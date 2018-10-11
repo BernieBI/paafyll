@@ -53,7 +53,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<ProductRecyc
                 .load(current_product.getBildeUrl())
                 .into(holder.productImage);
 
-        holder.productName.setText(current_product.getVarenavn());
+        holder.productName.setText(current_product.getVarenavn() + "\n" +current_product.getPris() + " Kr");
         Log.d(TAG, "onBindViewHolder: called." + products);
     }
 

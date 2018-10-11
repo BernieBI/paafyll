@@ -2,4 +2,5 @@
     <string name="app_name">Påfyll</string>
     <string name="product_name">Produktnavn</string>
     <string name="product_image">Produktbilde</string>
+    <string name="view_products_btn">Se produkter</string>
 </resources>
