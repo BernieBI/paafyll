@@ -32,7 +32,6 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<ProductRecyc
         this.products = products;
         this.context = context;
         this.inflater = LayoutInflater.from(context);
-
     }
 
     @NonNull
@@ -54,6 +53,13 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<ProductRecyc
                 .into(holder.productImage);
 
         holder.productName.setText(current_product.getVarenavn() + "\n" +current_product.getPris() + " Kr");
+        holder.setItemClickListener(new ItemClickListener(){
+            @Override
+            public void onClick(View view, int position, boolean isLoading) {
+                Toast.makeText(context, "Clicked " + current_product.getVarenavn(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
         Log.d(TAG, "onBindViewHolder: called." + products);
     }
 
@@ -67,16 +73,24 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<ProductRecyc
 
         ImageView productImage;
         TextView productName;
+        private ItemClickListener itemClickListener;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.product_image);
             productName = itemView.findViewById(R.id.product_name);
+            itemView.setOnClickListener(this);
         }
+
+        public void setItemClickListener(ItemClickListener itemClickListener){
+            this.itemClickListener = itemClickListener;
+        }
+
         @Override
         public void onClick(View v) {
-
+            itemClickListener.onClick(v, getAdapterPosition(), false);
         }
+
     }
 
 }

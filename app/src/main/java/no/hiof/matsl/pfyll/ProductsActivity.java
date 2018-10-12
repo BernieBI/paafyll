@@ -44,7 +44,7 @@ public class ProductsActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.product_recycler_view);
 
-        productsRef.addChildEventListener(new ChildEventListener() {
+        productsRef.limitToFirst(20).addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {

@@ -1,7 +1,7 @@
-package no.hiof.matsl.pfyll.Interface;
+package no.hiof.matsl.pfyll.adapter;
 
 import android.view.View;
 
-public class ItemClickListener {
-  void onClick (View view, int position, boolean isLoading);
+public interface ItemClickListener {
+   void onClick(View view, int position, boolean isLoading);
 }
