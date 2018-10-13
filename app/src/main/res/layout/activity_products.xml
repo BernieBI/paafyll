@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".ProductsActivity">
 
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/layoutButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change layout" />
         <android.support.v7.widget.RecyclerView
             android:id="@+id/product_recycler_view"
             android:layout_width="match_parent"
