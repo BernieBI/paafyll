@@ -3,4 +3,13 @@
     <string name="product_name">Produktnavn</string>
     <string name="product_image">Produktbilde</string>
     <string name="view_products_btn">Se produkter</string>
+    <string name="product_price">Pris</string>
+    <string name="liter_price">Literpris</string>
+    <string name="product_volume">Volum</string>
+    <string name="product_tase">Smak</string>
+    <string name="product_freshness">Friskhet</string>
+    <string name="product_fullness">Fylde</string>
+    <string name="product_tannin">Garvestoff</string>
+    <string name="eatWith">Passer til</string>
+
 </resources>

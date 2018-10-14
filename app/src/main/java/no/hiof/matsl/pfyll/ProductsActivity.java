@@ -51,14 +51,16 @@ public class ProductsActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.product_recycler_view);
 
-        productsRef.limitToFirst(20).addChildEventListener(new ChildEventListener() {
+        productsRef.orderByChild("varetype").equalTo("Rødvin").limitToFirst(50).addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
 
                 Product product = dataSnapshot.getValue(Product.class);
 
+                product.setFirebaseID(dataSnapshot.getKey());
                 product.setBildeUrl(product.getVarenummer());
+
                 Log.d(TAG, "onChildAdded: product: " + product.getVarenavn());
 
                 products.add(product);

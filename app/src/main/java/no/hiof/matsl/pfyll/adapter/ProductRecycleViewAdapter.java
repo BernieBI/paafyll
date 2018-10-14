@@ -2,6 +2,7 @@ package no.hiof.matsl.pfyll.adapter;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +18,9 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import no.hiof.matsl.pfyll.ProductsActivity;
 import no.hiof.matsl.pfyll.R;
+import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.model.Product;
 
 
@@ -56,7 +59,12 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<ProductRecyc
         holder.setItemClickListener(new ItemClickListener(){
             @Override
             public void onClick(View view, int position, boolean isLoading) {
-                Toast.makeText(context, "Clicked " + current_product.getVarenavn(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Clicked " + current_product.getFirebaseID(), Toast.LENGTH_SHORT).show();
+
+                //Starting single product activity
+                Intent singleProductIntent = new Intent(context, SingleProductActivity.class);
+                singleProductIntent.putExtra("ProductID", current_product.getFirebaseID());
+                context.startActivity(singleProductIntent);
 
             }
         });
