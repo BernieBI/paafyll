@@ -45,6 +45,7 @@ public class Product {
     private String varetype;
     private String vareurl;
     private String volum;
+    private String firebaseID;
 
     public Product(){ }
 
@@ -91,6 +92,14 @@ public class Product {
         this.varetype = varetype;
         this.vareurl = vareurl;
         this.volum = volum;
+    }
+
+    public void setFirebaseID(String firebaseID){
+        this.firebaseID = firebaseID;
+    }
+
+    public String getFirebaseID(){
+        return firebaseID;
     }
 
     public void setBildeUrl(String varenummer) {

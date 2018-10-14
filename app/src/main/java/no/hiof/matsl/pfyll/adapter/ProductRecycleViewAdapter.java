@@ -2,6 +2,7 @@ package no.hiof.matsl.pfyll.adapter;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +18,9 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import no.hiof.matsl.pfyll.ProductsActivity;
 import no.hiof.matsl.pfyll.R;
+import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.model.Product;
 
 
@@ -32,7 +35,6 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<ProductRecyc
         this.products = products;
         this.context = context;
         this.inflater = LayoutInflater.from(context);
-
     }
 
     @NonNull
@@ -54,6 +56,18 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<ProductRecyc
                 .into(holder.productImage);
 
         holder.productName.setText(current_product.getVarenavn() + "\n" +current_product.getPris() + " Kr");
+        holder.setItemClickListener(new ItemClickListener(){
+            @Override
+            public void onClick(View view, int position, boolean isLoading) {
+                Toast.makeText(context, "Clicked " + current_product.getFirebaseID(), Toast.LENGTH_SHORT).show();
+
+                //Starting single product activity
+                Intent singleProductIntent = new Intent(context, SingleProductActivity.class);
+                singleProductIntent.putExtra("ProductID", current_product.getFirebaseID());
+                context.startActivity(singleProductIntent);
+
+            }
+        });
         Log.d(TAG, "onBindViewHolder: called." + products);
     }
 
@@ -67,16 +81,24 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<ProductRecyc
 
         ImageView productImage;
         TextView productName;
+        private ItemClickListener itemClickListener;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.product_image);
             productName = itemView.findViewById(R.id.product_name);
+            itemView.setOnClickListener(this);
         }
+
+        public void setItemClickListener(ItemClickListener itemClickListener){
+            this.itemClickListener = itemClickListener;
+        }
+
         @Override
         public void onClick(View v) {
-
+            itemClickListener.onClick(v, getAdapterPosition(), false);
         }
+
     }
 
 }

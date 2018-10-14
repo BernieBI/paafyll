@@ -3,9 +3,11 @@ package no.hiof.matsl.pfyll;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -14,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+import no.hiof.matsl.pfyll.adapter.ItemClickListener;
 import no.hiof.matsl.pfyll.adapter.ProductRecycleViewAdapter;
 import no.hiof.matsl.pfyll.model.Product;
 
@@ -23,7 +26,9 @@ public class ProductsActivity extends AppCompatActivity {
 
     private ArrayList<Product> products = new ArrayList<>();
     private RecyclerView recyclerView;
+    private Button layoutButton;
     private ProductRecycleViewAdapter productAdapter;
+    private int layoutColumns = 2;
 
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -35,27 +40,31 @@ public class ProductsActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Started");
         setContentView(R.layout.activity_products);
 
-       initRecyclerView();
+        //Layout-toggle
+        layoutButton = findViewById(R.id.layoutButton);
+        layoutButton.setOnClickListener(layoutSwitchListener);
+        initRecyclerView();
     }
 
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView: init Recyclerview");
 
-
         recyclerView = findViewById(R.id.product_recycler_view);
 
-        productsRef.addChildEventListener(new ChildEventListener() {
+        productsRef.orderByChild("varetype").equalTo("Rødvin").limitToFirst(50).addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
 
                 Product product = dataSnapshot.getValue(Product.class);
 
+                product.setFirebaseID(dataSnapshot.getKey());
                 product.setBildeUrl(product.getVarenummer());
+
                 Log.d(TAG, "onChildAdded: product: " + product.getVarenavn());
 
                 products.add(product);
-                passProductsToView(products);
+                passProductsToView(products, layoutColumns);
             }
 
             @Override
@@ -70,7 +79,7 @@ public class ProductsActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                passProductsToView(products);
+                passProductsToView(products, layoutColumns);
             }
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -91,11 +100,23 @@ public class ProductsActivity extends AppCompatActivity {
 
     }
 
-    public void passProductsToView (ArrayList<Product> products){
+    private View.OnClickListener layoutSwitchListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(final View v) {
+            if (layoutColumns == 2){
+                layoutColumns = 1;
+            }else{
+                layoutColumns = 2;
+            }
+            passProductsToView(products, layoutColumns);
+        }
+    };
+    public void passProductsToView (ArrayList<Product> products, int layoutColumns){
 
         productAdapter = new ProductRecycleViewAdapter(ProductsActivity.this, products);
         recyclerView.setAdapter(productAdapter);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(ProductsActivity.this, 2); // (Context context, int spanCount)
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(ProductsActivity.this, layoutColumns); // (Context context, int spanCount)
         recyclerView.setLayoutManager(gridLayoutManager);
     }
 }
