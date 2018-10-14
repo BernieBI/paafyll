@@ -10,6 +10,15 @@
     <string name="product_freshness">Friskhet</string>
     <string name="product_fullness">Fylde</string>
     <string name="product_tannin">Garvestoff</string>
-    <string name="eatWith">Passer til</string>
+    <string name="drinkWith">Passer til</string>
+    <string name="centiLiter">Cl</string>
+    <string name="perLiter">Per liter</string>
+    <string name="currency">Kr</string>
+
+    <string-array name="nonDrinkables">
+        <item>Gaveesker</item>
+        <item>Gaveposer</item>
+        <item>Tilbehør</item>
+    </string-array>
 
 </resources>

@@ -1,8 +1,6 @@
 package no.hiof.matsl.pfyll;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,18 +8,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.model.Product;
 
 public class SingleProductActivity extends AppCompatActivity {
-    String TAG = "SingleProduct Activity";
+    String TAG = "SingleProductActivity";
 
     private String productID;
     //firebase
@@ -29,13 +25,18 @@ public class SingleProductActivity extends AppCompatActivity {
     private DatabaseReference productsRef;
 
     //views
-    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume;
-    private ImageView productImage, eatWith1, eatWith2, eatWith3;
+    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead;
+    private ImageView productImage, drinkWith1, drinkWith2, drinkWith3;
 
+
+    private String[] nonDrinkables;
+    private boolean hasDrinkWiths = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_product);
+
+        nonDrinkables = getResources().getStringArray(R.array.nonDrinkables);
 
         productName = findViewById(R.id.productName);
         productTaste = findViewById(R.id.productTaste);
@@ -44,9 +45,10 @@ public class SingleProductActivity extends AppCompatActivity {
         productVolume = findViewById(R.id.productVolume);
 
         productImage = findViewById(R.id.productImage);
-        eatWith1 = findViewById(R.id.eatWith1);
-        eatWith2 = findViewById(R.id.eatWith2);
-        eatWith3 = findViewById(R.id.eatWith3);
+        drinkWithhead = findViewById(R.id.drinkWith);
+        drinkWith1 = findViewById(R.id.drinkWith1);
+        drinkWith2 = findViewById(R.id.drinkWith2);
+        drinkWith3 = findViewById(R.id.drinkWith3);
 
         Intent intent = getIntent();
         productID = intent.getStringExtra("ProductID");
@@ -59,26 +61,33 @@ public class SingleProductActivity extends AppCompatActivity {
         ValueEventListener productListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
                 Product product = dataSnapshot.getValue(Product.class);
+                Log.d(TAG, "Product: " + product.getVarenummer());
+
                 product.setBildeUrl(product.getVarenummer());
 
                 Glide.with(SingleProductActivity.this)
                         .asBitmap()
                         .load(product.getBildeUrl())
                         .into(productImage);
+                productImage.setContentDescription(product.getVarenavn());
 
                 productName.setText(product.getVarenavn());
-                productTaste.setText(product.getSmak());
-                productPrice.setText("Kr " + product.getPris());
-                productLiterPrice.setText("Kr " + product.getLiterpris() + " pr. liter");
-                productVolume.setText(product.getVolum() + " Cl");
+                productPrice.setText(String.format( "%s %s", getString(R.string.currency), product.getPris() ));
+
+                if (confirmType(product.getVaretype())) {
+
+                    productTaste.setText(product.getSmak());
+                    productLiterPrice.setText(String.format("%s %s %s", getString(R.string.currency), product.getLiterpris(), getString(R.string.perLiter)) );
+                    productVolume.setText(String.format( "%s %s", product.getVolum(), getString(R.string.centiLiter) ));
 
 
-                eatWith1.setImageResource( getEatWiths( product.getPassertil01() ) );
-                eatWith2.setImageResource( getEatWiths( product.getPassertil02() ) );
-                eatWith3.setImageResource( getEatWiths( product.getPassertil03() ) );
-
+                    setDrinkWiths(drinkWith1, product.getPassertil01());
+                    setDrinkWiths(drinkWith2, product.getPassertil02());
+                    setDrinkWiths(drinkWith3, product.getPassertil03());
+                    if (hasDrinkWiths)
+                        drinkWithhead.setText(getString(R.string.drinkWith));
+                }
             }
 
             @Override
@@ -91,38 +100,58 @@ public class SingleProductActivity extends AppCompatActivity {
 
     }
 
-    public int getEatWiths(String value) {
+    public boolean confirmType(String productType){
+
+        for (String type:nonDrinkables){
+            if (productType.contains(type))
+                return false;
+        }
+
+        return true;
+    }
+
+    public void setDrinkWiths(ImageView view, String value) {
+        int image = 0;
+        String imageAlt = value;
 
         if (value.contains("Dessert"))
-            return R.drawable.dessert;
+            image = R.drawable.dessert;
 
         if (value.contains("Fisk"))
-            return R.drawable.fisk;
+            image = R.drawable.fisk;
 
         if (value.contains("Lyst kjøtt"))
-            return R.drawable.kylling;
+            image = R.drawable.kylling;
 
         if (value.contains("Lam og sau"))
-            return R.drawable.lam;
+            image = R.drawable.lam;
 
         if (value.contains( "Ost" ))
-            return R.drawable.ost;
+            image = R.drawable.ost;
 
         if (value.contains("Skalldyr"))
-            return R.drawable.skalldyr;
+            image = R.drawable.skalldyr;
 
         if (value.contains("Smavilt"))
-            return R.drawable.smavilt;
+            image = R.drawable.smavilt;
 
         if (value.contains("Storfe"))
-            return R.drawable.storfe;
+            image = R.drawable.storfe;
 
         if (value.contains("Storvilt"))
-            return R.drawable.storvilt;
+            image = R.drawable.storvilt;
 
         if (value.contains("Svinekjøtt"))
-            return R.drawable.svin;
+            image = R.drawable.svin;
 
-        return 0;
+        if (value.contains("Aperitiff"))
+            image = R.drawable.aperitiff;
+
+        if (image != 0)
+            hasDrinkWiths = true;
+
+        view.setImageResource(image);
+        view.setContentDescription(imageAlt);
+
     }
 }
