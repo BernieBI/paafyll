@@ -1,10 +1,12 @@
 package no.hiof.matsl.pfyll;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -25,7 +27,8 @@ public class SingleProductActivity extends AppCompatActivity {
     private DatabaseReference productsRef;
 
     //views
-    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead;
+    private LinearLayout productDetails1, productDetails2;
+    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead, productCountry;
     private ImageView productImage, drinkWith1, drinkWith2, drinkWith3;
 
 
@@ -43,6 +46,9 @@ public class SingleProductActivity extends AppCompatActivity {
         productPrice = findViewById(R.id.productPrice);
         productLiterPrice = findViewById(R.id.productLiterPrice);
         productVolume = findViewById(R.id.productVolume);
+        productDetails1 = findViewById(R.id.productDetails1);
+        productDetails2 = findViewById(R.id.productDetails2);
+        productCountry = findViewById(R.id.productCountry);
 
         productImage = findViewById(R.id.productImage);
         drinkWithhead = findViewById(R.id.drinkWith);
@@ -77,16 +83,34 @@ public class SingleProductActivity extends AppCompatActivity {
 
                 if (confirmType(product.getVaretype())) {
 
+                    if (!product.getLand().equals(""))
+                        productCountry.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
+                        productCountry.setText(product.getLand());
+
                     productTaste.setText(product.getSmak());
-                    productLiterPrice.setText(String.format("%s %s %s", getString(R.string.currency), product.getLiterpris(), getString(R.string.perLiter)) );
+                    productLiterPrice.setText(String.format("%s %s %s", getString(R.string.currency), product.getLiterpris(), getString(R.string.product_perLiter)) );
                     productVolume.setText(String.format( "%s %s", product.getVolum(), getString(R.string.centiLiter) ));
+
+                    //Adding info related to product contents
+                    createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
+                    createTextView(productDetails1, product.getArgang() , getString(R.string.product_year));
+                    createTextView(productDetails1, product.getLagringsgrad(), getString(R.string.product_storage));
+                    createTextView(productDetails1, product.getFriskhet(), getString(R.string.product_freshness));
+                    createTextView(productDetails1, product.getFylde(), getString(R.string.product_fullness));
+                    createTextView(productDetails1, product.getGarvestoffer(), getString(R.string.product_tannin));
+                    createTextView(productDetails1, product.getFarge(), getString(R.string.product_color));
+                    createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock));
+
+                    //Adding infor related to product production
+                    createTextView(productDetails2, product.getDistrikt() , getString(R.string.product_district));
+                    createTextView(productDetails2, product.getProdusent(), getString(R.string.product_producer));
 
 
                     setDrinkWiths(drinkWith1, product.getPassertil01());
                     setDrinkWiths(drinkWith2, product.getPassertil02());
                     setDrinkWiths(drinkWith3, product.getPassertil03());
                     if (hasDrinkWiths)
-                        drinkWithhead.setText(getString(R.string.drinkWith));
+                        drinkWithhead.setText(getString(R.string.product_drinkWith));
                 }
             }
 
@@ -108,6 +132,26 @@ public class SingleProductActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    //pass header text as "" if not to use
+    public void createTextView(LinearLayout parent, String text, String headerText){
+        if (text.equals("") || text.equals(null) || text.contains("Øvrige"))
+             return;
+
+        if (!headerText.equals("") || !headerText.equals(null)){
+
+            TextView headerTextView = new TextView(this);
+            headerTextView.setText(String.format("%s:",headerText));
+            headerTextView.setTypeface(null, Typeface.BOLD);
+
+            parent.addView(headerTextView);
+        }
+
+        TextView textView = new TextView(this);
+        textView.setText(text);
+
+        parent.addView(textView);
     }
 
     public void setDrinkWiths(ImageView view, String value) {
