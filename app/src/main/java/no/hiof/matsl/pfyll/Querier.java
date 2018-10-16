@@ -10,18 +10,18 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import no.hiof.matsl.pfyll.model.Filter;
 import no.hiof.matsl.pfyll.model.Product;
 
-// TODO Implement caching
 public class Querier {
     public static final int DEFAULT_LIMIT = 100;
 
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     private int limit;
+    private Ordering ordering;
     private List<Filter> filters;
 
 
@@ -29,6 +29,7 @@ public class Querier {
         this.database =  FirebaseDatabase.getInstance();
         this.databaseReference = database.getReference();
         this.limit = DEFAULT_LIMIT;
+        this.ordering = null;
     }
 
     public void setFilters(List<Filter> filters) {
@@ -47,11 +48,17 @@ public class Querier {
         this.limit = limit;
     }
 
-    // TODO implement ordering
+    public void setOrdering(Ordering ordering) {
+        this.ordering = ordering;
+    }
+
     public List<Product> getData(int offset) {
         final List<Product> data = new ArrayList<>();
 
         Query query = databaseReference.child("Products");
+        if (ordering != null) {
+            query.orderByChild(ordering.getKey());
+        }
         for (Filter filter : filters) {
             switch (filter.getType()) {
                 case DOUBLE:
@@ -98,6 +105,10 @@ public class Querier {
 
             }
         });
+
+        if (ordering != null && ordering.getMode() == Ordering.Mode.DESCENDING) {
+            Collections.reverse(data);
+        }
         return data;
     }
 

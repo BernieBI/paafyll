@@ -1,4 +1,4 @@
-package no.hiof.matsl.pfyll.model;
+package no.hiof.matsl.pfyll;
 
 public class Filter {
     public enum Type {
