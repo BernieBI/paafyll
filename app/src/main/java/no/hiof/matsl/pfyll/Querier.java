@@ -15,6 +15,7 @@ import java.util.List;
 import no.hiof.matsl.pfyll.model.Filter;
 import no.hiof.matsl.pfyll.model.Product;
 
+// TODO Implement caching
 public class Querier {
     public static final int DEFAULT_LIMIT = 100;
 
@@ -23,7 +24,6 @@ public class Querier {
     private int limit;
     private List<Filter> filters;
 
-    private List<Product> data;
 
     public Querier() {
         this.database =  FirebaseDatabase.getInstance();
@@ -47,6 +47,7 @@ public class Querier {
         this.limit = limit;
     }
 
+    // TODO implement ordering
     public List<Product> getData(int offset) {
         final List<Product> data = new ArrayList<>();
 
