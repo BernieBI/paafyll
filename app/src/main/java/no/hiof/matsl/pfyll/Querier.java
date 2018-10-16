@@ -1,26 +1,21 @@
 package no.hiof.matsl.pfyll;
 
-import android.support.annotation.NonNull;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import no.hiof.matsl.pfyll.model.Product;
+import java.util.List;
 
 public class Querier {
     public static final int DEFAULT_LIMIT = 100;
+    public static final int DEFAULT_OFFSET = 0;
 
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     private int limit;
+    private int offset;
     private Ordering ordering;
     private List<Filter> filters;
 
@@ -28,6 +23,7 @@ public class Querier {
     public Querier() {
         this.database =  FirebaseDatabase.getInstance();
         this.databaseReference = database.getReference();
+        this.offset = DEFAULT_OFFSET;
         this.limit = DEFAULT_LIMIT;
         this.ordering = null;
     }
@@ -44,17 +40,19 @@ public class Querier {
         this.filters.add(filter);
     }
 
-    public void setDatalimit(int limit) {
+    public void setlimit(int limit) {
         this.limit = limit;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     public void setOrdering(Ordering ordering) {
         this.ordering = ordering;
     }
 
-    public List<Product> getData(int offset) {
-        final List<Product> data = new ArrayList<>();
-
+    public void addListenerForSingleValueEvent(ValueEventListener valueEventListener) {
         Query query = databaseReference.child("Products");
         if (ordering != null) {
             query.orderByChild(ordering.getKey());
@@ -92,25 +90,6 @@ public class Querier {
         query.limitToFirst(offset);
         query.limitToLast(offset + limit);
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    data.add(d.getValue(Product.class));
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        if (ordering != null && ordering.getMode() == Ordering.Mode.DESCENDING) {
-            Collections.reverse(data);
-        }
-        return data;
+        query.addListenerForSingleValueEvent(valueEventListener);
     }
-
-
 }
