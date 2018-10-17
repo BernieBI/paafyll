@@ -1,15 +1,48 @@
 <resources>
     <string name="app_name">Påfyll</string>
+    <string name="view_products_btn">Se produkter</string>
+
+    <!-- Product strings -->
     <string name="product_name">Produktnavn</string>
     <string name="product_image">Produktbilde</string>
-    <string name="view_products_btn">Se produkter</string>
     <string name="product_price">Pris</string>
-    <string name="liter_price">Literpris</string>
+    <string name="prodcut_liter_price">Literpris</string>
     <string name="product_volume">Volum</string>
     <string name="product_tase">Smak</string>
     <string name="product_freshness">Friskhet</string>
     <string name="product_fullness">Fylde</string>
     <string name="product_tannin">Garvestoff</string>
-    <string name="eatWith">Passer til</string>
+    <string name="product_feedstock">Råstoff</string>
+    <string name="product_drinkWith">Passer til</string>
+    <string name="product_perLiter">per liter</string>
+    <string name="product_alkohol">Alkohol</string>
+    <string name="product_year">Årgang</string>
+    <string name="product_district">Distrikt</string>
+    <string name="product_producer">Produsent</string>
+    <string name="prodcut_packing">Emballasjetype</string>
+    <string name="product_fairtrade">Fairtrade</string>
+    <string name="product_color">Farge</string>
+    <string name="product_glutenLow">Lav på gluten</string>
+    <string name="product_wholesaler">Grossist</string>
+    <string name="product_korktype">Korktype</string>
+    <string name="product_kosher">Kosher</string>
+    <string name="product_storage">Lagringsgrad</string>
+    <string name="product_country">Land</string>
+    <string name="product_smell">Lukt</string>
+    <string name="product_method">Metode</string>
+    <string name="product_enviromentalPackage">Miljosmart emballasje</string>
+    <string name="product_Organic">Økologisk</string>
+
+    <string name="product_">Årgang</string>
+
+    <!-- other -->
+    <string name="centiLiter">Cl</string>
+    <string name="currency">Kr</string>
+
+    <string-array name="nonDrinkables">
+        <item>Gaveesker</item>
+        <item>Gaveposer</item>
+        <item>Tilbehør</item>
+    </string-array>
 
 </resources>
