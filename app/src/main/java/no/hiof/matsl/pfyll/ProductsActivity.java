@@ -43,33 +43,17 @@ public class ProductsActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Started");
         setContentView(R.layout.activity_products);
 
-        layoutButton.setOnClickListener(layoutSwitchListener);
         layoutButton = findViewById(R.id.layoutButton);
-        querier = new Querier();
-        querier.setlimit(20);
+        layoutButton.setOnClickListener(layoutSwitchListener);
 
         initRecyclerView();
     }
 
     private void initRecyclerView(){
-        Log.d(TAG, "initRecyclerView: init RecyclerView");
 
         recyclerView = findViewById(R.id.product_recycler_view);
-        querier.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Product product = child.getValue(Product.class);
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        /*
-        productsRef.addChildEventListener(new ChildEventListener() {
+        productsRef.limitToFirst(50).addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
@@ -87,17 +71,7 @@ public class ProductsActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                Product new_product = dataSnapshot.getValue(Product.class);
 
-                Log.d(TAG, "onChildChanged:" + new_product.getVarenavn());
-
-                for (Product old_product : products){
-                    if(old_product.getVarenummer() == new_product.getVarenummer() ){
-                        products.set( products.indexOf(old_product) , new_product);
-                        break;
-                    }
-                }
-                passProductsToView(products, layoutColumns);
             }
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -115,7 +89,6 @@ public class ProductsActivity extends AppCompatActivity {
 
             }
         });
-        */
 
     }
 
