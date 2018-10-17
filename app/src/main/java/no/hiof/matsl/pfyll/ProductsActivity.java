@@ -1,5 +1,6 @@
 package no.hiof.matsl.pfyll;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,6 +12,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -28,6 +30,7 @@ public class ProductsActivity extends AppCompatActivity {
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference productsRef = database.getReference("Products");
+    private Querier querier;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +38,31 @@ public class ProductsActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Started");
         setContentView(R.layout.activity_products);
 
-       initRecyclerView();
+        querier = new Querier();
+        querier.setlimit(20);
+
+        initRecyclerView();
     }
 
     private void initRecyclerView(){
-        Log.d(TAG, "initRecyclerView: init Recyclerview");
+        Log.d(TAG, "initRecyclerView: init RecyclerView");
 
 
         recyclerView = findViewById(R.id.product_recycler_view);
+        querier.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    Product product = child.getValue(Product.class);
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        /*
         productsRef.addChildEventListener(new ChildEventListener() {
 
             @Override
@@ -88,6 +107,7 @@ public class ProductsActivity extends AppCompatActivity {
 
             }
         });
+        */
 
     }
 
