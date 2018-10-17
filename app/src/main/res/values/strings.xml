@@ -19,7 +19,7 @@
     <string name="product_year">Årgang</string>
     <string name="product_district">Distrikt</string>
     <string name="product_producer">Produsent</string>
-    <string name="prodcut_packing">Emballasjetype</string>
+    <string name="product_packaging">Emballasjetype</string>
     <string name="product_fairtrade">Fairtrade</string>
     <string name="product_color">Farge</string>
     <string name="product_glutenLow">Lav på gluten</string>
@@ -30,6 +30,7 @@
     <string name="product_country">Land</string>
     <string name="product_smell">Lukt</string>
     <string name="product_method">Metode</string>
+    <string name="product_category">Butikkategori</string>
     <string name="product_enviromentalPackage">Miljosmart emballasje</string>
     <string name="product_Organic">Økologisk</string>
 

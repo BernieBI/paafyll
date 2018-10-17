@@ -419,6 +419,7 @@ public class Product {
     }
 
     public void setVarenummer(String varenummer) {
+        setBildeUrl(varenummer);
         this.varenummer = varenummer;
     }
 

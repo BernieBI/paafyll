@@ -55,11 +55,13 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<ProductRecyc
                 .load(current_product.getBildeUrl())
                 .into(holder.productImage);
 
-        holder.productName.setText(current_product.getVarenavn() + "\n" +current_product.getPris() + " Kr");
+        holder.productName.setText(current_product.getVarenavn());
+        holder.productCountry.setText(current_product.getLand());
+        holder.productPrice.setText(current_product.getPris());
+
         holder.setItemClickListener(new ItemClickListener(){
             @Override
             public void onClick(View view, int position, boolean isLoading) {
-                Toast.makeText(context, "Clicked " + current_product.getFirebaseID(), Toast.LENGTH_SHORT).show();
 
                 //Starting single product activity
                 Intent singleProductIntent = new Intent(context, SingleProductActivity.class);
@@ -81,12 +83,16 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<ProductRecyc
 
         ImageView productImage;
         TextView productName;
+        TextView productPrice;
+        TextView productCountry;
         private ItemClickListener itemClickListener;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.product_image);
             productName = itemView.findViewById(R.id.product_name);
+            productPrice = itemView.findViewById(R.id.product_price);
+            productCountry = itemView.findViewById(R.id.product_country);
             itemView.setOnClickListener(this);
         }
 
@@ -100,5 +106,6 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<ProductRecyc
         }
 
     }
+
 
 }

@@ -1,10 +1,13 @@
 package no.hiof.matsl.pfyll;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,10 +30,10 @@ public class SingleProductActivity extends AppCompatActivity {
     private DatabaseReference productsRef;
 
     //views
-    private LinearLayout productDetails1, productDetails2;
-    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead, productCountry;
+    private LinearLayout productDetails1, productDetails2, productDetails3;
+    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead;
     private ImageView productImage, drinkWith1, drinkWith2, drinkWith3;
-
+    private int secondaryColor;
 
     private String[] nonDrinkables;
     private boolean hasDrinkWiths = false;
@@ -39,6 +42,7 @@ public class SingleProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_product);
 
+        secondaryColor = getResources().getColor(R.color.primaryLightColor);
         nonDrinkables = getResources().getStringArray(R.array.nonDrinkables);
 
         productName = findViewById(R.id.productName);
@@ -48,7 +52,7 @@ public class SingleProductActivity extends AppCompatActivity {
         productVolume = findViewById(R.id.productVolume);
         productDetails1 = findViewById(R.id.productDetails1);
         productDetails2 = findViewById(R.id.productDetails2);
-        productCountry = findViewById(R.id.productCountry);
+        productDetails3 = findViewById(R.id.productDetails3);
 
         productImage = findViewById(R.id.productImage);
         drinkWithhead = findViewById(R.id.drinkWith);
@@ -58,7 +62,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         productID = intent.getStringExtra("ProductID");
-        productsRef = database.getReference("Products/" + productID);
+        productsRef = database.getReference("Products/" + "9140");
         GetData();
     }
 
@@ -79,17 +83,21 @@ public class SingleProductActivity extends AppCompatActivity {
                 productImage.setContentDescription(product.getVarenavn());
 
                 productName.setText(product.getVarenavn());
+                productName.setBackgroundColor(secondaryColor);
+
                 productPrice.setText(String.format( "%s %s", getString(R.string.currency), product.getPris() ));
+                productPrice.setBackgroundColor(secondaryColor);
 
                 if (confirmType(product.getVaretype())) {
 
-                    if (!product.getLand().equals(""))
-                        productCountry.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
-                        productCountry.setText(product.getLand());
-
                     productTaste.setText(product.getSmak());
+                    productTaste.setBackgroundColor(secondaryColor);
+
                     productLiterPrice.setText(String.format("%s %s %s", getString(R.string.currency), product.getLiterpris(), getString(R.string.product_perLiter)) );
+                    productLiterPrice.setBackgroundColor(secondaryColor);
+
                     productVolume.setText(String.format( "%s %s", product.getVolum(), getString(R.string.centiLiter) ));
+
 
                     //Adding info related to product contents
                     createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
@@ -99,13 +107,24 @@ public class SingleProductActivity extends AppCompatActivity {
                     createTextView(productDetails1, product.getFylde(), getString(R.string.product_fullness));
                     createTextView(productDetails1, product.getGarvestoffer(), getString(R.string.product_tannin));
                     createTextView(productDetails1, product.getFarge(), getString(R.string.product_color));
+                    createTextView(productDetails1, product.getLukt(), getString(R.string.product_smell));
                     createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock));
 
-                    //Adding infor related to product production
-                    createTextView(productDetails2, product.getDistrikt() , getString(R.string.product_district));
+
+                    //Adding info related to product production
                     createTextView(productDetails2, product.getProdusent(), getString(R.string.product_producer));
+                    createTextView(productDetails2, product.getMetode(), getString(R.string.product_method));
+                    createTextView(productDetails2, product.getLand() , getString(R.string.product_country));
+                    createTextView(productDetails2, String.format("%s, %s",product.getDistrikt(), product.getUnderdistrikt()) , getString(R.string.product_district));
+
+                    //Other info
+                    createTextView(productDetails3, product.getEmballasjetype() , getString(R.string.product_packaging));
+                    createTextView(productDetails3, product.getButikkategori() , getString(R.string.product_category));
+                    createTextView(productDetails3, product.getGrossist() , getString(R.string.product_wholesaler));
 
 
+
+                    drinkWithhead.setBackgroundColor(secondaryColor);
                     setDrinkWiths(drinkWith1, product.getPassertil01());
                     setDrinkWiths(drinkWith2, product.getPassertil02());
                     setDrinkWiths(drinkWith3, product.getPassertil03());
@@ -139,19 +158,24 @@ public class SingleProductActivity extends AppCompatActivity {
         if (text.equals("") || text.equals(null) || text.contains("Øvrige"))
              return;
 
+        LinearLayout listElement = new LinearLayout(this);
+        listElement.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        listElement.setOrientation(LinearLayout.HORIZONTAL);
+
+        parent.addView(listElement);
+
         if (!headerText.equals("") || !headerText.equals(null)){
 
             TextView headerTextView = new TextView(this);
-            headerTextView.setText(String.format("%s:",headerText));
+            headerTextView.setText(String.format("%s: ",headerText));
             headerTextView.setTypeface(null, Typeface.BOLD);
 
-            parent.addView(headerTextView);
+            listElement.addView(headerTextView);
         }
 
         TextView textView = new TextView(this);
         textView.setText(text);
-
-        parent.addView(textView);
+        listElement.addView(textView);
     }
 
     public void setDrinkWiths(ImageView view, String value) {
