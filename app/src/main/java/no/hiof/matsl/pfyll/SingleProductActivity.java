@@ -3,11 +3,14 @@ package no.hiof.matsl.pfyll;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -62,7 +65,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         productID = intent.getStringExtra("ProductID");
-        productsRef = database.getReference("Products/" + "9140");
+        productsRef = database.getReference("Products/" + productID);
         GetData();
     }
 
@@ -71,7 +74,7 @@ public class SingleProductActivity extends AppCompatActivity {
         ValueEventListener productListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Product product = dataSnapshot.getValue(Product.class);
+                final Product product = dataSnapshot.getValue(Product.class);
                 Log.d(TAG, "Product: " + product.getVarenummer());
 
                 product.setBildeUrl(product.getVarenummer());
@@ -88,7 +91,6 @@ public class SingleProductActivity extends AppCompatActivity {
                 productPrice.setText(String.format( "%s %s", getString(R.string.currency), product.getPris() ));
                 productPrice.setBackgroundColor(secondaryColor);
 
-                if (confirmType(product.getVaretype())) {
 
                     productTaste.setText(product.getSmak());
                     productTaste.setBackgroundColor(secondaryColor);
@@ -130,7 +132,20 @@ public class SingleProductActivity extends AppCompatActivity {
                     setDrinkWiths(drinkWith3, product.getPassertil03());
                     if (hasDrinkWiths)
                         drinkWithhead.setText(getString(R.string.product_drinkWith));
-                }
+
+
+                //Button for opening product in browser
+                Button productsButton = findViewById(R.id.webButton);
+
+                productsButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "onClick: ProductsActivity started");
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse(product.getVareurl()));
+                        startActivity(browserIntent);
+                    }
+                });
             }
 
             @Override
@@ -143,15 +158,6 @@ public class SingleProductActivity extends AppCompatActivity {
 
     }
 
-    public boolean confirmType(String productType){
-
-        for (String type:nonDrinkables){
-            if (productType.contains(type))
-                return false;
-        }
-
-        return true;
-    }
 
     //pass header text as "" if not to use
     public void createTextView(LinearLayout parent, String text, String headerText){
@@ -217,6 +223,9 @@ public class SingleProductActivity extends AppCompatActivity {
 
         if (image != 0)
             hasDrinkWiths = true;
+        else
+            view.setVisibility(View.GONE);
+
 
         view.setImageResource(image);
         view.setContentDescription(imageAlt);

@@ -33,8 +33,7 @@
     <string name="product_category">Butikkategori</string>
     <string name="product_enviromentalPackage">Miljosmart emballasje</string>
     <string name="product_Organic">Økologisk</string>
-
-    <string name="product_">Årgang</string>
+    <string name="product_webBtn">Se i nettbutikk</string>
 
     <!-- other -->
     <string name="centiLiter">Cl</string>
