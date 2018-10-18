@@ -28,7 +28,7 @@ public class ProductDataSource extends ItemKeyedDataSource<String, Product> {
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<String> params, @NonNull LoadInitialCallback<Product> callback) {
-        loadData(params.requestedInitialKey, params.requestedLoadSize, callback, false);
+        loadData("", params.requestedLoadSize, callback, false);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ProductDataSource extends ItemKeyedDataSource<String, Product> {
     private void loadData(String key, int loadSize, @NonNull final LoadCallback<Product> callback, final boolean async) {
 
         final TaskCompletionSource<List<Product>> taskCompletionSource = new TaskCompletionSource<>();
-        Query query = databaseReference.child("Produkter");
+        Query query = databaseReference.child("Products");
         query.orderByChild("varenummer")
                 .startAt(key)
                 .limitToFirst(loadSize)

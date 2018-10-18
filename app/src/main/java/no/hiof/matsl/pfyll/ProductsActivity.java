@@ -45,7 +45,7 @@ public class ProductsActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Started");
         setContentView(R.layout.activity_products);
 
-        PagedList.Config config = new PagedList.Config.Builder().setPageSize(18).build();
+        PagedList.Config config = new PagedList.Config.Builder().setPageSize(12).build();
 
         ProductDataSourceFactory factory = new ProductDataSourceFactory(database.getReference());
 
@@ -61,12 +61,12 @@ public class ProductsActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.product_recycler_view);
 
-        passProductsToView(products.getValue(), layoutColumns);
+        passProductsToView(layoutColumns);
 
         products.observe(this, new Observer<PagedList<Product>>() {
             @Override
             public void onChanged(@Nullable PagedList<Product> products) {
-                ((ProductRecycleViewAdapter) recyclerView.getAdapter()).submitList(products);
+                productAdapter.submitList(products);
             }
         });
         /*
@@ -120,13 +120,13 @@ public class ProductsActivity extends AppCompatActivity {
             }else{
                 layoutColumns = 2;
             }
-            passProductsToView(products.getValue(), layoutColumns);
+            //passProductsToView(layoutColumns);
 
         }
     };
-    public void passProductsToView (PagedList<Product> products, int layoutColumns){
+    public void passProductsToView (int layoutColumns){
 
-        productAdapter = new ProductRecycleViewAdapter(ProductsActivity.this, products);
+        productAdapter = new ProductRecycleViewAdapter(ProductsActivity.this);
         recyclerView.setAdapter(productAdapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(ProductsActivity.this, layoutColumns); // (Context context, int spanCount)
         recyclerView.setLayoutManager(gridLayoutManager);
