@@ -1,6 +1,11 @@
 package no.hiof.matsl.pfyll;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.paging.LivePagedListBuilder;
+import android.arch.paging.PagedList;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,12 +19,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.List;
-import java.util.ArrayList;
-
-import no.hiof.matsl.pfyll.adapter.ItemClickListener;
+import no.hiof.matsl.pfyll.adapter.ProductDataSourceFactory;
 import no.hiof.matsl.pfyll.adapter.ProductRecycleViewAdapter;
 import no.hiof.matsl.pfyll.model.Product;
 
@@ -27,7 +28,7 @@ public class ProductsActivity extends AppCompatActivity {
     String TAG = "ProductsActivity";
 
 
-    private ArrayList<Product> products = new ArrayList<>();
+    private LiveData<PagedList<Product>> products;
     private RecyclerView recyclerView;
     private Button layoutButton;
     private ProductRecycleViewAdapter productAdapter;
@@ -44,6 +45,12 @@ public class ProductsActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Started");
         setContentView(R.layout.activity_products);
 
+        PagedList.Config config = new PagedList.Config.Builder().setPageSize(18).build();
+
+        ProductDataSourceFactory factory = new ProductDataSourceFactory(database.getReference());
+
+        products = new LivePagedListBuilder<>(factory, config).build();
+
         layoutButton = findViewById(R.id.layoutButton);
         layoutButton.setOnClickListener(layoutSwitchListener);
 
@@ -54,15 +61,24 @@ public class ProductsActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.product_recycler_view);
 
-        passProductsToView(products, layoutColumns);
+        passProductsToView(products.getValue(), layoutColumns);
 
-        productsRef.limitToFirst(50).addChildEventListener(new ChildEventListener() {
+        products.observe(this, new Observer<PagedList<Product>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<Product> products) {
+                ((ProductRecycleViewAdapter) recyclerView.getAdapter()).submitList(products);
+            }
+        });
+        /*
+        productsRef.orderByChild("varenummer").limitToFirst(100).addChildEventListener(new ChildEventListener() {
 
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
 
                 Product product = dataSnapshot.getValue(Product.class);
-
+                if (product == null) {
+                    return;
+                }
                 product.setFirebaseID(dataSnapshot.getKey());
                 product.setBildeUrl(product.getVarenummer());
 
@@ -91,7 +107,7 @@ public class ProductsActivity extends AppCompatActivity {
                 Log.w(TAG, "onCancelled:", databaseError.toException());
 
             }
-        });
+        });*/
 
     }
 
@@ -104,11 +120,11 @@ public class ProductsActivity extends AppCompatActivity {
             }else{
                 layoutColumns = 2;
             }
-            passProductsToView(products, layoutColumns);
+            passProductsToView(products.getValue(), layoutColumns);
 
         }
     };
-    public void passProductsToView (ArrayList<Product> products, int layoutColumns){
+    public void passProductsToView (PagedList<Product> products, int layoutColumns){
 
         productAdapter = new ProductRecycleViewAdapter(ProductsActivity.this, products);
         recyclerView.setAdapter(productAdapter);
