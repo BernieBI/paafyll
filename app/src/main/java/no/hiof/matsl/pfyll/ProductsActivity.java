@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
 import java.util.ArrayList;
 
 import no.hiof.matsl.pfyll.adapter.ItemClickListener;
@@ -53,6 +54,8 @@ public class ProductsActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.product_recycler_view);
 
+        passProductsToView(products, layoutColumns);
+
         productsRef.limitToFirst(50).addChildEventListener(new ChildEventListener() {
 
             @Override
@@ -66,7 +69,7 @@ public class ProductsActivity extends AppCompatActivity {
                 Log.d(TAG, "onChildAdded: product: " + product.getVarenavn());
 
                 products.add(product);
-                passProductsToView(products, layoutColumns);
+                recyclerView.getAdapter().notifyItemInserted(products.size() - 1);
             }
 
             @Override
@@ -102,6 +105,7 @@ public class ProductsActivity extends AppCompatActivity {
                 layoutColumns = 2;
             }
             passProductsToView(products, layoutColumns);
+
         }
     };
     public void passProductsToView (ArrayList<Product> products, int layoutColumns){

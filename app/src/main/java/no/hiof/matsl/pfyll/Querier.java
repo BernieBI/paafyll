@@ -6,11 +6,12 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Querier {
     public static final int DEFAULT_LIMIT = 100;
-    public static final int DEFAULT_OFFSET = 0;
+    public static final int DEFAULT_OFFSET = 1;
 
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
@@ -22,10 +23,11 @@ public class Querier {
 
     public Querier() {
         this.database =  FirebaseDatabase.getInstance();
-        this.databaseReference = database.getReference();
+        this.databaseReference = database.getReference("Products");
         this.offset = DEFAULT_OFFSET;
         this.limit = DEFAULT_LIMIT;
         this.ordering = null;
+        this.filters = new ArrayList<>();
     }
 
     public void setFilters(List<Filter> filters) {
@@ -40,7 +42,7 @@ public class Querier {
         this.filters.add(filter);
     }
 
-    public void setlimit(int limit) {
+    public void setLimit(int limit) {
         this.limit = limit;
     }
 
@@ -53,43 +55,40 @@ public class Querier {
     }
 
     public void addListenerForSingleValueEvent(ValueEventListener valueEventListener) {
-        Query query = databaseReference.child("Products");
+        Query query = databaseReference.limitToFirst(limit);
         if (ordering != null) {
-            query.orderByChild(ordering.getKey());
+            query = query.orderByChild(ordering.getKey());
         }
         for (Filter filter : filters) {
             switch (filter.getType()) {
                 case DOUBLE:
                     if (filter.isLowerBounded()) {
-                        query.startAt(filter.getLowerAsDouble(), filter.getKey());
+                        query = query.startAt(filter.getLowerAsDouble(), filter.getKey());
                     }
                     if (filter.isUpperBounded()) {
-                        query.endAt(filter.getUpperAsDouble(), filter.getKey());
+                        query = query.endAt(filter.getUpperAsDouble(), filter.getKey());
                     }
                     break;
                 case BOOLEAN:
                     if (filter.isLowerBounded()) {
-                        query.startAt(filter.getLowerAsBoolean(), filter.getKey());
+                        query = query.startAt(filter.getLowerAsBoolean(), filter.getKey());
                     }
                     if (filter.isLowerBounded()) {
-                        query.endAt(filter.getUpperAsBoolean(), filter.getKey());
+                        query = query.endAt(filter.getUpperAsBoolean(), filter.getKey());
                     }
                     break;
                 case STRING:
                     if (filter.isLowerBounded()) {
-                        query.startAt(filter.getLowerAsString(), filter.getKey());
+                        query = query.startAt(filter.getLowerAsString(), filter.getKey());
                     }
                     if (filter.isLowerBounded()) {
-                        query.endAt(filter.getUpperAsString(), filter.getKey());
+                        query = query.endAt(filter.getUpperAsString(), filter.getKey());
                     }
                     break;
                 default:
                     break;
             }
         }
-        query.limitToFirst(offset);
-        query.limitToLast(offset + limit);
-
         query.addListenerForSingleValueEvent(valueEventListener);
     }
 }
