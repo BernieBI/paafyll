@@ -23,6 +23,7 @@ import no.hiof.matsl.pfyll.model.Product;
 
 public class ProductRecycleViewAdapter extends PagedListAdapter<Product, ProductRecycleViewAdapter.ViewHolder> {
     private static final String TAG = "RecycleViewAdapter";
+    public boolean layoutMode = false;
 
     private static final DiffUtil.ItemCallback<Product> DIFF_CALLBACK = new DiffUtil.ItemCallback<Product>() {
         @Override
@@ -44,13 +45,17 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
         super(DIFF_CALLBACK);
         this.context = context;
         this.inflater = LayoutInflater.from(context);
+
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.layout_list_products, parent, false);
+
+        View view = inflater.inflate(viewType, parent, false);
+
         return new ViewHolder(view);
+
     }
 
     @Override
@@ -67,7 +72,10 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
 
         holder.productName.setText(current_product.getVarenavn());
         holder.productCountry.setText(current_product.getLand());
-        holder.productPrice.setText(current_product.getPris());
+        holder.productPrice.setText(String.format("Kr %s",current_product.getPris()));
+        if (getItemViewType(position) == R.layout.layout_list_products_alt ){
+            holder.productTaste.setText(current_product.getSmak());
+        }
 
         holder.setItemClickListener(new ItemClickListener(){
             @Override
@@ -81,8 +89,18 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             }
         });
         Log.d(TAG, "onBindViewHolder: called.");
+
     }
 
+    @Override
+    public int getItemViewType(final int position) {
+        return layoutMode ? R.layout.layout_list_products_alt : R.layout.layout_list_products;
+    }
+
+    public void changeLayout(Boolean layoutMode){
+        this.layoutMode = layoutMode;
+        notifyDataSetChanged();
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -90,6 +108,8 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
         TextView productName;
         TextView productPrice;
         TextView productCountry;
+        TextView productTaste;
+
         private ItemClickListener itemClickListener;
 
         public ViewHolder(@NonNull View itemView) {
@@ -98,6 +118,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             productName = itemView.findViewById(R.id.product_name);
             productPrice = itemView.findViewById(R.id.product_price);
             productCountry = itemView.findViewById(R.id.product_country);
+            productTaste = itemView.findViewById(R.id.product_taste);
             itemView.setOnClickListener(this);
         }
 
@@ -111,6 +132,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
         }
 
     }
+
 
 
 }
