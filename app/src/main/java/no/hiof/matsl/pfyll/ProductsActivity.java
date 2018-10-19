@@ -12,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -23,13 +25,12 @@ import no.hiof.matsl.pfyll.model.Product;
 public class ProductsActivity extends AppCompatActivity {
     String TAG = "ProductsActivity";
 
-
     private LiveData<PagedList<Product>> products;
     private RecyclerView recyclerView;
-    private Button layoutButton;
+    private ImageButton layoutButton;
     private ProductRecycleViewAdapter productAdapter;
     private int layoutColumns = 2;
-
+    private GridLayoutManager gridLayoutManager;
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -37,6 +38,7 @@ public class ProductsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: Started");
+
         setContentView(R.layout.activity_products);
 
         PagedList.Config config = new PagedList.Config.Builder().setPageSize(6).build();
@@ -54,7 +56,6 @@ public class ProductsActivity extends AppCompatActivity {
     private void initRecyclerView(){
 
         recyclerView = findViewById(R.id.product_recycler_view);
-
         passProductsToView(layoutColumns);
 
         products.observe(this, new Observer<PagedList<Product>>() {
@@ -72,18 +73,21 @@ public class ProductsActivity extends AppCompatActivity {
         public void onClick(final View v) {
             if (layoutColumns == 2){
                 layoutColumns = 1;
+                layoutButton.setImageDrawable(getDrawable(R.drawable.grid));
+                productAdapter.changeLayout(true);
             }else{
                 layoutColumns = 2;
+                layoutButton.setImageDrawable(getDrawable(R.drawable.list));
+                productAdapter.changeLayout(false);
             }
-            //passProductsToView(layoutColumns);
-
+            gridLayoutManager.setSpanCount(layoutColumns);
         }
     };
     public void passProductsToView (int layoutColumns){
 
         productAdapter = new ProductRecycleViewAdapter(ProductsActivity.this);
         recyclerView.setAdapter(productAdapter);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(ProductsActivity.this, layoutColumns); // (Context context, int spanCount)
+        gridLayoutManager = new GridLayoutManager(ProductsActivity.this, layoutColumns); // (Context context, int spanCount)
         recyclerView.setLayoutManager(gridLayoutManager);
     }
 }
