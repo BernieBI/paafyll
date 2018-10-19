@@ -37,7 +37,6 @@ public class ProductsActivity extends AppCompatActivity {
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference productsRef = database.getReference("Products");
-    private Querier querier;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
