@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,9 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -36,7 +32,6 @@ public class ProductsActivity extends AppCompatActivity {
 
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference productsRef = database.getReference("Products");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,45 +63,6 @@ public class ProductsActivity extends AppCompatActivity {
                 productAdapter.submitList(products);
             }
         });
-        /*
-        productsRef.orderByChild("varenummer").limitToFirst(100).addChildEventListener(new ChildEventListener() {
-
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
-
-                Product product = dataSnapshot.getValue(Product.class);
-                if (product == null) {
-                    return;
-                }
-                product.setFirebaseID(dataSnapshot.getKey());
-                product.setBildeUrl(product.getVarenummer());
-
-                Log.d(TAG, "onChildAdded: product: " + product.getVarenavn());
-
-                products.add(product);
-                recyclerView.getAdapter().notifyItemInserted(products.size() - 1);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-
-            }
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-
-            }
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "onCancelled:", databaseError.toException());
-
-            }
-        });*/
 
     }
 
