@@ -45,7 +45,7 @@ public class ProductsActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Started");
         setContentView(R.layout.activity_products);
 
-        PagedList.Config config = new PagedList.Config.Builder().setPageSize(12).build();
+        PagedList.Config config = new PagedList.Config.Builder().setPageSize(6).build();
 
         ProductDataSourceFactory factory = new ProductDataSourceFactory(database.getReference());
 

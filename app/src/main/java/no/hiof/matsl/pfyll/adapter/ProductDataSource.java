@@ -28,59 +28,61 @@ public class ProductDataSource extends ItemKeyedDataSource<String, Product> {
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<String> params, @NonNull LoadInitialCallback<Product> callback) {
-        loadData("", params.requestedLoadSize, callback, false);
+        loadData("0", params.requestedLoadSize, callback, false, false);
     }
 
     @Override
     public void loadAfter(@NonNull LoadParams<String> params, @NonNull LoadCallback<Product> callback) {
-        loadData(params.key, params.requestedLoadSize, callback, true);
+        loadData("" + (Integer.parseInt(params.key) + 1), params.requestedLoadSize, callback, true, false);
     }
 
     @Override
     public void loadBefore(@NonNull LoadParams<String> params, @NonNull LoadCallback<Product> callback) {
-
+        //loadData(params.key, params.requestedLoadSize, callback, true, true);
     }
 
     @NonNull
     @Override
     public String getKey(@NonNull Product item) {
-        return item.getVarenummer();
+        return item.getFirebaseID();
     }
 
-    private void loadData(String key, int loadSize, @NonNull final LoadCallback<Product> callback, final boolean async) {
+    private void loadData(String key, int loadSize, @NonNull final LoadCallback<Product> callback, final boolean async, final boolean reverse) {
 
         final TaskCompletionSource<List<Product>> taskCompletionSource = new TaskCompletionSource<>();
-        Query query = databaseReference.child("Products");
-        query.orderByChild("varenummer")
-                .startAt(key)
-                .limitToFirst(loadSize)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+        Query query = databaseReference.child("Products").orderByKey();
+        if (reverse) {
+            query = query.endAt(key);
+        } else {
+            query = query.startAt(key);
+        }
+        query.limitToFirst(loadSize).addListenerForSingleValueEvent(new ValueEventListener() {
 
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<Product> products = new ArrayList<>();
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Product> products = new ArrayList<>();
 
-                        for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            Product product = child.getValue(Product.class);
-                            if (product == null) {
-                                continue;
-                            }
-                            product.setFirebaseID(child.getKey());
-                            product.setBildeUrl(product.getVarenummer());
-                            products.add(product);
-                        }
-                        if (!async) {
-                            taskCompletionSource.setResult(products);
-                        } else {
-                            callback.onResult(products);
-                        }
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    Product product = child.getValue(Product.class);
+                    if (product == null) {
+                        continue;
                     }
+                    product.setFirebaseID(child.getKey());
+                    product.setBildeUrl(product.getVarenummer());
+                    products.add(product);
+                }
+                if (!async) {
+                    taskCompletionSource.setResult(products);
+                } else {
+                    callback.onResult(products);
+                }
+            }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        taskCompletionSource.setException(databaseError.toException());
-                    }
-                });
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
 
         if (async) {
             return;
