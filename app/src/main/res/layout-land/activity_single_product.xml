@@ -62,7 +62,7 @@
                     android:layout_height="match_parent"
                     android:background="@color/white"
                     android:minWidth="100dp"
-                    >
+                    android:orientation="vertical">
 
                     <ImageView
                         android:id="@+id/productImage"
@@ -87,7 +87,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/primaryLightColor"
-                    >
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/productName"
@@ -96,7 +96,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:background="@android:color/darker_gray"
+                        android:background="@color/white"
                         android:minWidth="200dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                         android:textColor="@color/primaryTextColor"
@@ -126,7 +126,7 @@
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
-                            android:background="@android:color/darker_gray"
+                            android:background="@color/white"
                             android:minWidth="100dp"
                             android:textAlignment="viewStart"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -154,7 +154,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:background="@android:color/darker_gray"
+                        android:background="@color/white"
                         android:minWidth="200dp"
                         android:minHeight="50dp"
                         android:textColor="@color/primaryTextColor"
@@ -170,7 +170,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:background="@android:color/darker_gray"
+                        android:background="@color/white"
                         android:minWidth="100dp"
                         android:textColor="@color/primaryTextColor"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -179,12 +179,14 @@
                         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
                     <android.support.constraint.ConstraintLayout
+                        android:id="@+id/constraintLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
+                        android:orientation="horizontal"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -196,59 +198,103 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
-                            android:background="@android:color/darker_gray"
+                            android:background="@color/white"
                             android:minWidth="100dp"
-                            android:textAlignment="textStart"
+                            android:textAlignment="center"
                             android:textColor="@color/primaryTextColor"
-                            app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.0" />
 
-                        <ImageView
-                            android:id="@+id/drinkWith1"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                        <android.support.v7.widget.CardView
+                            android:id="@+id/cardView3"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_marginTop="8dp"
-                            android:adjustViewBounds="false"
-                            android:background="@color/secondaryColor"
-                            android:cropToPadding="false"
-                            android:padding="3dp"
-                            android:visibility="visible"
+                            android:layout_marginBottom="8dp"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="0dp"
+                            app:cardPreventCornerOverlap="false"
+                            app:cardUseCompatPadding="false"
+                            app:contentPadding="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/cardView"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/drinkWith" />
+                            app:layout_constraintTop_toBottomOf="@+id/drinkWith">
 
+                            <ImageView
+                                android:id="@+id/drinkWith1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:adjustViewBounds="false"
+                                android:cropToPadding="false"
+                                android:scaleType="centerInside"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/drinkWith" />
+                        </android.support.v7.widget.CardView>
 
-                        <ImageView
-                            android:id="@+id/drinkWith2"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_marginStart="8dp"
+                        <android.support.v7.widget.CardView
+                            android:id="@+id/cardView"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_marginTop="8dp"
-                            android:adjustViewBounds="false"
-                            android:background="@color/secondaryColor"
-                            android:cropToPadding="false"
-                            android:padding="3dp"
-                            android:visibility="visible"
-                            app:layout_constraintStart_toEndOf="@+id/drinkWith1"
-                            app:layout_constraintTop_toBottomOf="@+id/drinkWith" />
+                            android:layout_marginBottom="8dp"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="0dp"
+                            app:cardPreventCornerOverlap="false"
+                            app:cardUseCompatPadding="false"
+                            app:contentPadding="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/cardView2"
+                            app:layout_constraintStart_toEndOf="@+id/cardView3"
+                            app:layout_constraintTop_toBottomOf="@+id/drinkWith">
 
+                            <ImageView
+                                android:id="@+id/drinkWith2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:scaleType="fitCenter"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/drinkWith1"
+                                app:layout_constraintTop_toBottomOf="@+id/drinkWith" />
 
-                        <ImageView
-                            android:id="@+id/drinkWith3"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_marginStart="8dp"
+                        </android.support.v7.widget.CardView>
+
+                        <android.support.v7.widget.CardView
+                            android:id="@+id/cardView2"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_margin="5dp"
                             android:layout_marginTop="8dp"
-                            android:adjustViewBounds="false"
-                            android:background="@color/secondaryColor"
-                            android:cropToPadding="false"
-                            android:padding="3dp"
-                            android:visibility="visible"
-                            app:layout_constraintStart_toEndOf="@+id/drinkWith2"
-                            app:layout_constraintTop_toBottomOf="@+id/drinkWith" />
+                            android:layout_marginBottom="8dp"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="0dp"
+                            app:cardPreventCornerOverlap="false"
+                            app:cardUseCompatPadding="false"
+                            app:contentPadding="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/cardView"
+                            app:layout_constraintTop_toBottomOf="@+id/drinkWith">
 
+                            <ImageView
+                                android:id="@+id/drinkWith3"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:scaleType="fitCenter"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/drinkWith2"
+                                app:layout_constraintTop_toBottomOf="@+id/drinkWith" />
 
+                        </android.support.v7.widget.CardView>
 
                     </android.support.constraint.ConstraintLayout>
 
@@ -330,4 +376,4 @@
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
-    </android.support.design.widget.CoordinatorLayout>
+</android.support.design.widget.CoordinatorLayout>
