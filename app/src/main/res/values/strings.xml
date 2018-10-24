@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Påfyll</string>
     <string name="view_products_btn">Se produkter</string>
 
@@ -7,7 +7,7 @@
     <string name="product_image">Produktbilde</string>
     <string name="product_price">Pris</string>
     <string name="prodcut_liter_price">Literpris</string>
-    <string name="product_volume">Volum</string>
+    <string name="product_volume" tools:ignore="ExtraTranslation">Volum</string>
     <string name="product_tase">Smak</string>
     <string name="product_freshness">Friskhet</string>
     <string name="product_fullness">Fylde</string>

@@ -33,28 +33,17 @@ public class FragmentProducts extends Fragment {
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     View view;
-    String TAG = "MainActivity";
+    String TAG = "ProductsFragment";
 
     public FragmentProducts(){
-
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_products, container, false);
-        /*Button productsButton = view.findViewById(R.id.viewProductsBtn);
 
-        //Temporary button for starting ProductsActivity
-        productsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: ProductsActivity started");
-                Intent productActivityIntent = new Intent(FragmentProducts.this.getActivity(), ProductsActivity.class);
-                getActivity().startActivity(productActivityIntent);
-            }
-        });*/
-        Log.d(TAG, "onCreate: Started");
+        Log.d(TAG, "onCreate: Started " + layoutColumns + " columns");
 
 
         PagedList.Config config = new PagedList.Config.Builder().setPageSize(6).build();
@@ -89,14 +78,15 @@ public class FragmentProducts extends Fragment {
 
         @Override
         public void onClick(final View v) {
+
             if (layoutColumns == 2){
                 layoutColumns = 1;
                 layoutButton.setImageDrawable(getActivity().getDrawable(R.drawable.grid));
-                productAdapter.changeLayout(true);
+                productAdapter.setLayout(true);
             }else{
                 layoutColumns = 2;
                 layoutButton.setImageDrawable(getActivity().getDrawable(R.drawable.list));
-                productAdapter.changeLayout(false);
+                productAdapter.setLayout(false);
             }
             gridLayoutManager.setSpanCount(layoutColumns);
         }
@@ -104,6 +94,11 @@ public class FragmentProducts extends Fragment {
     public void passProductsToView (int layoutColumns){
 
         productAdapter = new ProductRecycleViewAdapter(getActivity());
+        if (layoutColumns == 2)
+            productAdapter.setLayout(false);
+        else
+            productAdapter.setLayout(true);
+
         recyclerView.setAdapter(productAdapter);
         gridLayoutManager = new GridLayoutManager(getActivity(), layoutColumns); // (Context context, int spanCount)
         recyclerView.setLayoutManager(gridLayoutManager);

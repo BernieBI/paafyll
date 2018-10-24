@@ -21,8 +21,8 @@
 
     <ImageButton
         android:id="@+id/layoutButton"
-        android:layout_width="40dp"
-        android:layout_height="43dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
         android:elevation="5dp"

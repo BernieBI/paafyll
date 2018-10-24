@@ -23,7 +23,7 @@ import no.hiof.matsl.pfyll.model.Product;
 
 public class ProductRecycleViewAdapter extends PagedListAdapter<Product, ProductRecycleViewAdapter.ViewHolder> {
     private static final String TAG = "RecycleViewAdapter";
-    public boolean layoutMode = false;
+    public boolean useListLayout = false;
 
     private static final DiffUtil.ItemCallback<Product> DIFF_CALLBACK = new DiffUtil.ItemCallback<Product>() {
         @Override
@@ -94,11 +94,11 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
 
     @Override
     public int getItemViewType(final int position) {
-        return layoutMode ? R.layout.layout_list_products_alt : R.layout.layout_list_products;
+        return useListLayout ? R.layout.layout_list_products_alt : R.layout.layout_list_products;
     }
 
-    public void changeLayout(Boolean layoutMode){
-        this.layoutMode = layoutMode;
+    public void setLayout(Boolean useListLayout){
+        this.useListLayout = useListLayout;
         notifyDataSetChanged();
     }
 
