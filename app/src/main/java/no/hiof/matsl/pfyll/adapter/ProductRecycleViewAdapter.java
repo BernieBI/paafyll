@@ -73,7 +73,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
         holder.productName.setText(current_product.getVarenavn());
         holder.productCountry.setText(current_product.getLand());
         holder.productPrice.setText(String.format("Kr %s",current_product.getPris()));
-        if (getItemViewType(position) == R.layout.layout_list_products_alt ){
+        if (getItemViewType(position) == R.layout.layout_list_product_alt){
             holder.productTaste.setText(current_product.getSmak());
         }
 
@@ -94,7 +94,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
 
     @Override
     public int getItemViewType(final int position) {
-        return useListLayout ? R.layout.layout_list_products_alt : R.layout.layout_list_products;
+        return useListLayout ? R.layout.layout_list_product_alt : R.layout.layout_list_product;
     }
 
     public void setLayout(Boolean useListLayout){
