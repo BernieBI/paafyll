@@ -51,15 +51,14 @@ public class FragmentUserList extends Fragment {
     }
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView: init Recyclerview");
-
-
         userListsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userLists.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    UserList list = child.getValue(UserList.class);
-                    userLists.add(list);
-                    Log.d(TAG, "List " + list.getNavn());
+                        UserList list = child.getValue(UserList.class);
+                        userLists.add(list);
+                        Log.d(TAG, "List added" + list.getNavn());
                 }
                 passUserListsToView(userLists);
             }
@@ -69,6 +68,7 @@ public class FragmentUserList extends Fragment {
 
             }
         });
+
 
     }
     public void passUserListsToView (ArrayList<UserList> userLists){
