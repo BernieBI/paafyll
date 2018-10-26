@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -12,10 +14,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import no.hiof.matsl.pfyll.model.UserList;
 
-public class SingleListActivity extends AppCompatActivity {
-    String TAG = "SingleListActivity";
+public class SingleUserListActivity extends AppCompatActivity {
+    String TAG = "SingleUserListActivity";
 
     private String listID;
+    private TextView listName;
+
     //firebase
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference listsRef;
@@ -27,8 +31,8 @@ public class SingleListActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        listID = intent.getStringExtra("ListID");
-        listsRef = database.getReference("Lists/" + listID);
+        listID = intent.getStringExtra("UserListId");
+        listsRef = database.getReference("userLists/" + listID);
         GetData();
     }
 
@@ -38,7 +42,11 @@ public class SingleListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final UserList list = dataSnapshot.getValue(UserList.class);
-                Log.d(TAG, "List: ");
+                Log.d(TAG, "List: " + list.getNavn());
+
+                listName = findViewById(R.id.listName);
+
+                listName.setText(list.getNavn());
             }
 
             @Override

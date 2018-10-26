@@ -1,15 +1,16 @@
 package no.hiof.matsl.pfyll;
 
-import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,7 +23,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 import no.hiof.matsl.pfyll.model.Product;
+import no.hiof.matsl.pfyll.model.UserList;
 
 public class SingleProductActivity extends AppCompatActivity {
     String TAG = "SingleProductActivity";
@@ -32,13 +36,19 @@ public class SingleProductActivity extends AppCompatActivity {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference productsRef;
 
+    private DatabaseReference userListRef = database.getReference("userLists");
+    private ValueEventListener userListListener;
+
     //views
     private LinearLayout productDetails1, productDetails2, productDetails3;
     private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead;
     private ImageView productImage, drinkWith1, drinkWith2, drinkWith3;
+    FloatingActionButton addToListBtn;
     private int secondaryColor;
 
-    private String[] nonDrinkables;
+    private ArrayList<UserList> userLists = new ArrayList<>();
+    private ArrayList<String> options = new ArrayList<>();
+
     private boolean hasDrinkWiths = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +56,6 @@ public class SingleProductActivity extends AppCompatActivity {
         setContentView(R.layout.activity_single_product);
 
         secondaryColor = getResources().getColor(R.color.primaryLightColor);
-        nonDrinkables = getResources().getStringArray(R.array.nonDrinkables);
 
         productName = findViewById(R.id.productName);
         productTaste = findViewById(R.id.productTaste);
@@ -66,7 +75,68 @@ public class SingleProductActivity extends AppCompatActivity {
         Intent intent = getIntent();
         productID = intent.getStringExtra("ProductID");
         productsRef = database.getReference("Products/" + productID);
+        userListRef = database.getReference("userLists");
+
         GetData();
+        GetUserLists();
+
+
+    }
+    private void GetUserLists() {
+        userListListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userLists.clear();
+                options.clear();
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    UserList list = child.getValue(UserList.class);
+                    userLists.add(list);
+                    options.add(list.getNavn());
+                    Log.d(TAG, "List added to dialog " + options);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        userListRef.addValueEventListener(userListListener);
+
+        //Getting list data'
+        addToListBtn = findViewById(R.id.addToListButton);
+        addToListBtn.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
+                builder.setTitle(R.string.selectList);
+                builder.setItems(options.toArray(new CharSequence[options.size()]), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "Products: " + userLists.get(which).getProducts());
+
+                        ArrayList<String> products = new ArrayList<>();
+
+
+                        if (userLists.get(which).getProducts() != null){
+
+                            if (userLists.get(which).getProducts().contains(productID))
+                                return;
+
+                            userLists.get(which).addProduct(productID);
+                        }else{
+                            products.add(productID);
+                            userLists.get(which).setProducts(products);
+                        }
+
+                        userListRef.child(userLists.get(which).getId()).child("products").setValue( userLists.get(which).getProducts());
+
+
+                    }
+                });
+                builder.show();
+            }
+        });
     }
 
     private void GetData() {

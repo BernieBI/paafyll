@@ -38,6 +38,7 @@
     <!-- other -->
     <string name="centiLiter">Cl</string>
     <string name="currency">Kr</string>
+    <string name="selectList">Legg til i liste</string>
 
     <string-array name="nonDrinkables">
         <item>Gaveesker</item>

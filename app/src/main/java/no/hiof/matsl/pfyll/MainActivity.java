@@ -35,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPagerid);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         //Adding fragments
-        adapter.AddFragment(new FragmentProducts(),"Products");
-        adapter.AddFragment(new FragmentUserList(),"Favorites");
-        adapter.AddFragment(new FragmentMyActivity(),"My activity");
-        adapter.AddFragment(new FragmentDrinklog(),"Drink log");
+        adapter.AddFragment(new FragmentProducts(),"Sortiment");
+        adapter.AddFragment(new FragmentUserList(),"Lister");
+        adapter.AddFragment(new FragmentMyActivity(),"Min aktivitet");
+        adapter.AddFragment(new FragmentDrinklog(),"Drikkelogg");
         //Adapter setup
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -50,11 +50,12 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference userListsRef = database.getReference();
 
+        ArrayList<String> products = new ArrayList<>();
         ArrayList<UserList> lists = new ArrayList<>();
-        lists.add(new UserList("Favorittliste", "1"));
-        lists.add(new UserList("Fylleliste", "2"));
-        lists.add(new UserList("Vinliste", "3"));
-        lists.add(new UserList("Drittliste", "4"));
+        lists.add(new UserList("Favorittliste", "1", products));
+        lists.add(new UserList("Fylleliste", "2", products));
+        lists.add(new UserList("Vinliste", "3", products));
+        lists.add(new UserList("Drittliste", "4", products));
 
         for(UserList list : lists){
             userListsRef.child("userLists").child(list.getId()).setValue(list);

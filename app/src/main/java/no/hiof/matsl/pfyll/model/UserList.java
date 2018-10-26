@@ -5,13 +5,14 @@ import java.util.ArrayList;
 public class UserList {
 
     private String navn;
-    private ArrayList<Product> products;
+    private ArrayList<String> products;
     private String id;
     public UserList(){ }
 
-    public UserList(String navn, String id) {
+    public UserList(String navn, String id, ArrayList<String> products ) {
         this.navn = navn;
         this.id = id;
+        this.products = products;
     }
 
     public String getNavn() {
@@ -22,12 +23,16 @@ public class UserList {
         this.navn = navn;
     }
 
-    public ArrayList<Product> getProducts() {
+    public ArrayList<String> getProducts() {
         return products;
     }
 
-    public void setProducts(ArrayList<Product> products) {
+    public void setProducts(ArrayList<String> products) {
         this.products = products;
+    }
+
+    public void addProduct(String product) {
+        products.add(product);
     }
 
     public String getId() {

@@ -2,6 +2,7 @@ package no.hiof.matsl.pfyll.adapter;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import no.hiof.matsl.pfyll.R;
+import no.hiof.matsl.pfyll.SingleUserListActivity;
 import no.hiof.matsl.pfyll.model.UserList;
 
 
@@ -42,7 +44,17 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
         final UserList current_list = lists.get(position);
 
         holder.listName.setText(current_list.getNavn());
+        holder.setItemClickUserListener(new ItemClickListener(){
+            @Override
+            public void onClick(View view, int position, boolean isLoading) {
 
+                //Starting single product activity
+                Intent singleUserListIntent = new Intent(context, SingleUserListActivity.class);
+                singleUserListIntent.putExtra("UserListId", current_list.getId());
+                context.startActivity(singleUserListIntent);
+
+            }
+        });
         Log.d(TAG, "onBindViewHolder: called." + lists);
     }
 
