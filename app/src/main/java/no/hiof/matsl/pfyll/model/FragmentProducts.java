@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,11 +15,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 import no.hiof.matsl.pfyll.R;
+import no.hiof.matsl.pfyll.SingleProductActivity;
+import no.hiof.matsl.pfyll.adapter.ItemClickListener;
 import no.hiof.matsl.pfyll.adapter.ProductDataSourceFactory;
 import no.hiof.matsl.pfyll.adapter.ProductRecycleViewAdapter;
 
@@ -28,6 +35,7 @@ public class FragmentProducts extends Fragment {
     private ImageButton layoutButton;
     private ProductRecycleViewAdapter productAdapter;
     private int layoutColumns = 2;
+    private ArrayList<String> productsInList;
     private GridLayoutManager gridLayoutManager;
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -45,6 +53,12 @@ public class FragmentProducts extends Fragment {
 
         Log.d(TAG, "onCreate: Started " + layoutColumns + " columns");
 
+        Bundle bundle = getArguments();
+        if (bundle != null){
+            //Retrieving list of product IDs.
+            productsInList = bundle.getStringArrayList("ProductsInList");
+            Log.d(TAG, "Parameters: " + productsInList);
+        }
 
         PagedList.Config config = new PagedList.Config.Builder().setPageSize(6).build();
 
@@ -60,6 +74,7 @@ public class FragmentProducts extends Fragment {
 
 
     }
+
     private void initRecyclerView(){
 
         recyclerView = view.findViewById(R.id.product_recycler_view);
@@ -93,7 +108,7 @@ public class FragmentProducts extends Fragment {
     };
     public void passProductsToView (int layoutColumns){
 
-        productAdapter = new ProductRecycleViewAdapter(getActivity());
+        productAdapter = new ProductRecycleViewAdapter(getActivity(), getArguments());
         if (layoutColumns == 2)
             productAdapter.setLayout(false);
         else

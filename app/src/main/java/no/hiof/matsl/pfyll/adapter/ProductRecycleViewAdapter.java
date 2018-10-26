@@ -1,8 +1,10 @@
 package no.hiof.matsl.pfyll.adapter;
 
+import android.app.Activity;
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import android.support.v7.util.DiffUtil;
@@ -11,19 +13,33 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.model.Product;
 
+import static android.widget.Toast.LENGTH_LONG;
+
 
 public class ProductRecycleViewAdapter extends PagedListAdapter<Product, ProductRecycleViewAdapter.ViewHolder> {
+
     private static final String TAG = "RecycleViewAdapter";
     public boolean useListLayout = false;
+    private boolean isListActivity;
+    private Bundle arguments;
+    //firebase
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     private static final DiffUtil.ItemCallback<Product> DIFF_CALLBACK = new DiffUtil.ItemCallback<Product>() {
         @Override
@@ -41,11 +57,11 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
     private Context context;
 
 
-    public ProductRecycleViewAdapter(Context context) {
+    public ProductRecycleViewAdapter(Context context, Bundle arguments) {
         super(DIFF_CALLBACK);
         this.context = context;
         this.inflater = LayoutInflater.from(context);
-
+        this.arguments = arguments;
     }
 
     @NonNull
@@ -53,6 +69,11 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = inflater.inflate(viewType, parent, false);
+
+        String activity = view.getContext().toString();
+        if (arguments != null)
+            isListActivity = true;
+            Log.d(TAG, "Activity type " + activity );
 
         return new ViewHolder(view);
 
@@ -65,6 +86,27 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             return;
         }
 
+        if (!isListActivity) {
+            holder.removeFromListBtn.setVisibility(View.GONE);
+        }else{
+            holder.removeFromListBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String userListID = arguments.getString("userListId");
+                    ArrayList<String> productsInList = arguments.getStringArrayList("ProductsInList");
+
+                    if (productsInList.remove(current_product.getFirebaseID())){
+
+                        DatabaseReference userListRef = database.getReference("userLists");
+
+                        userListRef.child(userListID).child("products").setValue(productsInList);
+                        Toast toast = Toast.makeText(context,  String.format("%s %s!", current_product.getVarenavn(),  context.getString(R.string.removed_from_list)), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+
+                }
+            });
+        }
         Glide.with(context)
                 .asBitmap()
                 .load(current_product.getBildeUrl())
@@ -109,6 +151,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
         TextView productPrice;
         TextView productCountry;
         TextView productTaste;
+        ImageButton removeFromListBtn;
 
         private ItemClickListener itemClickListener;
 
@@ -119,6 +162,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             productPrice = itemView.findViewById(R.id.product_price);
             productCountry = itemView.findViewById(R.id.product_country);
             productTaste = itemView.findViewById(R.id.product_taste);
+            removeFromListBtn = itemView.findViewById(R.id.removeFromListBtn);
             itemView.setOnClickListener(this);
         }
 

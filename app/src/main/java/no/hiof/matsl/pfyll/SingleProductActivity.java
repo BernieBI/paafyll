@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
@@ -120,18 +121,19 @@ public class SingleProductActivity extends AppCompatActivity {
 
                         if (userLists.get(which).getProducts() != null){
 
-                            if (userLists.get(which).getProducts().contains(productID))
+                            if (!userLists.get(which).addProduct(productID)) {
+                                Toast toast = Toast.makeText(SingleProductActivity.this,  String.format("%s %s!",getString(R.string.already_exists), userLists.get(which).getNavn()), Toast.LENGTH_LONG);
+                                toast.show();
                                 return;
-
-                            userLists.get(which).addProduct(productID);
+                            }
                         }else{
                             products.add(productID);
                             userLists.get(which).setProducts(products);
                         }
 
                         userListRef.child(userLists.get(which).getId()).child("products").setValue( userLists.get(which).getProducts());
-
-
+                        Toast toast = Toast.makeText(SingleProductActivity.this, String.format("%s %s!",getString(R.string.add_success), userLists.get(which).getNavn()), Toast.LENGTH_LONG);
+                        toast.show();
                     }
                 });
                 builder.show();

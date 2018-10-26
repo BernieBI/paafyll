@@ -38,7 +38,11 @@
     <!-- other -->
     <string name="centiLiter">Cl</string>
     <string name="currency">Kr</string>
+    <!-- UserLists -->
     <string name="selectList">Legg til i liste</string>
+    <string name="already_exists">Produktet er allerede i</string>
+    <string name="add_success">Produktet ble lagt i</string>
+    <string name="removed_from_list">ble fjernet fra listen</string>
 
     <string-array name="nonDrinkables">
         <item>Gaveesker</item>

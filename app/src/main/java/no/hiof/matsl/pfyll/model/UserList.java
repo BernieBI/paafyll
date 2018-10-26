@@ -31,8 +31,12 @@ public class UserList {
         this.products = products;
     }
 
-    public void addProduct(String product) {
+    public boolean addProduct(String product) {
+        if (products.contains(product))
+            return false;
+
         products.add(product);
+        return true;
     }
 
     public String getId() {
