@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +33,7 @@ import no.hiof.matsl.pfyll.adapter.ProductRecycleViewAdapter;
 public class FragmentProducts extends Fragment {
     private LiveData<PagedList<Product>> products;
     private RecyclerView recyclerView;
-    private ImageButton layoutButton;
+    private FloatingActionButton layoutButton;
     private ProductRecycleViewAdapter productAdapter;
     private int layoutColumns = 2;
     private ArrayList<String> productsInList;
@@ -73,6 +74,36 @@ public class FragmentProducts extends Fragment {
         return view;
 
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        initRecyclerView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onstop");
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     private void initRecyclerView(){

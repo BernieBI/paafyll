@@ -18,7 +18,7 @@ import no.hiof.matsl.pfyll.model.UserList;
 
 
 public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRecycleViewAdapter.ViewHolder> {
-    private static final String TAG = "RecycleViewAdapter";
+    private static final String TAG = "ListRecycleViewAdapter";
 
     private ArrayList<UserList> lists;
     private LayoutInflater inflater;
@@ -39,22 +39,25 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
         return holder;
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         final UserList current_list = lists.get(position);
 
         holder.listName.setText(current_list.getNavn());
-        holder.setItemClickUserListener(new ItemClickListener(){
-            @Override
-            public void onClick(View view, int position, boolean isLoading) {
+        holder.listCount.setText(current_list.getListSize() + " varer");
+            holder.setItemClickUserListener(new ItemClickListener() {
+                @Override
+                public void onClick(View view, int position, boolean isLoading) {
+                    if (current_list.getListSize() > 0 ) {
+                        //Starting single product activity
+                        Intent singleUserListIntent = new Intent(context, SingleUserListActivity.class);
+                        singleUserListIntent.putExtra("UserListId", current_list.getId());
+                        context.startActivity(singleUserListIntent);
+                    }
 
-                //Starting single product activity
-                Intent singleUserListIntent = new Intent(context, SingleUserListActivity.class);
-                singleUserListIntent.putExtra("UserListId", current_list.getId());
-                context.startActivity(singleUserListIntent);
-
-            }
-        });
+                }
+            });
         Log.d(TAG, "onBindViewHolder: called." + lists);
     }
 
@@ -67,11 +70,13 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView listName;
+        TextView listCount;
         private ItemClickListener itemClickUserListener;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             listName = itemView.findViewById(R.id.list_name);
+            listCount = itemView.findViewById(R.id.list_count);
             itemView.setOnClickListener(this);
         }
 

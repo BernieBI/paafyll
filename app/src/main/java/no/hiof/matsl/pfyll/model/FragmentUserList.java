@@ -1,4 +1,6 @@
 package no.hiof.matsl.pfyll.model;
+import android.arch.lifecycle.Observer;
+import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -49,6 +51,37 @@ public class FragmentUserList extends Fragment {
         initRecyclerView();
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        initRecyclerView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onstop");
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView: init Recyclerview");
         userListsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -58,7 +91,7 @@ public class FragmentUserList extends Fragment {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                         UserList list = child.getValue(UserList.class);
                         userLists.add(list);
-                        Log.d(TAG, "List added" + list.getNavn());
+                        Log.d(TAG, "List added " + list.getNavn());
                 }
                 passUserListsToView(userLists);
             }
@@ -68,8 +101,6 @@ public class FragmentUserList extends Fragment {
 
             }
         });
-
-
     }
     public void passUserListsToView (ArrayList<UserList> userLists){
 

@@ -19,17 +19,18 @@
 
     </android.support.v7.widget.RecyclerView>
 
-    <ImageButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/layoutButton"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginEnd="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:elevation="5dp"
-        android:scaleType="fitCenter"
-        android:tint="@color/secondaryDarkColor"
+        android:tint="@color/primaryLightColor"
+        app:backgroundTint="@color/common_google_signin_btn_text_dark_default"
+        app:backgroundTintMode="src_in"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="@color/common_google_signin_btn_text_dark_pressed"
         app:srcCompat="@drawable/list" />
 
 </android.support.constraint.ConstraintLayout>

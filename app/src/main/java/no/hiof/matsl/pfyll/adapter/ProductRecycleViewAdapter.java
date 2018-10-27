@@ -1,6 +1,5 @@
 package no.hiof.matsl.pfyll.adapter;
 
-import android.app.Activity;
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,15 +27,15 @@ import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.model.Product;
 
-import static android.widget.Toast.LENGTH_LONG;
-
 
 public class ProductRecycleViewAdapter extends PagedListAdapter<Product, ProductRecycleViewAdapter.ViewHolder> {
 
-    private static final String TAG = "RecycleViewAdapter";
+    private static final String TAG = "ProductRVAdapter";
     public boolean useListLayout = false;
     private boolean isListActivity;
     private Bundle arguments;
+    private  String userListID;
+    ArrayList<String> productsInList;
     //firebase
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -70,14 +68,15 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
 
         View view = inflater.inflate(viewType, parent, false);
 
-        String activity = view.getContext().toString();
-        if (arguments != null)
+        if (arguments != null) {
             isListActivity = true;
-            Log.d(TAG, "Activity type " + activity );
-
+            productsInList = arguments.getStringArrayList("ProductsInList");
+            userListID = arguments.getString("userListId");
+        }
         return new ViewHolder(view);
 
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
@@ -92,16 +91,13 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             holder.removeFromListBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String userListID = arguments.getString("userListId");
-                    ArrayList<String> productsInList = arguments.getStringArrayList("ProductsInList");
-
                     if (productsInList.remove(current_product.getFirebaseID())){
-
+                        Log.d(TAG, "Removed from list, list: " + productsInList);
                         DatabaseReference userListRef = database.getReference("userLists");
-
                         userListRef.child(userListID).child("products").setValue(productsInList);
                         Toast toast = Toast.makeText(context,  String.format("%s %s!", current_product.getVarenavn(),  context.getString(R.string.removed_from_list)), Toast.LENGTH_LONG);
                         toast.show();
+                        notifyItemRemoved(position);
                     }
 
                 }

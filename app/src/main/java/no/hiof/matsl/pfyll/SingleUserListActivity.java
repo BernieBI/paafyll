@@ -43,7 +43,48 @@ public class SingleUserListActivity extends AppCompatActivity {
         listID = intent.getStringExtra("UserListId");
         listsRef = database.getReference("userLists/" + listID);
         GetData();
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        //listID = savedInstanceState.getString("userListId");
+        Intent intent = getIntent();
+        listID = intent.getStringExtra("UserListId");
+        Log.d(TAG, "onRestoreInstanceState: ");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "savedInstanceState: " + listID);
+        outState.putString("userListId", listID);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        GetData();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onstop");
     }
 
     private void GetData() {

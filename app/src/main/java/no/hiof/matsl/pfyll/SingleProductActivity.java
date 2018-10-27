@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -81,28 +82,80 @@ public class SingleProductActivity extends AppCompatActivity {
         GetData();
         GetUserLists();
 
-
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onstop");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d(TAG, "onRestoreInstanceState");
+        productID = savedInstanceState.getString("productID");
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState");
+        outState.putString("productID", productID);
+    }
+
     private void GetUserLists() {
-        userListListener = new ValueEventListener() {
+
+        ChildEventListener userListListener = new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userLists.clear();
-                options.clear();
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    UserList list = child.getValue(UserList.class);
-                    userLists.add(list);
-                    options.add(list.getNavn());
-                    Log.d(TAG, "List added to dialog " + options);
-                }
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
+                UserList list = dataSnapshot.getValue(UserList.class);
+                userLists.add(list);
+                options.add(list.getNavn());
+                Log.d(TAG, "List added to dialog " + options);
             }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
+
+            }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                Log.w(TAG, "postComments:onCancelled", databaseError.toException());
             }
         };
-        userListRef.addValueEventListener(userListListener);
+        userListRef.addChildEventListener(userListListener);
 
         //Getting list data'
         addToListBtn = findViewById(R.id.addToListButton);
@@ -114,10 +167,8 @@ public class SingleProductActivity extends AppCompatActivity {
                 builder.setItems(options.toArray(new CharSequence[options.size()]), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG, "Products: " + userLists.get(which).getProducts());
 
                         ArrayList<String> products = new ArrayList<>();
-
 
                         if (userLists.get(which).getProducts() != null){
 
@@ -134,6 +185,7 @@ public class SingleProductActivity extends AppCompatActivity {
                         userListRef.child(userLists.get(which).getId()).child("products").setValue( userLists.get(which).getProducts());
                         Toast toast = Toast.makeText(SingleProductActivity.this, String.format("%s %s!",getString(R.string.add_success), userLists.get(which).getNavn()), Toast.LENGTH_LONG);
                         toast.show();
+                        Log.d(TAG, "Products in list: " + userLists.get(which).getProducts());
                     }
                 });
                 builder.show();
@@ -147,7 +199,8 @@ public class SingleProductActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final Product product = dataSnapshot.getValue(Product.class);
-                Log.d(TAG, "Product: " + product.getVarenummer());
+                product.setFirebaseID(dataSnapshot.getKey());
+                Log.d(TAG, "Product: " + product.getFirebaseID());
 
                 product.setBildeUrl(product.getVarenummer());
 
@@ -163,7 +216,6 @@ public class SingleProductActivity extends AppCompatActivity {
                 productPrice.setText(String.format( "%s %s", getString(R.string.currency), product.getPris() ));
                 productPrice.setBackgroundColor(secondaryColor);
 
-
                     productTaste.setText(product.getSmak());
                     productTaste.setBackgroundColor(secondaryColor);
 
@@ -171,7 +223,6 @@ public class SingleProductActivity extends AppCompatActivity {
                     productLiterPrice.setBackgroundColor(secondaryColor);
 
                     productVolume.setText(String.format( "%s %s", product.getVolum(), getString(R.string.centiLiter) ));
-
 
                     //Adding info related to product contents
                     createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
@@ -184,7 +235,6 @@ public class SingleProductActivity extends AppCompatActivity {
                     createTextView(productDetails1, product.getLukt(), getString(R.string.product_smell));
                     createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock));
 
-
                     //Adding info related to product production
                     createTextView(productDetails2, product.getProdusent(), getString(R.string.product_producer));
                     createTextView(productDetails2, product.getMetode(), getString(R.string.product_method));
@@ -195,8 +245,6 @@ public class SingleProductActivity extends AppCompatActivity {
                     createTextView(productDetails3, product.getEmballasjetype() , getString(R.string.product_packaging));
                     createTextView(productDetails3, product.getButikkategori() , getString(R.string.product_category));
                     createTextView(productDetails3, product.getGrossist() , getString(R.string.product_wholesaler));
-
-
 
                     drinkWithhead.setBackgroundColor(secondaryColor);
                     setDrinkWiths(drinkWith1, product.getPassertil01());
