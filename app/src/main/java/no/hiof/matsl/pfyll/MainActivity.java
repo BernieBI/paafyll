@@ -1,5 +1,6 @@
 package no.hiof.matsl.pfyll;
 
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
@@ -39,26 +40,13 @@ public class MainActivity extends AppCompatActivity {
         adapter.AddFragment(new FragmentUserList(),"Lister");
         adapter.AddFragment(new FragmentMyActivity(),"Min aktivitet");
         adapter.AddFragment(new FragmentDrinklog(),"Drikkelogg");
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.secondaryColor));
+        tabLayout.setTabTextColors(Color.parseColor("#727272"), Color.parseColor("#ffffff"));
         //Adapter setup
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
 
-       // createLists();
     }
 
-    private void createLists(){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference userListsRef = database.getReference();
 
-        ArrayList<String> products = new ArrayList<>();
-        ArrayList<UserList> lists = new ArrayList<>();
-        lists.add(new UserList("Favorittliste", "1", products));
-        lists.add(new UserList("Fylleliste", "2", products));
-        lists.add(new UserList("Vinliste", "3", products));
-        lists.add(new UserList("Drittliste", "4", products));
-
-        for(UserList list : lists){
-            userListsRef.child("userLists").child(list.getId()).setValue(list);
-        }
-    }
 }

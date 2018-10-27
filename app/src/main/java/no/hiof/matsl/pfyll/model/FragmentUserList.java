@@ -1,9 +1,12 @@
 package no.hiof.matsl.pfyll.model;
+import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.paging.PagedList;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import no.hiof.matsl.pfyll.R;
+import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.adapter.ProductDataSourceFactory;
 import no.hiof.matsl.pfyll.adapter.ProductRecycleViewAdapter;
 import no.hiof.matsl.pfyll.adapter.UserListRecycleViewAdapter;
@@ -31,24 +37,55 @@ public class FragmentUserList extends Fragment {
     String TAG = "UserListFragment";
     private RecyclerView recyclerView;
     private UserListRecycleViewAdapter userListAdapter;
+    private FloatingActionButton addListBtn;
     private ArrayList<UserList> userLists = new ArrayList<>();
 
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference userListsRef = database.getReference("userLists");
+    private DatabaseReference userListRef = database.getReference("userLists");
 
     public FragmentUserList(){
-
-
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_userlists,container,false);
         Log.d(TAG, "onCreate: Started ");
 
         recyclerView = view.findViewById(R.id.userList_recycler_view);
         initRecyclerView();
+
+        //Getting list data'
+        addListBtn= view.findViewById(R.id.addListButton);
+        addListBtn.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                builder.setTitle("Lag ny liste");
+                builder.setView(inflater.inflate(R.layout.addlistfields,null))
+                        .setPositiveButton("Lag ny liste", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditText editText = ((AlertDialog)dialog).findViewById(R.id.newListName);
+                                UserList newList = new UserList();
+                                newList.setNavn(editText.getText().toString());
+                                userListRef.push().setValue(newList);
+                                Log.d(TAG, "List created ");
+                                Toast toast = Toast.makeText(getActivity(), String.format("Listen %s ble opprettet!", newList.getNavn()), Toast.LENGTH_LONG);
+                                toast.show();
+                            }
+                        })
+                        .setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                builder.show();
+            }
+        });
+
         return view;
     }
 
@@ -84,25 +121,32 @@ public class FragmentUserList extends Fragment {
 
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView: init Recyclerview");
-        userListsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        userListRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userLists.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                         UserList list = child.getValue(UserList.class);
+                        list.setId(child.getKey());
                         userLists.add(list);
                         Log.d(TAG, "List added " + list.getNavn());
                 }
-                passUserListsToView(userLists);
+                if (userLists.size() > 0)
+                passUserListsToView();
+                else
+                    recyclerView.removeAllViewsInLayout();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
+
     }
-    public void passUserListsToView (ArrayList<UserList> userLists){
+
+
+
+    public void passUserListsToView (){
 
         userListAdapter = new UserListRecycleViewAdapter(getActivity(), userLists);
         recyclerView.setAdapter(userListAdapter);

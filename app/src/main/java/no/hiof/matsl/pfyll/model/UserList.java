@@ -38,12 +38,6 @@ public class UserList {
         products.add(product);
         return true;
     }
-    public int getListSize(){
-        if (products == null)
-            return 0;
-
-        return products.size();
-    }
 
     public String getId() {
         return id;

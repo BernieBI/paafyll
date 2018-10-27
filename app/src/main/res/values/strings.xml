@@ -43,6 +43,7 @@
     <string name="already_exists">Produktet er allerede i</string>
     <string name="add_success">Produktet ble lagt i</string>
     <string name="removed_from_list">ble fjernet fra listen</string>
+    <string name="confirm_delete_list">Er du sikker på at du vil slette denne listen?</string>
 
     <string-array name="nonDrinkables">
         <item>Gaveesker</item>
