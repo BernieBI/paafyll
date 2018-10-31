@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/product_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginBottom="5dp"
+    android:background="@color/secondaryLightColor"
+    android:elevation="5dp"
+    android:orientation="vertical">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:id="@+id/list_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:textAlignment="textStart"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@color/secondaryTextColor"
+            tool:layout_constraintBottom_toBottomOf="parent"
+            tool:layout_constraintStart_toStartOf="parent"
+            tool:layout_constraintTop_toTopOf="parent"
+            tool:layout_constraintVertical_bias="0.523" />
+
+        <TextView
+            android:id="@+id/list_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@color/secondaryTextColor"
+            tool:layout_constraintBottom_toBottomOf="parent"
+            tool:layout_constraintEnd_toStartOf="@+id/removeListBtn"
+            tool:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/removeListBtn"
+            style="@android:style/Widget.Holo.ImageButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/common_google_signin_btn_text_light_disabled"
+            tool:layout_constraintBottom_toBottomOf="parent"
+            tool:layout_constraintEnd_toEndOf="parent"
+            tool:layout_constraintTop_toTopOf="parent"
+            tool:srcCompat="@android:drawable/ic_menu_delete" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</LinearLayout>
+

@@ -3,6 +3,7 @@ package no.hiof.matsl.pfyll.adapter;
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import android.support.v7.util.DiffUtil;
@@ -11,10 +12,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.SingleProductActivity;
@@ -22,8 +29,15 @@ import no.hiof.matsl.pfyll.model.Product;
 
 
 public class ProductRecycleViewAdapter extends PagedListAdapter<Product, ProductRecycleViewAdapter.ViewHolder> {
-    private static final String TAG = "RecycleViewAdapter";
+
+    private static final String TAG = "ProductRVAdapter";
     public boolean useListLayout = false;
+    private boolean isListActivity;
+    private Bundle arguments;
+    private  String userListID;
+    ArrayList<String> productsInList;
+    //firebase
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     private static final DiffUtil.ItemCallback<Product> DIFF_CALLBACK = new DiffUtil.ItemCallback<Product>() {
         @Override
@@ -41,11 +55,11 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
     private Context context;
 
 
-    public ProductRecycleViewAdapter(Context context) {
+    public ProductRecycleViewAdapter(Context context, Bundle arguments) {
         super(DIFF_CALLBACK);
         this.context = context;
         this.inflater = LayoutInflater.from(context);
-
+        this.arguments = arguments;
     }
 
     @NonNull
@@ -54,9 +68,15 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
 
         View view = inflater.inflate(viewType, parent, false);
 
+        if (arguments != null) {
+            isListActivity = true;
+            productsInList = arguments.getStringArrayList("ProductsInList");
+            userListID = arguments.getString("userListId");
+        }
         return new ViewHolder(view);
 
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
@@ -65,6 +85,24 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             return;
         }
 
+        if (!isListActivity) {
+            holder.removeFromListBtn.setVisibility(View.GONE);
+        }else{
+            holder.removeFromListBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (productsInList.remove(current_product.getFirebaseID())){
+                        Log.d(TAG, "Removed from list, list: " + productsInList);
+                        DatabaseReference userListRef = database.getReference("userLists");
+                        userListRef.child(userListID).child("products").setValue(productsInList);
+                        Toast toast = Toast.makeText(context,  String.format("%s %s!", current_product.getVarenavn(),  context.getString(R.string.removed_from_list)), Toast.LENGTH_LONG);
+                        toast.show();
+                        notifyItemRemoved(position);
+                    }
+
+                }
+            });
+        }
         Glide.with(context)
                 .asBitmap()
                 .load(current_product.getBildeUrl())
@@ -73,7 +111,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
         holder.productName.setText(current_product.getVarenavn());
         holder.productCountry.setText(current_product.getLand());
         holder.productPrice.setText(String.format("Kr %s",current_product.getPris()));
-        if (getItemViewType(position) == R.layout.layout_list_products_alt ){
+        if (getItemViewType(position) == R.layout.layout_list_product_alt){
             holder.productTaste.setText(current_product.getSmak());
         }
 
@@ -94,7 +132,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
 
     @Override
     public int getItemViewType(final int position) {
-        return useListLayout ? R.layout.layout_list_products_alt : R.layout.layout_list_products;
+        return useListLayout ? R.layout.layout_list_product_alt : R.layout.layout_list_product;
     }
 
     public void setLayout(Boolean useListLayout){
@@ -109,6 +147,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
         TextView productPrice;
         TextView productCountry;
         TextView productTaste;
+        ImageButton removeFromListBtn;
 
         private ItemClickListener itemClickListener;
 
@@ -119,6 +158,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             productPrice = itemView.findViewById(R.id.product_price);
             productCountry = itemView.findViewById(R.id.product_country);
             productTaste = itemView.findViewById(R.id.product_taste);
+            removeFromListBtn = itemView.findViewById(R.id.removeFromListBtn);
             itemView.setOnClickListener(this);
         }
 
