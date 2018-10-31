@@ -46,10 +46,10 @@ public class Product {
     private String vareurl;
     private String volum;
     private String firebaseID;
-
+    private String hovedGTIN;
     public Product(){ }
 
-    public Product(String alkohol, String argang, String biodynamisk, String bitterhet, String butikkategori, String datotid, String distributor, String distrikt, String emballasjetype, String fairtrade, String farge, String friskhet, String fylde, String garvestoffer, String gluten_lav_pa, String grossist, String korktype, String kosher, String lagringsgrad, String land, String literpris, String lukt, String metode, String miljosmart_emballasje, String okologisk, String passertil01, String passertil02, String passertil03, String pris, String produktutvalg, String produsent, String rastoff, String smak, String sodme, String sukker, String syre, String underdistrikt, String varenavn, String varenummer, String varetype, String vareurl, String volum) {
+    public Product(String alkohol, String argang, String biodynamisk, String bitterhet, String butikkategori, String datotid, String distributor, String distrikt, String emballasjetype, String fairtrade, String farge, String friskhet, String fylde, String garvestoffer, String gluten_lav_pa, String grossist, String korktype, String kosher, String lagringsgrad, String land, String literpris, String lukt, String metode, String miljosmart_emballasje, String okologisk, String passertil01, String passertil02, String passertil03, String pris, String produktutvalg, String produsent, String rastoff, String smak, String sodme, String sukker, String syre, String underdistrikt, String varenavn, String varenummer, String varetype, String vareurl, String volum, String hovedGTIN) {
         this.alkohol = alkohol;
         this.argang = argang;
         this.biodynamisk = biodynamisk;
@@ -92,6 +92,15 @@ public class Product {
         this.varetype = varetype;
         this.vareurl = vareurl;
         this.volum = volum;
+        this.hovedGTIN = hovedGTIN;
+    }
+
+    public String getHovedGTIN() {
+        return hovedGTIN;
+    }
+
+    public void setHovedGTIN(String hovedGTIN) {
+        this.hovedGTIN = hovedGTIN;
     }
 
     public void setFirebaseID(String firebaseID){
