@@ -38,6 +38,7 @@
     <!-- other -->
     <string name="centiLiter">Cl</string>
     <string name="currency">Kr</string>
+    <string name="scan_for_product">Skann strekkode</string>
     <!-- UserLists -->
     <string name="selectList">Legg til i liste</string>
     <string name="already_exists">Produktet er allerede i</string>

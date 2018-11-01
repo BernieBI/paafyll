@@ -33,7 +33,7 @@ public class ProductDataSource extends ItemKeyedDataSource<String, Product> {
 
     @Override
     public void loadAfter(@NonNull LoadParams<String> params, @NonNull LoadCallback<Product> callback) {
-        loadData("" + (Integer.parseInt(params.key) + 1), params.requestedLoadSize, callback, true, false);
+        loadData("" + (Long.parseLong(params.key) + 1), params.requestedLoadSize, callback, true, false);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ProductDataSource extends ItemKeyedDataSource<String, Product> {
     @NonNull
     @Override
     public String getKey(@NonNull Product item) {
-        return item.getFirebaseID();
+        return item.getHovedGTIN();
     }
 
     private void loadData(String key, int loadSize, @NonNull final LoadCallback<Product> callback, final boolean async, final boolean reverse) {
@@ -67,7 +67,6 @@ public class ProductDataSource extends ItemKeyedDataSource<String, Product> {
                     if (product == null) {
                         continue;
                     }
-                    product.setFirebaseID(child.getKey());
                     product.setBildeUrl(product.getVarenummer());
                     products.add(product);
                 }

@@ -45,7 +45,6 @@ public class Product {
     private String varetype;
     private String vareurl;
     private String volum;
-    private String firebaseID;
     private String hovedGTIN;
     public Product(){ }
 
@@ -103,13 +102,6 @@ public class Product {
         this.hovedGTIN = hovedGTIN;
     }
 
-    public void setFirebaseID(String firebaseID){
-        this.firebaseID = firebaseID;
-    }
-
-    public String getFirebaseID(){
-        return firebaseID;
-    }
 
     public void setBildeUrl(String varenummer) {
         bildeUrl = "https://bilder.vinmonopolet.no/cache/300x300-0/"  + varenummer + "-1.jpg";

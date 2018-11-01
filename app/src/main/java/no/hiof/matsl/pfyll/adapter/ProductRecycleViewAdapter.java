@@ -91,7 +91,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             holder.removeFromListBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (productsInList.remove(current_product.getFirebaseID())){
+                    if (productsInList.remove(current_product.getHovedGTIN())){
                         Log.d(TAG, "Removed from list, list: " + productsInList);
                         DatabaseReference userListRef = database.getReference("userLists");
                         userListRef.child(userListID).child("products").setValue(productsInList);
@@ -121,7 +121,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
 
                 //Starting single product activity
                 Intent singleProductIntent = new Intent(context, SingleProductActivity.class);
-                singleProductIntent.putExtra("ProductID", current_product.getFirebaseID());
+                singleProductIntent.putExtra("ProductID", current_product.getHovedGTIN());
                 context.startActivity(singleProductIntent);
 
             }

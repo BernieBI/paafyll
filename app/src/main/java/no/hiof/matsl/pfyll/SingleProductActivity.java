@@ -176,8 +176,15 @@ public class SingleProductActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final Product product = dataSnapshot.getValue(Product.class);
-                product.setFirebaseID(dataSnapshot.getKey());
-                Log.d(TAG, "Product: " + product.getFirebaseID());
+
+                if (product == null){
+                    Toast toast = Toast.makeText(SingleProductActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
+                    toast.show();
+                    onBackPressed();
+                    return;
+                }
+
+                Log.d(TAG, "Product: " + product.getHovedGTIN());
 
                 product.setBildeUrl(product.getVarenummer());
 
@@ -249,6 +256,9 @@ public class SingleProductActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                Toast toast = Toast.makeText(SingleProductActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
+                toast.show();
+                onBackPressed();
             }
         };
         productsRef.addValueEventListener(productListener);

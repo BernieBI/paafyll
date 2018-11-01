@@ -8,13 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
-import no.hiof.matsl.pfyll.model.FragmentProductScan;
+import no.hiof.matsl.pfyll.model.FragmentProducts;
 
 public class ScanActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
@@ -69,7 +68,7 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
         Log.d(TAG, "handleresult");
         Toast.makeText(getApplicationContext(),result.getText(),Toast.LENGTH_SHORT).show();
         zXingScannerView.stopCamera();
-        FragmentProductScan.BarcodeReturn(result.getText());
+        FragmentProducts.BarcodeReturn(result.getText());
         onBackPressed();
     }
 }
