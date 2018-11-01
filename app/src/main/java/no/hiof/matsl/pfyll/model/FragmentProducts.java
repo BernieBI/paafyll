@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 import no.hiof.matsl.pfyll.R;
+import no.hiof.matsl.pfyll.ScanActivity;
 import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.adapter.ItemClickListener;
 import no.hiof.matsl.pfyll.adapter.ProductDataSourceFactory;
@@ -38,10 +40,12 @@ public class FragmentProducts extends Fragment {
     private int layoutColumns = 2;
     private ArrayList<String> productsInList;
     private GridLayoutManager gridLayoutManager;
+    public static TextView scanResult;
+
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    View view;
+    static View view;
     String TAG = "ProductsFragment";
 
     public FragmentProducts(){
@@ -71,6 +75,15 @@ public class FragmentProducts extends Fragment {
         layoutButton.setOnClickListener(layoutSwitchListener);
 
         initRecyclerView();
+
+        Button button = view.findViewById(R.id.startScan);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ScanActivity.class);
+                startActivity(intent);
+            }
+        });
         return view;
 
 
@@ -148,5 +161,11 @@ public class FragmentProducts extends Fragment {
         recyclerView.setAdapter(productAdapter);
         gridLayoutManager = new GridLayoutManager(getActivity(), layoutColumns); // (Context context, int spanCount)
         recyclerView.setLayoutManager(gridLayoutManager);
+    }
+    public static void BarcodeReturn(String barcode){
+        Intent singleProductIntent = new Intent(view.getContext(), SingleProductActivity.class);
+        singleProductIntent.putExtra("ProductID", barcode);
+        view.getContext().startActivity(singleProductIntent);
+
     }
 }
