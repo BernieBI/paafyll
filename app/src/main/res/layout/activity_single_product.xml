@@ -207,11 +207,10 @@
 
                         <ImageView
                             android:id="@+id/drinkWith1"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
                             android:layout_marginTop="8dp"
                             android:adjustViewBounds="false"
-                            android:background="@color/secondaryColor"
                             android:cropToPadding="false"
                             android:padding="3dp"
                             android:visibility="visible"
@@ -221,12 +220,11 @@
 
                         <ImageView
                             android:id="@+id/drinkWith2"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
                             android:layout_marginStart="8dp"
                             android:layout_marginTop="8dp"
                             android:adjustViewBounds="false"
-                            android:background="@color/secondaryColor"
                             android:cropToPadding="false"
                             android:padding="3dp"
                             android:visibility="visible"
@@ -236,12 +234,11 @@
 
                         <ImageView
                             android:id="@+id/drinkWith3"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
                             android:layout_marginStart="8dp"
                             android:layout_marginTop="8dp"
                             android:adjustViewBounds="false"
-                            android:background="@color/secondaryColor"
                             android:cropToPadding="false"
                             android:padding="3dp"
                             android:visibility="visible"

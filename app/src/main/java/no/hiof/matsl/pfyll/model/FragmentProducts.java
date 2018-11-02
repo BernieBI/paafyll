@@ -86,7 +86,6 @@ public class FragmentProducts extends Fragment {
         });
         return view;
 
-
     }
 
     @Override
