@@ -68,6 +68,14 @@ public class FragmentUserList extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 EditText editText = ((AlertDialog)dialog).findViewById(R.id.newListName);
+                                Log.d(TAG, "List name " + editText.getText());
+
+                                if (editText.getText().length() == 0){
+                                    Toast toast = Toast.makeText(getActivity(), getString(R.string.require_name), Toast.LENGTH_LONG);
+                                    toast.show();
+                                    return;
+                                }
+
                                 UserList newList = new UserList();
                                 newList.setNavn(editText.getText().toString());
                                 userListRef.push().setValue(newList);

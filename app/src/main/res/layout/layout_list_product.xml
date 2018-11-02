@@ -20,9 +20,13 @@
     <ImageButton
         android:id="@+id/removeFromListBtn"
         style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tool:srcCompat="@android:drawable/btn_dialog" />
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@color/common_google_signin_btn_text_light_disabled"
+        android:elevation="0dp"
+        android:scaleType="fitCenter"
+        android:tint="@color/primaryTextColor"
+        tool:srcCompat="@drawable/remove2" />
 
     <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/product_image"
@@ -33,7 +37,6 @@
             android:background="@color/white"
             android:contentDescription="@string/product_image"
             android:scaleType="centerInside"
-            android:src="@mipmap/ic_launcher"
             tool:srcCompat="@drawable/bottle" />
 
 

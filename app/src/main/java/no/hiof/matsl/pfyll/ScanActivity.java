@@ -66,7 +66,6 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     public void handleResult(Result result) {
         Log.d(TAG, "handleresult");
-        Toast.makeText(getApplicationContext(),result.getText(),Toast.LENGTH_SHORT).show();
         zXingScannerView.stopCamera();
         FragmentProducts.BarcodeReturn(result.getText());
         onBackPressed();

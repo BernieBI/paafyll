@@ -40,7 +40,6 @@ public class FragmentProducts extends Fragment {
     private int layoutColumns = 2;
     private ArrayList<String> productsInList;
     private GridLayoutManager gridLayoutManager;
-    public static TextView scanResult;
 
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -63,6 +62,7 @@ public class FragmentProducts extends Fragment {
             //Retrieving list of product IDs.
             productsInList = bundle.getStringArrayList("ProductsInList");
             Log.d(TAG, "Parameters: " + productsInList);
+            view.findViewById(R.id.filterField).setVisibility(View.GONE);
         }
 
         PagedList.Config config = new PagedList.Config.Builder().setPageSize(6).build();
@@ -76,7 +76,7 @@ public class FragmentProducts extends Fragment {
 
         initRecyclerView();
 
-        Button button = view.findViewById(R.id.startScan);
+        ImageButton button = view.findViewById(R.id.startScan);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

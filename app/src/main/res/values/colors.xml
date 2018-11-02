@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <color name="tabIndicatorColor">#000</color>
     <color name="tabTextColor">#000</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#00ffffff</color>
     <color name="primaryColor">#212121</color>
     <color name="primaryLightColor">#484848</color>
     <color name="primaryDarkColor">#000000</color>

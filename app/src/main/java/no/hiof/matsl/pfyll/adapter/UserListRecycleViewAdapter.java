@@ -54,7 +54,8 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
         final UserList current_list = lists.get(position);
 
         holder.listName.setText(current_list.getNavn());
-        holder.listCount.setText( (current_list.getProducts() == null ? "0" : current_list.getProducts().size() ) + " vare(r)");
+
+        holder.listCount.setText( (current_list.getProducts() == null ? "0" : current_list.getProducts().size() + "" )  );
 
         holder.removeListBtn.setOnClickListener(new View.OnClickListener() {
             @Override

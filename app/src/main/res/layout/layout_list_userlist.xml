@@ -38,13 +38,16 @@
 
         <TextView
             android:id="@+id/list_count"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="0dp"
             android:layout_margin="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:textAlignment="textEnd"
+            android:gravity="center_vertical|center"
+            android:alpha="0.5"
+            android:background="@color/white"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/secondaryTextColor"
             tool:layout_constraintBottom_toBottomOf="parent"
@@ -59,11 +62,11 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/common_google_signin_btn_text_light_disabled"
+            android:backgroundTint="@color/colorAccent"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintTop_toTopOf="parent"
-            tool:srcCompat="@android:drawable/ic_menu_delete" />
+            tool:srcCompat="@drawable/remove" />
 
     </android.support.constraint.ConstraintLayout>
 
