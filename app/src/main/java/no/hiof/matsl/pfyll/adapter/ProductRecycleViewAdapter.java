@@ -69,7 +69,8 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
         View view = inflater.inflate(viewType, parent, false);
 
         if (arguments != null) {
-            isListActivity = true;
+            if (arguments.getString("userListId") != null)
+                isListActivity = true;
             productsInList = arguments.getStringArrayList("ProductsInList");
             userListID = arguments.getString("userListId");
         }

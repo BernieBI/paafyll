@@ -48,11 +48,8 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
                 setContentView(zXingScannerView);
                 zXingScannerView.setResultHandler(this);
                 zXingScannerView.startCamera();
-                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
 
             } else {
-
-                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
             }
         }
     }

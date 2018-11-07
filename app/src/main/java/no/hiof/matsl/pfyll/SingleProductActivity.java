@@ -1,8 +1,10 @@
 package no.hiof.matsl.pfyll;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -24,8 +26,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import no.hiof.matsl.pfyll.model.Product;
 import no.hiof.matsl.pfyll.model.UserList;
@@ -46,7 +53,7 @@ public class SingleProductActivity extends AppCompatActivity {
     private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead;
     private ImageView productImage, drinkWith1, drinkWith2, drinkWith3;
     FloatingActionButton addToListBtn;
-    private int secondaryColor;
+    private int white;
 
     private ArrayList<UserList> userLists = new ArrayList<>();
     private ArrayList<String> options = new ArrayList<>();
@@ -57,7 +64,9 @@ public class SingleProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_product);
 
-        secondaryColor = getResources().getColor(R.color.primaryLightColor);
+
+        //Populating text fields and other
+        white = getResources().getColor(R.color.white);
 
         productName = findViewById(R.id.productName);
         productTaste = findViewById(R.id.productTaste);
@@ -81,6 +90,25 @@ public class SingleProductActivity extends AppCompatActivity {
 
         GetData();
         GetUserLists();
+
+        //Adding product to recently viewed producs
+        CacheHandler cacheHandler = new CacheHandler(this, "Recent Products", "LocalCache");
+        ArrayList<String> products;
+        if (cacheHandler.getRecentProducts() == null)
+            products = new ArrayList<>();
+        else
+            products = cacheHandler.getRecentProducts();
+
+        if (products.size() >= 10)
+            products.remove(0);
+
+        if (products.contains(productID))
+            products.remove(productID);
+
+        products.add(productID);
+        cacheHandler.setRecentProducts(products);
+
+        Log.d(TAG, "recents: " + cacheHandler.getRecentProducts());
 
     }
 
@@ -185,7 +213,7 @@ public class SingleProductActivity extends AppCompatActivity {
                 }
 
                 Log.d(TAG, "Product: " + product.getHovedGTIN());
-
+                productID = product.getHovedGTIN();
                 product.setBildeUrl(product.getVarenummer());
 
                 Glide.with(SingleProductActivity.this)
@@ -195,47 +223,47 @@ public class SingleProductActivity extends AppCompatActivity {
                 productImage.setContentDescription(product.getVarenavn());
 
                 productName.setText(product.getVarenavn());
-                productName.setBackgroundColor(secondaryColor);
+                productName.setBackgroundColor(white);
 
                 productPrice.setText(String.format( "%s %s", getString(R.string.currency), product.getPris() ));
-                productPrice.setBackgroundColor(secondaryColor);
+                productPrice.setBackgroundColor(white);
 
-                    productTaste.setText(product.getSmak());
-                    productTaste.setBackgroundColor(secondaryColor);
+                productTaste.setText(product.getSmak());
+                productTaste.setBackgroundColor(white);
 
-                    productLiterPrice.setText(String.format("%s %s %s", getString(R.string.currency), product.getLiterpris(), getString(R.string.product_perLiter)) );
-                    productLiterPrice.setBackgroundColor(secondaryColor);
+                productLiterPrice.setText(String.format("%s %s %s", getString(R.string.currency), product.getLiterpris(), getString(R.string.product_perLiter)) );
+                productLiterPrice.setBackgroundColor(white);
 
-                    productVolume.setText(String.format( "%s %s", product.getVolum(), getString(R.string.centiLiter) ));
+                productVolume.setText(String.format( "%s %s", product.getVolum(), getString(R.string.centiLiter) ));
 
-                    //Adding info related to product contents
-                    createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
-                    createTextView(productDetails1, product.getArgang() , getString(R.string.product_year));
-                    createTextView(productDetails1, product.getLagringsgrad(), getString(R.string.product_storage));
-                    createTextView(productDetails1, product.getFriskhet(), getString(R.string.product_freshness));
-                    createTextView(productDetails1, product.getFylde(), getString(R.string.product_fullness));
-                    createTextView(productDetails1, product.getGarvestoffer(), getString(R.string.product_tannin));
-                    createTextView(productDetails1, product.getFarge(), getString(R.string.product_color));
-                    createTextView(productDetails1, product.getLukt(), getString(R.string.product_smell));
-                    createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock));
+                //Adding info related to product contents
+                createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
+                createTextView(productDetails1, product.getArgang() , getString(R.string.product_year));
+                createTextView(productDetails1, product.getLagringsgrad(), getString(R.string.product_storage));
+                createTextView(productDetails1, product.getFriskhet(), getString(R.string.product_freshness));
+                createTextView(productDetails1, product.getFylde(), getString(R.string.product_fullness));
+                createTextView(productDetails1, product.getGarvestoffer(), getString(R.string.product_tannin));
+                createTextView(productDetails1, product.getFarge(), getString(R.string.product_color));
+                createTextView(productDetails1, product.getLukt(), getString(R.string.product_smell));
+                createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock));
 
-                    //Adding info related to product production
-                    createTextView(productDetails2, product.getProdusent(), getString(R.string.product_producer));
-                    createTextView(productDetails2, product.getMetode(), getString(R.string.product_method));
-                    createTextView(productDetails2, product.getLand() , getString(R.string.product_country));
-                    createTextView(productDetails2, String.format("%s, %s",product.getDistrikt(), product.getUnderdistrikt()) , getString(R.string.product_district));
+                //Adding info related to product production
+                createTextView(productDetails2, product.getProdusent(), getString(R.string.product_producer));
+                createTextView(productDetails2, product.getMetode(), getString(R.string.product_method));
+                createTextView(productDetails2, product.getLand() , getString(R.string.product_country));
+                createTextView(productDetails2, String.format("%s, %s",product.getDistrikt(), product.getUnderdistrikt()) , getString(R.string.product_district));
 
-                    //Other info
-                    createTextView(productDetails3, product.getEmballasjetype() , getString(R.string.product_packaging));
-                    createTextView(productDetails3, product.getButikkategori() , getString(R.string.product_category));
-                    createTextView(productDetails3, product.getGrossist() , getString(R.string.product_wholesaler));
+                //Other info
+                createTextView(productDetails3, product.getEmballasjetype() , getString(R.string.product_packaging));
+                createTextView(productDetails3, product.getButikkategori() , getString(R.string.product_category));
+                createTextView(productDetails3, product.getGrossist() , getString(R.string.product_wholesaler));
 
-                    drinkWithhead.setBackgroundColor(secondaryColor);
-                    setDrinkWiths(drinkWith1, product.getPassertil01());
-                    setDrinkWiths(drinkWith2, product.getPassertil02());
-                    setDrinkWiths(drinkWith3, product.getPassertil03());
-                    if (hasDrinkWiths)
-                        drinkWithhead.setText(getString(R.string.product_drinkWith));
+                drinkWithhead.setBackgroundColor(white);
+                setDrinkWiths(drinkWith1, product.getPassertil01());
+                setDrinkWiths(drinkWith2, product.getPassertil02());
+                setDrinkWiths(drinkWith3, product.getPassertil03());
+                if (hasDrinkWiths)
+                    drinkWithhead.setText(getString(R.string.product_drinkWith));
 
 
                 //Button for opening product in browser
@@ -277,14 +305,12 @@ public class SingleProductActivity extends AppCompatActivity {
 
         parent.addView(listElement);
 
-        if (!headerText.equals("") || !headerText.equals(null)){
+        TextView headerTextView = new TextView(this);
+        headerTextView.setText(String.format("%s: ",headerText));
+        headerTextView.setTypeface(null, Typeface.BOLD);
 
-            TextView headerTextView = new TextView(this);
-            headerTextView.setText(String.format("%s: ",headerText));
-            headerTextView.setTypeface(null, Typeface.BOLD);
+        listElement.addView(headerTextView);
 
-            listElement.addView(headerTextView);
-        }
 
         TextView textView = new TextView(this);
         textView.setText(text);
@@ -338,4 +364,5 @@ public class SingleProductActivity extends AppCompatActivity {
         view.setContentDescription(imageAlt);
 
     }
+
 }

@@ -1,5 +1,6 @@
 package no.hiof.matsl.pfyll;
 
+
 import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -36,8 +37,11 @@ public class MainActivity extends AppCompatActivity {
         //Adapter setup
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-    }
 
+
+
+
+    }
 
 
 }
