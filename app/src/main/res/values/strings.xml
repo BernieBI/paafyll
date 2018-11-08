@@ -11,7 +11,9 @@
     <string name="product_tase">Smak</string>
     <string name="product_freshness">Friskhet</string>
     <string name="product_fullness">Fylde</string>
+    <string name="product_Sweetness">Sødme</string>
     <string name="product_tannin">Garvestoff</string>
+    <string name="product_bitterness">Bitterhet</string>
     <string name="product_feedstock">Råstoff</string>
     <string name="product_drinkWith">Passer til</string>
     <string name="product_perLiter">per liter</string>

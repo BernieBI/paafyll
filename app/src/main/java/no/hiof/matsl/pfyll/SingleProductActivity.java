@@ -1,8 +1,10 @@
 package no.hiof.matsl.pfyll;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -24,8 +26,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.razerdp.widget.animatedpieview.AnimatedPieView;
+import com.razerdp.widget.animatedpieview.AnimatedPieViewConfig;
+import com.razerdp.widget.animatedpieview.data.SimplePieInfo;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import no.hiof.matsl.pfyll.model.Product;
 import no.hiof.matsl.pfyll.model.UserList;
@@ -34,6 +44,7 @@ public class SingleProductActivity extends AppCompatActivity {
     String TAG = "SingleProductActivity";
 
     private String productID;
+    private Product product;
     //firebase
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference productsRef;
@@ -46,7 +57,15 @@ public class SingleProductActivity extends AppCompatActivity {
     private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead;
     private ImageView productImage, drinkWith1, drinkWith2, drinkWith3;
     FloatingActionButton addToListBtn;
-    private int secondaryColor;
+
+    //PieCharts
+    AnimatedPieView pieChartSweetness;
+    AnimatedPieView pieChartFreshness;
+    AnimatedPieView pieChartFullness;
+    AnimatedPieView pieChartTannin;
+    AnimatedPieView pieChartBitterness;
+
+    private int white;
 
     private ArrayList<UserList> userLists = new ArrayList<>();
     private ArrayList<String> options = new ArrayList<>();
@@ -57,7 +76,9 @@ public class SingleProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_product);
 
-        secondaryColor = getResources().getColor(R.color.primaryLightColor);
+
+        //Populating text fields and other
+        white = getResources().getColor(R.color.white);
 
         productName = findViewById(R.id.productName);
         productTaste = findViewById(R.id.productTaste);
@@ -74,13 +95,40 @@ public class SingleProductActivity extends AppCompatActivity {
         drinkWith2 = findViewById(R.id.drinkWith2);
         drinkWith3 = findViewById(R.id.drinkWith3);
 
+        pieChartSweetness = findViewById(R.id.pieChartSweetness);
+        pieChartFreshness = findViewById(R.id.pieChartFreshness);
+        pieChartFullness = findViewById(R.id.pieChartFullness);
+        pieChartTannin = findViewById(R.id.pieChartTannin);
+        pieChartBitterness = findViewById(R.id.pieChartBitterness);
+
         Intent intent = getIntent();
         productID = intent.getStringExtra("ProductID");
         productsRef = database.getReference("Products/" + productID);
         userListRef = database.getReference("userLists");
 
+        //getting product and list data from firebase
         GetData();
         GetUserLists();
+
+        //Adding product to recently viewed producs
+        CacheHandler cacheHandler = new CacheHandler(this, "Recent Products", "LocalCache");
+        ArrayList<String> products;
+        if (cacheHandler.getRecentProducts() == null)
+            products = new ArrayList<>();
+        else
+            products = cacheHandler.getRecentProducts();
+
+        if (products.size() >= 24)
+            products.remove(0);
+
+        if (products.contains(productID))
+            products.remove(productID);
+
+        products.add(productID);
+        cacheHandler.setRecentProducts(products);
+
+        Log.d(TAG, "recents: " + cacheHandler.getRecentProducts());
+
 
     }
 
@@ -175,7 +223,7 @@ public class SingleProductActivity extends AppCompatActivity {
         ValueEventListener productListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final Product product = dataSnapshot.getValue(Product.class);
+                product = dataSnapshot.getValue(Product.class);
 
                 if (product == null){
                     Toast toast = Toast.makeText(SingleProductActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
@@ -185,7 +233,7 @@ public class SingleProductActivity extends AppCompatActivity {
                 }
 
                 Log.d(TAG, "Product: " + product.getHovedGTIN());
-
+                productID = product.getHovedGTIN();
                 product.setBildeUrl(product.getVarenummer());
 
                 Glide.with(SingleProductActivity.this)
@@ -195,48 +243,48 @@ public class SingleProductActivity extends AppCompatActivity {
                 productImage.setContentDescription(product.getVarenavn());
 
                 productName.setText(product.getVarenavn());
-                productName.setBackgroundColor(secondaryColor);
+                productName.setBackgroundColor(white);
 
                 productPrice.setText(String.format( "%s %s", getString(R.string.currency), product.getPris() ));
-                productPrice.setBackgroundColor(secondaryColor);
+                productPrice.setBackgroundColor(white);
 
-                    productTaste.setText(product.getSmak());
-                    productTaste.setBackgroundColor(secondaryColor);
+                productTaste.setText(product.getSmak());
+                productTaste.setBackgroundColor(white);
 
-                    productLiterPrice.setText(String.format("%s %s %s", getString(R.string.currency), product.getLiterpris(), getString(R.string.product_perLiter)) );
-                    productLiterPrice.setBackgroundColor(secondaryColor);
+                productLiterPrice.setText(String.format("%s %s %s", getString(R.string.currency), product.getLiterpris(), getString(R.string.product_perLiter)) );
+                productLiterPrice.setBackgroundColor(white);
 
-                    productVolume.setText(String.format( "%s %s", product.getVolum(), getString(R.string.centiLiter) ));
+                productVolume.setText(String.format( "%s %s", product.getVolum(), getString(R.string.centiLiter) ));
 
-                    //Adding info related to product contents
-                    createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
-                    createTextView(productDetails1, product.getArgang() , getString(R.string.product_year));
-                    createTextView(productDetails1, product.getLagringsgrad(), getString(R.string.product_storage));
-                    createTextView(productDetails1, product.getFriskhet(), getString(R.string.product_freshness));
-                    createTextView(productDetails1, product.getFylde(), getString(R.string.product_fullness));
-                    createTextView(productDetails1, product.getGarvestoffer(), getString(R.string.product_tannin));
-                    createTextView(productDetails1, product.getFarge(), getString(R.string.product_color));
-                    createTextView(productDetails1, product.getLukt(), getString(R.string.product_smell));
-                    createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock));
+                //Adding info related to product contents
+                createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
+                createTextView(productDetails1, product.getArgang() , getString(R.string.product_year));
+                createTextView(productDetails1, product.getLagringsgrad(), getString(R.string.product_storage));
+                createTextView(productDetails1, product.getFarge(), getString(R.string.product_color));
+                createTextView(productDetails1, product.getLukt(), getString(R.string.product_smell));
+                createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock));
 
-                    //Adding info related to product production
-                    createTextView(productDetails2, product.getProdusent(), getString(R.string.product_producer));
-                    createTextView(productDetails2, product.getMetode(), getString(R.string.product_method));
-                    createTextView(productDetails2, product.getLand() , getString(R.string.product_country));
-                    createTextView(productDetails2, String.format("%s, %s",product.getDistrikt(), product.getUnderdistrikt()) , getString(R.string.product_district));
+                //Adding info related to product production
+                createTextView(productDetails2, product.getProdusent(), getString(R.string.product_producer));
+                createTextView(productDetails2, product.getMetode(), getString(R.string.product_method));
+                createTextView(productDetails2, product.getLand() , getString(R.string.product_country));
+                createTextView(productDetails2, String.format("%s, %s",product.getDistrikt(), product.getUnderdistrikt()) , getString(R.string.product_district));
 
-                    //Other info
-                    createTextView(productDetails3, product.getEmballasjetype() , getString(R.string.product_packaging));
-                    createTextView(productDetails3, product.getButikkategori() , getString(R.string.product_category));
-                    createTextView(productDetails3, product.getGrossist() , getString(R.string.product_wholesaler));
+                //Other info
+                createTextView(productDetails3, product.getEmballasjetype() , getString(R.string.product_packaging));
+                createTextView(productDetails3, product.getButikkategori() , getString(R.string.product_category));
+                createTextView(productDetails3, product.getGrossist() , getString(R.string.product_wholesaler));
 
-                    drinkWithhead.setBackgroundColor(secondaryColor);
-                    setDrinkWiths(drinkWith1, product.getPassertil01());
-                    setDrinkWiths(drinkWith2, product.getPassertil02());
-                    setDrinkWiths(drinkWith3, product.getPassertil03());
-                    if (hasDrinkWiths)
-                        drinkWithhead.setText(getString(R.string.product_drinkWith));
+                setDrinkWiths(drinkWith1, product.getPassertil01());
+                setDrinkWiths(drinkWith2, product.getPassertil02());
+                setDrinkWiths(drinkWith3, product.getPassertil03());
 
+
+                createPieCharts(getString(R.string.product_Sweetness), Integer.parseInt(product.getSodme()), pieChartSweetness);
+                createPieCharts(getString(R.string.product_freshness), Integer.parseInt(product.getFriskhet()), pieChartFreshness);
+                createPieCharts(getString(R.string.product_fullness), Integer.parseInt(product.getFylde()), pieChartFullness);
+                createPieCharts(getString(R.string.product_tannin), Integer.parseInt(product.getGarvestoffer()), pieChartTannin);
+                createPieCharts(getString(R.string.product_bitterness), Integer.parseInt(product.getGarvestoffer()), pieChartBitterness);
 
                 //Button for opening product in browser
                 Button productsButton = findViewById(R.id.webButton);
@@ -277,14 +325,11 @@ public class SingleProductActivity extends AppCompatActivity {
 
         parent.addView(listElement);
 
-        if (!headerText.equals("") || !headerText.equals(null)){
+        TextView headerTextView = new TextView(this);
+        headerTextView.setText(String.format("%s: ",headerText));
+        headerTextView.setTypeface(null, Typeface.BOLD);
 
-            TextView headerTextView = new TextView(this);
-            headerTextView.setText(String.format("%s: ",headerText));
-            headerTextView.setTypeface(null, Typeface.BOLD);
-
-            listElement.addView(headerTextView);
-        }
+        listElement.addView(headerTextView);
 
         TextView textView = new TextView(this);
         textView.setText(text);
@@ -338,4 +383,36 @@ public class SingleProductActivity extends AppCompatActivity {
         view.setContentDescription(imageAlt);
 
     }
+    public void createPieCharts(String headerText, int value,AnimatedPieView pieView){
+
+        if (value == 0) {
+            ((LinearLayout)pieView.getParent()).setVisibility(View.GONE);
+            return;
+        }
+
+        if (((LinearLayout)pieView.getParent().getParent()).getVisibility() == View.GONE)
+            ((LinearLayout)pieView.getParent().getParent()).setVisibility(View.VISIBLE);
+
+        int remaining = 10 - value;
+
+
+        //Adding chart and text to section
+        TextView headerTextView = new TextView(this);
+        headerTextView.setText(headerText);
+        headerTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        ((LinearLayout)pieView.getParent()).addView(headerTextView);
+
+        //Configuring chart
+        AnimatedPieViewConfig config = new AnimatedPieViewConfig();
+        config.addData(new SimplePieInfo(value, getResources().getColor(R.color.secondaryDarkColor)));
+        config.addData(new SimplePieInfo(remaining, getResources().getColor(R.color.blank)));
+        config.canTouch(false);
+        config.strokeMode(false);
+        config.pieRadius(40);
+        config.duration(100);
+        config.autoSize(true);
+        pieView.applyConfig(config);
+        pieView.start();
+    }
+
 }

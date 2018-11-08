@@ -125,7 +125,7 @@ public class SingleUserListActivity extends AppCompatActivity {
         FragmentProducts fragment = new FragmentProducts();
 
         Bundle args = new Bundle();
-        args.putStringArrayList("ProductsInList", productList );
+        args.putStringArrayList("preSetProducts", productList );
         args.putString("userListId", listID);
         fragment.setArguments(args);
 
