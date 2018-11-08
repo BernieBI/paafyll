@@ -57,6 +57,14 @@ public class SingleProductActivity extends AppCompatActivity {
     private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead;
     private ImageView productImage, drinkWith1, drinkWith2, drinkWith3;
     FloatingActionButton addToListBtn;
+
+    //PieCharts
+    AnimatedPieView pieChartSweetness;
+    AnimatedPieView pieChartFreshness;
+    AnimatedPieView pieChartFullness;
+    AnimatedPieView pieChartTannin;
+    AnimatedPieView pieChartBitterness;
+
     private int white;
 
     private ArrayList<UserList> userLists = new ArrayList<>();
@@ -86,6 +94,12 @@ public class SingleProductActivity extends AppCompatActivity {
         drinkWith1 = findViewById(R.id.drinkWith1);
         drinkWith2 = findViewById(R.id.drinkWith2);
         drinkWith3 = findViewById(R.id.drinkWith3);
+
+        pieChartSweetness = findViewById(R.id.pieChartSweetness);
+        pieChartFreshness = findViewById(R.id.pieChartFreshness);
+        pieChartFullness = findViewById(R.id.pieChartFullness);
+        pieChartTannin = findViewById(R.id.pieChartTannin);
+        pieChartBitterness = findViewById(R.id.pieChartBitterness);
 
         Intent intent = getIntent();
         productID = intent.getStringExtra("ProductID");
@@ -246,9 +260,6 @@ public class SingleProductActivity extends AppCompatActivity {
                 createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
                 createTextView(productDetails1, product.getArgang() , getString(R.string.product_year));
                 createTextView(productDetails1, product.getLagringsgrad(), getString(R.string.product_storage));
-                createTextView(productDetails1, product.getFriskhet(), getString(R.string.product_freshness));
-                createTextView(productDetails1, product.getFylde(), getString(R.string.product_fullness));
-                createTextView(productDetails1, product.getGarvestoffer(), getString(R.string.product_tannin));
                 createTextView(productDetails1, product.getFarge(), getString(R.string.product_color));
                 createTextView(productDetails1, product.getLukt(), getString(R.string.product_smell));
                 createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock));
@@ -264,16 +275,16 @@ public class SingleProductActivity extends AppCompatActivity {
                 createTextView(productDetails3, product.getButikkategori() , getString(R.string.product_category));
                 createTextView(productDetails3, product.getGrossist() , getString(R.string.product_wholesaler));
 
-                drinkWithhead.setBackgroundColor(white);
                 setDrinkWiths(drinkWith1, product.getPassertil01());
                 setDrinkWiths(drinkWith2, product.getPassertil02());
                 setDrinkWiths(drinkWith3, product.getPassertil03());
-                if (hasDrinkWiths)
-                    drinkWithhead.setText(getString(R.string.product_drinkWith));
 
-                createPieCharts("Sødme", Integer.parseInt(product.getSodme()), (AnimatedPieView) findViewById(R.id.pieChartSweetness));
-                createPieCharts("Friskhet", Integer.parseInt(product.getFriskhet()), (AnimatedPieView) findViewById(R.id.pieChartFreshness));
-                createPieCharts("Fylde", Integer.parseInt(product.getFylde()), (AnimatedPieView) findViewById(R.id.pieChartFullness));
+
+                createPieCharts(getString(R.string.product_Sweetness), Integer.parseInt(product.getSodme()), pieChartSweetness);
+                createPieCharts(getString(R.string.product_freshness), Integer.parseInt(product.getFriskhet()), pieChartFreshness);
+                createPieCharts(getString(R.string.product_fullness), Integer.parseInt(product.getFylde()), pieChartFullness);
+                createPieCharts(getString(R.string.product_tannin), Integer.parseInt(product.getGarvestoffer()), pieChartTannin);
+                createPieCharts(getString(R.string.product_bitterness), Integer.parseInt(product.getGarvestoffer()), pieChartBitterness);
 
                 //Button for opening product in browser
                 Button productsButton = findViewById(R.id.webButton);
@@ -374,10 +385,16 @@ public class SingleProductActivity extends AppCompatActivity {
     }
     public void createPieCharts(String headerText, int value,AnimatedPieView pieView){
 
-        if (value == 0)
+        if (value == 0) {
+            ((LinearLayout)pieView.getParent()).setVisibility(View.GONE);
             return;
+        }
+
+        if (((LinearLayout)pieView.getParent().getParent()).getVisibility() == View.GONE)
+            ((LinearLayout)pieView.getParent().getParent()).setVisibility(View.VISIBLE);
 
         int remaining = 10 - value;
+
 
         //Adding chart and text to section
         TextView headerTextView = new TextView(this);
@@ -387,8 +404,8 @@ public class SingleProductActivity extends AppCompatActivity {
 
         //Configuring chart
         AnimatedPieViewConfig config = new AnimatedPieViewConfig();
-        config.addData(new SimplePieInfo(value, getResources().getColor(R.color.primaryLightColor)));
-        config.addData(new SimplePieInfo(remaining, getResources().getColor(R.color.white)));
+        config.addData(new SimplePieInfo(value, getResources().getColor(R.color.secondaryDarkColor)));
+        config.addData(new SimplePieInfo(remaining, getResources().getColor(R.color.blank)));
         config.canTouch(false);
         config.strokeMode(false);
         config.pieRadius(40);
@@ -396,7 +413,6 @@ public class SingleProductActivity extends AppCompatActivity {
         config.autoSize(true);
         pieView.applyConfig(config);
         pieView.start();
-        Log.d(TAG, "pieView added");
     }
 
 }
