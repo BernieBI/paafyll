@@ -28,6 +28,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.razerdp.widget.animatedpieview.AnimatedPieView;
+import com.razerdp.widget.animatedpieview.AnimatedPieViewConfig;
+import com.razerdp.widget.animatedpieview.data.SimplePieInfo;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -41,6 +44,7 @@ public class SingleProductActivity extends AppCompatActivity {
     String TAG = "SingleProductActivity";
 
     private String productID;
+    private Product product;
     //firebase
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference productsRef;
@@ -88,6 +92,7 @@ public class SingleProductActivity extends AppCompatActivity {
         productsRef = database.getReference("Products/" + productID);
         userListRef = database.getReference("userLists");
 
+        //getting product and list data from firebase
         GetData();
         GetUserLists();
 
@@ -99,7 +104,7 @@ public class SingleProductActivity extends AppCompatActivity {
         else
             products = cacheHandler.getRecentProducts();
 
-        if (products.size() >= 10)
+        if (products.size() >= 24)
             products.remove(0);
 
         if (products.contains(productID))
@@ -109,6 +114,7 @@ public class SingleProductActivity extends AppCompatActivity {
         cacheHandler.setRecentProducts(products);
 
         Log.d(TAG, "recents: " + cacheHandler.getRecentProducts());
+
 
     }
 
@@ -203,7 +209,7 @@ public class SingleProductActivity extends AppCompatActivity {
         ValueEventListener productListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final Product product = dataSnapshot.getValue(Product.class);
+                product = dataSnapshot.getValue(Product.class);
 
                 if (product == null){
                     Toast toast = Toast.makeText(SingleProductActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
@@ -265,6 +271,9 @@ public class SingleProductActivity extends AppCompatActivity {
                 if (hasDrinkWiths)
                     drinkWithhead.setText(getString(R.string.product_drinkWith));
 
+                createPieCharts("Sødme", Integer.parseInt(product.getSodme()), (AnimatedPieView) findViewById(R.id.pieChartSweetness));
+                createPieCharts("Friskhet", Integer.parseInt(product.getFriskhet()), (AnimatedPieView) findViewById(R.id.pieChartFreshness));
+                createPieCharts("Fylde", Integer.parseInt(product.getFylde()), (AnimatedPieView) findViewById(R.id.pieChartFullness));
 
                 //Button for opening product in browser
                 Button productsButton = findViewById(R.id.webButton);
@@ -310,7 +319,6 @@ public class SingleProductActivity extends AppCompatActivity {
         headerTextView.setTypeface(null, Typeface.BOLD);
 
         listElement.addView(headerTextView);
-
 
         TextView textView = new TextView(this);
         textView.setText(text);
@@ -363,6 +371,32 @@ public class SingleProductActivity extends AppCompatActivity {
         view.setImageResource(image);
         view.setContentDescription(imageAlt);
 
+    }
+    public void createPieCharts(String headerText, int value,AnimatedPieView pieView){
+
+        if (value == 0)
+            return;
+
+        int remaining = 10 - value;
+
+        //Adding chart and text to section
+        TextView headerTextView = new TextView(this);
+        headerTextView.setText(headerText);
+        headerTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        ((LinearLayout)pieView.getParent()).addView(headerTextView);
+
+        //Configuring chart
+        AnimatedPieViewConfig config = new AnimatedPieViewConfig();
+        config.addData(new SimplePieInfo(value, getResources().getColor(R.color.primaryLightColor)));
+        config.addData(new SimplePieInfo(remaining, getResources().getColor(R.color.white)));
+        config.canTouch(false);
+        config.strokeMode(false);
+        config.pieRadius(40);
+        config.duration(100);
+        config.autoSize(true);
+        pieView.applyConfig(config);
+        pieView.start();
+        Log.d(TAG, "pieView added");
     }
 
 }

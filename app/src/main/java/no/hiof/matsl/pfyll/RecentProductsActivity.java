@@ -35,18 +35,16 @@ public class RecentProductsActivity extends AppCompatActivity {
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        // set Fragmentclass Arguments
         FragmentProducts fragment = newInstance(products);
         fragmentTransaction.add(R.id.parent, fragment);
         fragmentTransaction.commit();
-
 
     }
     public static FragmentProducts newInstance(ArrayList<String> productList) {
         FragmentProducts fragment = new FragmentProducts();
 
         Bundle args = new Bundle();
-        args.putStringArrayList("RecentProducts", productList );
+        args.putStringArrayList("preSetProducts", productList );
         fragment.setArguments(args);
         return fragment;
     }
