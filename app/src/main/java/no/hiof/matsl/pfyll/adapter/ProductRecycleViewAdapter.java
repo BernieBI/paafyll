@@ -124,7 +124,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
 
                 //Starting single product activity
                 Intent singleProductIntent = new Intent(context, SingleProductActivity.class);
-                singleProductIntent.putExtra("ProductID", current_product.getHovedGTIN());
+                singleProductIntent.putExtra("ProductID", current_product.getId());
                 context.startActivity(singleProductIntent);
 
             }

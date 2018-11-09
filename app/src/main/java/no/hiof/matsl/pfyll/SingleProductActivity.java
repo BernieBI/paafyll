@@ -129,6 +129,7 @@ public class SingleProductActivity extends AppCompatActivity {
         productsRef = database.getReference("Products/" + productID);
         userListRef = database.getReference("userLists");
         userReviewRef = database.getReference("userReviews");
+        Log.d(TAG, "ID " + productID);
 
         if (productID == -1){
             Toast toast = Toast.makeText(SingleProductActivity.this,  "Fant ikke produktet", Toast.LENGTH_LONG);
@@ -152,8 +153,8 @@ public class SingleProductActivity extends AppCompatActivity {
         if (recentProducts.size() >= 24)
             recentProducts.remove(0);
 
-        if (recentProducts.contains(productID))
-            recentProducts.remove(productID);
+        if (recentProducts.contains(productID+""))
+            recentProducts.remove(productID+"");
 
         recentProducts.add(productID+"");
         cacheHandler.setRecentProducts(recentProducts);
