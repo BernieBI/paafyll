@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -17,20 +18,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import no.hiof.matsl.pfyll.model.BooleanFilter;
 import no.hiof.matsl.pfyll.model.Filter;
-import no.hiof.matsl.pfyll.model.NumberFilter;
+import no.hiof.matsl.pfyll.model.IdFilter;
 import no.hiof.matsl.pfyll.model.Product;
-import no.hiof.matsl.pfyll.model.StringFilter;
 
 public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
 
     private FirebaseFirestore database;
     private List<Filter> filters;
+    private IdFilter idFilter;
 
     public ProductDataSource(FirebaseFirestore database, List<Filter> filters) {
         this.database = database;
         this.filters = filters;
+    }
+
+    public ProductDataSource(FirebaseFirestore database, IdFilter idFilter) {
+        this.database = database;
+        this.idFilter = idFilter;
     }
 
     @Override
@@ -55,99 +60,59 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
     }
 
     private void loadData(Integer key, int loadSize, @NonNull final LoadCallback<Product> callback, final boolean async, final boolean reverse) {
-
         final TaskCompletionSource<List<Product>> taskCompletionSource = new TaskCompletionSource<>();
-        CollectionReference collection = database.collection("Produkter");
 
-        Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter(key).limit(loadSize);
+        if (idFilter != null) {
+            if (async)
+                loadDataByIdFilter(callback, new ArrayList<Product>(), 0);
+            else
+                loadDataByIdFilter(taskCompletionSource, new ArrayList<Product>(), 0);
+        } else {
+            CollectionReference collection = database.collection("Produkter");
+            Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter(key).limit(loadSize);
 
-        boolean rangeSelector = false; // There can only be one
-        for (Filter filter : filters) {
-            switch (filter.getComparisonType()) {
-                case EQUALS:
-                    query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
-                    break;
-                case GREATER_THAN:
-                    if (rangeSelector)
+            boolean rangeSelector = false; // There can only be one
+            for (Filter filter : filters) {
+                switch (filter.getComparisonType()) {
+                    case EQUALS:
+                        query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
                         break;
-                    query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
-                    rangeSelector = true;
-                    break;
-                case LESS_THAN:
-                    if (rangeSelector)
+                    case GREATER_THAN:
+                        if (rangeSelector)
+                            break;
+                        query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
+                        rangeSelector = true;
                         break;
-                    query = query.whereLessThan(filter.getFieldName(), filter.getValue());
-                    rangeSelector = true;
-                    break;
+                    case LESS_THAN:
+                        if (rangeSelector)
+                            break;
+                        query = query.whereLessThan(filter.getFieldName(), filter.getValue());
+                        rangeSelector = true;
+                        break;
+                }
             }
-        }
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
 
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<Product> products = new ArrayList<>();
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    List<Product> products = new ArrayList<>();
 
-                if (task.isSuccessful() && task.getResult() != null) {
-                    for (QueryDocumentSnapshot doc : task.getResult()){
-                        //Product product = doc.toObject(Product.class);
-                        Product product = new Product(
-                                Integer.parseInt(doc.getId()),
-                                stringify(doc.get("Alkohol")),
-                                stringify(doc.get("Argang")),
-                                stringify(doc.get("Biodynamisk")),
-                                stringify(doc.get("Bitterhet")),
-                                stringify(doc.get("Butikkategori")),
-                                stringify(doc.get("Datotid")),
-                                stringify(doc.get("Distributor")),
-                                stringify(doc.get("Distrikt")),
-                                stringify(doc.get("Emballasjetype")),
-                                stringify(doc.get("Fairtrade")),
-                                stringify(doc.get("Farge")),
-                                stringify(doc.get("Friskhet")),
-                                stringify(doc.get("Fylde")),
-                                stringify(doc.get("Garvestoffer")),
-                                stringify(doc.get("Gluten_lav_pa")),
-                                stringify(doc.get("Grossist")),
-                                stringify(doc.get("Korktype")),
-                                stringify(doc.get("Kosher")),
-                                stringify(doc.get("Lagringsgrad")),
-                                stringify(doc.get("Land")),
-                                stringify(doc.get("Literpris")),
-                                stringify(doc.get("Lukt")),
-                                stringify(doc.get("Metode")),
-                                stringify(doc.get("Miljosmart_emballasje")),
-                                stringify(doc.get("Okologisk")),
-                                stringify(doc.get("Passertil01")),
-                                stringify(doc.get("Passertil02")),
-                                stringify(doc.get("Passertil03")),
-                                stringify(doc.get("Pris")),
-                                stringify(doc.get("Produktutvalg")),
-                                stringify(doc.get("Produsent")),
-                                stringify(doc.get("Rastoff")),
-                                stringify(doc.get("Smak")),
-                                stringify(doc.get("Sodme")),
-                                stringify(doc.get("Sukker")),
-                                stringify(doc.get("Syre")),
-                                stringify(doc.get("Underdistrikt")),
-                                stringify(doc.get("Varenavn")),
-                                stringify(doc.get("Varenummer")),
-                                stringify(doc.get("Varetype")),
-                                stringify(doc.get("Vareurl")),
-                                stringify(doc.get("Volum")),
-                                stringify(doc.get("HovedGTIN"))
-                        );
-                        product.setBildeUrl(product.getVarenummer());
-                        products.add(product);
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (QueryDocumentSnapshot doc : task.getResult()){
+                            Product product = documentToProduct(doc);
+                            product.setBildeUrl(product.getVarenummer());
+                            products.add(product);
+                        }
+                    }
+
+                    if (!async) {
+                        taskCompletionSource.setResult(products);
+                    } else {
+                        callback.onResult(products);
                     }
                 }
-
-                if (!async) {
-                    taskCompletionSource.setResult(products);
-                } else {
-                    callback.onResult(products);
-                }
-            }
-        });
+            });
+        }
 
         if (async) {
             return;
@@ -168,9 +133,94 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
         }
     }
 
+    private void loadDataByIdFilter(@NonNull final LoadCallback<Product> callback, @NonNull final List<Product> result, final int index) {
+        final List<String> ids = idFilter.getIds();
+        final int size = ids.size();
+
+        database.collection("Produkter").document(ids.get(index)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful() && task.getResult() != null)
+                        result.add(documentToProduct(task.getResult()));
+                    if ((index + 1) >= size)
+                        callback.onResult(result);
+                    else
+                        loadDataByIdFilter(callback, result, index + 1);
+                }
+            }
+        );
+    }
+
+    private void loadDataByIdFilter(@NonNull final TaskCompletionSource<List<Product>> taskCompletionSource, @NonNull final List<Product> result, final int index) {
+        final List<String> ids = idFilter.getIds();
+        final int size = ids.size();
+
+        database.collection("Produkter").document(ids.get(index)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                                                  @Override
+                                                                                                  public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+              if (task.isSuccessful() && task.getResult() != null)
+                  result.add(documentToProduct(task.getResult()));
+              if ((index + 1) >= size)
+                  taskCompletionSource.setResult(result);
+              else
+                  loadDataByIdFilter(taskCompletionSource, result, index + 1);
+                  }
+              }
+        );
+    }
+
     private String stringify(Object object) {
         return (object == null)
                 ? ""
                 : object.toString();
+    }
+
+    private Product documentToProduct(DocumentSnapshot doc) {
+        return new Product(
+                Integer.parseInt(doc.getId()),
+                stringify(doc.get("Alkohol")),
+                stringify(doc.get("Argang")),
+                stringify(doc.get("Biodynamisk")),
+                stringify(doc.get("Bitterhet")),
+                stringify(doc.get("Butikkategori")),
+                stringify(doc.get("Datotid")),
+                stringify(doc.get("Distributor")),
+                stringify(doc.get("Distrikt")),
+                stringify(doc.get("Emballasjetype")),
+                stringify(doc.get("Fairtrade")),
+                stringify(doc.get("Farge")),
+                stringify(doc.get("Friskhet")),
+                stringify(doc.get("Fylde")),
+                stringify(doc.get("Garvestoffer")),
+                stringify(doc.get("Gluten_lav_pa")),
+                stringify(doc.get("Grossist")),
+                stringify(doc.get("Korktype")),
+                stringify(doc.get("Kosher")),
+                stringify(doc.get("Lagringsgrad")),
+                stringify(doc.get("Land")),
+                stringify(doc.get("Literpris")),
+                stringify(doc.get("Lukt")),
+                stringify(doc.get("Metode")),
+                stringify(doc.get("Miljosmart_emballasje")),
+                stringify(doc.get("Okologisk")),
+                stringify(doc.get("Passertil01")),
+                stringify(doc.get("Passertil02")),
+                stringify(doc.get("Passertil03")),
+                stringify(doc.get("Pris")),
+                stringify(doc.get("Produktutvalg")),
+                stringify(doc.get("Produsent")),
+                stringify(doc.get("Rastoff")),
+                stringify(doc.get("Smak")),
+                stringify(doc.get("Sodme")),
+                stringify(doc.get("Sukker")),
+                stringify(doc.get("Syre")),
+                stringify(doc.get("Underdistrikt")),
+                stringify(doc.get("Varenavn")),
+                stringify(doc.get("Varenummer")),
+                stringify(doc.get("Varetype")),
+                stringify(doc.get("Vareurl")),
+                stringify(doc.get("Volum")),
+                stringify(doc.get("HovedGTIN"))
+        );
     }
 }
