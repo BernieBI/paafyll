@@ -23,6 +23,7 @@ import no.hiof.matsl.pfyll.model.IdFilter;
 import no.hiof.matsl.pfyll.model.Product;
 
 public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
+    private static final String COLLECTION_PATH = "Produkter";
 
     private FirebaseFirestore database;
     private List<Filter> filters;
@@ -93,28 +94,31 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
         }
     }
 
+    // TODO: Refactor to remove duplicate code
     private void loadDataByValueFilter(@NonNull final LoadCallback<Product> callback, int key, int loadSize) {
-        CollectionReference collection = database.collection("Produkter");
+        CollectionReference collection = database.collection(COLLECTION_PATH);
         Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter(key).limit(loadSize);
 
         boolean rangeSelector = false; // There can only be one
-        for (Filter filter : filters) {
-            switch (filter.getComparisonType()) {
-                case EQUALS:
-                    query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
-                    break;
-                case GREATER_THAN:
-                    if (rangeSelector)
+        if (filters != null) {
+            for (Filter filter : filters) {
+                switch (filter.getComparisonType()) {
+                    case EQUALS:
+                        query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
                         break;
-                    query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
-                    rangeSelector = true;
-                    break;
-                case LESS_THAN:
-                    if (rangeSelector)
+                    case GREATER_THAN:
+                        if (rangeSelector)
+                            break;
+                        query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
+                        rangeSelector = true;
                         break;
-                    query = query.whereLessThan(filter.getFieldName(), filter.getValue());
-                    rangeSelector = true;
-                    break;
+                    case LESS_THAN:
+                        if (rangeSelector)
+                            break;
+                        query = query.whereLessThan(filter.getFieldName(), filter.getValue());
+                        rangeSelector = true;
+                        break;
+                }
             }
         }
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
@@ -135,31 +139,33 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
         });
     }
     private void loadDataByValueFilter(@NonNull final TaskCompletionSource<List<Product>> taskCompletionSource, int key, int loadSize) {
-        CollectionReference collection = database.collection("Produkter");
+        CollectionReference collection = database.collection(COLLECTION_PATH);
         Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter(key).limit(loadSize);
 
         boolean rangeSelector = false; // There can only be one
-        for (Filter filter : filters) {
-            switch (filter.getComparisonType()) {
-                case EQUALS:
-                    query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
-                    break;
-                case GREATER_THAN:
-                    if (rangeSelector)
+        if (filters != null) {
+            for (Filter filter : filters) {
+                switch (filter.getComparisonType()) {
+                    case EQUALS:
+                        query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
                         break;
-                    query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
-                    rangeSelector = true;
-                    break;
-                case LESS_THAN:
-                    if (rangeSelector)
+                    case GREATER_THAN:
+                        if (rangeSelector)
+                            break;
+                        query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
+                        rangeSelector = true;
                         break;
-                    query = query.whereLessThan(filter.getFieldName(), filter.getValue());
-                    rangeSelector = true;
-                    break;
+                    case LESS_THAN:
+                        if (rangeSelector)
+                            break;
+                        query = query.whereLessThan(filter.getFieldName(), filter.getValue());
+                        rangeSelector = true;
+                        break;
+                }
             }
         }
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
 
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 List<Product> products = new ArrayList<>();
@@ -179,7 +185,7 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
         final List<String> ids = idFilter.getIds();
         final int size = ids.size();
 
-        database.collection("Produkter").document(ids.get(index)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        database.collection(COLLECTION_PATH).document(ids.get(index)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful() && task.getResult() != null)
