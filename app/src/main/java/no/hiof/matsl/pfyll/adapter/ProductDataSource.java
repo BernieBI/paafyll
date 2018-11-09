@@ -51,9 +51,9 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
     private void loadData(Integer key, int loadSize, @NonNull final LoadCallback<Product> callback, final boolean async, final boolean reverse) {
 
         final TaskCompletionSource<List<Product>> taskCompletionSource = new TaskCompletionSource<>();
-        CollectionReference collection = database.collection("Products");
+        CollectionReference collection = database.collection("Produkter");
 
-        Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter("Index", key).limit(loadSize);
+        Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter(key).limit(loadSize);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
 
             @Override
@@ -62,8 +62,53 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
 
                 if (task.isSuccessful() && task.getResult() != null) {
                     for (QueryDocumentSnapshot doc : task.getResult()){
-                        Product product = doc.toObject(Product.class);
-
+                        //Product product = doc.toObject(Product.class);
+                        Product product = new Product(
+                                Integer.parseInt(doc.getId()),
+                                stringify(doc.get("Alkohol")),
+                                stringify(doc.get("Argang")),
+                                stringify(doc.get("Biodynamisk")),
+                                stringify(doc.get("Bitterhet")),
+                                stringify(doc.get("Butikkategori")),
+                                stringify(doc.get("Datotid")),
+                                stringify(doc.get("Distributor")),
+                                stringify(doc.get("Distrikt")),
+                                stringify(doc.get("Emballasjetype")),
+                                stringify(doc.get("Fairtrade")),
+                                stringify(doc.get("Farge")),
+                                stringify(doc.get("Friskhet")),
+                                stringify(doc.get("Fylde")),
+                                stringify(doc.get("Garvestoffer")),
+                                stringify(doc.get("Gluten_lav_pa")),
+                                stringify(doc.get("Grossist")),
+                                stringify(doc.get("Korktype")),
+                                stringify(doc.get("Kosher")),
+                                stringify(doc.get("Lagringsgrad")),
+                                stringify(doc.get("Land")),
+                                stringify(doc.get("Literpris")),
+                                stringify(doc.get("Lukt")),
+                                stringify(doc.get("Metode")),
+                                stringify(doc.get("Miljosmart_emballasje")),
+                                stringify(doc.get("Okologisk")),
+                                stringify(doc.get("Passertil01")),
+                                stringify(doc.get("Passertil02")),
+                                stringify(doc.get("Passertil03")),
+                                stringify(doc.get("Pris")),
+                                stringify(doc.get("Produktutvalg")),
+                                stringify(doc.get("Produsent")),
+                                stringify(doc.get("Rastoff")),
+                                stringify(doc.get("Smak")),
+                                stringify(doc.get("Sodme")),
+                                stringify(doc.get("Sukker")),
+                                stringify(doc.get("Syre")),
+                                stringify(doc.get("Underdistrikt")),
+                                stringify(doc.get("Varenavn")),
+                                stringify(doc.get("Varenummer")),
+                                stringify(doc.get("Varetype")),
+                                stringify(doc.get("Vareurl")),
+                                stringify(doc.get("Volum")),
+                                stringify(doc.get("HovedGTIN"))
+                        );
                         product.setBildeUrl(product.getVarenummer());
                         products.add(product);
                     }
@@ -94,5 +139,11 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
         } else {
             callback.onResult(new ArrayList<Product>(loadSize));
         }
+    }
+
+    private String stringify(Object object) {
+        return (object == null)
+                ? ""
+                : object.toString();
     }
 }
