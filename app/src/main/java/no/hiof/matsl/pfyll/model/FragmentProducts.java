@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -42,7 +44,9 @@ public class FragmentProducts extends Fragment {
     private GridLayoutManager gridLayoutManager;
 
     //firebase
-    final private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    //final private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    final private FirebaseFirestore database = FirebaseFirestore.getInstance();
+
 
     static View view;
     String TAG = "ProductsFragment";
@@ -67,7 +71,7 @@ public class FragmentProducts extends Fragment {
 
         PagedList.Config config = new PagedList.Config.Builder().setPageSize(6).build();
 
-        ProductDataSourceFactory factory = new ProductDataSourceFactory(database.getReference());
+        ProductDataSourceFactory factory = new ProductDataSourceFactory(database);
 
         products = new LivePagedListBuilder<>(factory, config).build();
 
