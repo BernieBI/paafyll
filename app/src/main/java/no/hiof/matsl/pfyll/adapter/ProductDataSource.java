@@ -7,12 +7,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -23,11 +21,10 @@ import no.hiof.matsl.pfyll.model.Product;
 
 public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
 
-    //private DatabaseReference databaseReference;
-    private DocumentReference documentReference;
+    private FirebaseFirestore database;
 
-    public ProductDataSource(DocumentReference documentReference) {
-        this.documentReference = documentReference;
+    public ProductDataSource(FirebaseFirestore database) {
+        this.database = database;
     }
 
     @Override
@@ -54,35 +51,29 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
     private void loadData(Integer key, int loadSize, @NonNull final LoadCallback<Product> callback, final boolean async, final boolean reverse) {
 
         final TaskCompletionSource<List<Product>> taskCompletionSource = new TaskCompletionSource<>();
-        CollectionReference query = documentReference.collection("Products");
+        CollectionReference collection = database.collection("Products");
 
-        query.limit(loadSize).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+        Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter("Index", key).limit(loadSize);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
 
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 List<Product> products = new ArrayList<>();
 
-                if (task.isSuccessful()) {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    for (QueryDocumentSnapshot doc : task.getResult()){
+                        Product product = doc.toObject(Product.class);
 
-                }
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Product product = child.getValue(Product.class);
-                    if (product == null) {
-                        continue;
+                        product.setBildeUrl(product.getVarenummer());
+                        products.add(product);
                     }
-                    product.setBildeUrl(product.getVarenummer());
-                    products.add(product);
                 }
+
                 if (!async) {
                     taskCompletionSource.setResult(products);
                 } else {
                     callback.onResult(products);
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                taskCompletionSource.setException(databaseError.toException());
             }
         });
 
