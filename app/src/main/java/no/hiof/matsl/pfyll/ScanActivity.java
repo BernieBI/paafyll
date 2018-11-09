@@ -8,14 +8,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import no.hiof.matsl.pfyll.model.FragmentProducts;
 
 public class ScanActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     String TAG = "ScanActivity";
 
@@ -64,7 +73,25 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
     public void handleResult(Result result) {
         Log.d(TAG, "handleresult");
         zXingScannerView.stopCamera();
-        FragmentProducts.BarcodeReturn(result.getText());
-        onBackPressed();
+        ProgressBar progressBar = new ProgressBar(this);
+        zXingScannerView.addView(progressBar);
+        Query query = db.collection("Produkter").limit(1).whereEqualTo("HovedGTIN", Long.parseLong(result.getText()));
+        query.get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Log.d(TAG, document.getId() + " => " + document.getData());
+                            FragmentProducts.BarcodeReturn(Integer.parseInt(document.getId()));
+                            onBackPressed();
+                        }
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
+                }
+            });
+
+
     }
 }

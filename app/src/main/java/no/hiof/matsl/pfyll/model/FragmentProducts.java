@@ -165,9 +165,9 @@ public class FragmentProducts extends Fragment {
         gridLayoutManager = new GridLayoutManager(getActivity(), layoutColumns); // (Context context, int spanCount)
         recyclerView.setLayoutManager(gridLayoutManager);
     }
-    public static void BarcodeReturn(String barcode){
+    public static void BarcodeReturn(int id){
         Intent singleProductIntent = new Intent(view.getContext(), SingleProductActivity.class);
-        singleProductIntent.putExtra("ProductID", barcode);
+        singleProductIntent.putExtra("ProductID", id);
         view.getContext().startActivity(singleProductIntent);
 
     }
