@@ -61,17 +61,22 @@ public class FragmentProducts extends Fragment {
 
         Log.d(TAG, "onCreate: Started " + layoutColumns + " columns");
 
+        PagedList.Config config = new PagedList.Config.Builder().setPageSize(6).build();
+        ProductDataSourceFactory  factory = new ProductDataSourceFactory(database);
+
         Bundle bundle = getArguments();
         if (bundle != null){
             //Retrieving list of product IDs.
-            productsInList = bundle.getStringArrayList("ProductsInList");
+            productsInList = bundle.getStringArrayList("preSetProducts");
             Log.d(TAG, "Parameters: " + productsInList);
             view.findViewById(R.id.filterField).setVisibility(View.GONE);
+
+            config = new PagedList.Config.Builder().setPageSize(productsInList.size()).build();
+            factory = new ProductDataSourceFactory(database, new IdFilter(productsInList));
+
         }
 
-        PagedList.Config config = new PagedList.Config.Builder().setPageSize(6).build();
 
-        ProductDataSourceFactory factory = new ProductDataSourceFactory(database);
 
         products = new LivePagedListBuilder<>(factory, config).build();
 
