@@ -68,6 +68,13 @@ public class FragmentMyActivity extends Fragment {
         return view;
     }
 
+    private void initRecyclerView(){
+
+      
+
+    }
+
+
 
 
     private View.OnClickListener layoutSwitchListener = new View.OnClickListener() {
