@@ -82,7 +82,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
 
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Product current_product = getItem(position);
         if (current_product == null) {
             return;
@@ -94,13 +94,14 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             holder.removeFromListBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (productsInList.remove(current_product.getHovedGTIN())){
+                    if (productsInList.remove(current_product.getId()+"")){
                         Log.d(TAG, "Removed from list, list: " + productsInList);
                         DatabaseReference userListRef = database.getReference("userLists");
                         userListRef.child(userListID).child("products").setValue(productsInList);
                         Toast toast = Toast.makeText(context,  String.format("%s %s!", current_product.getVarenavn(),  context.getString(R.string.removed_from_list)), Toast.LENGTH_LONG);
                         toast.show();
-                        notifyItemRemoved(position);
+                        holder.itemView.setVisibility(View.GONE);
+                        //notifyItemRemoved(position);
                     }
 
                 }
