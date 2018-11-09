@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
@@ -43,8 +44,7 @@ public class FragmentMyActivity extends Fragment {
     private ArrayList<UserReview> userReviews = new ArrayList<>();
 
     //firebase
-    final private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference userReviewRef = database.getReference("userReviews");
+    final private FirebaseFirestore database = FirebaseFirestore.getInstance();
 
 
     View view;
@@ -61,7 +61,7 @@ public class FragmentMyActivity extends Fragment {
 
         PagedList.Config config = new PagedList.Config.Builder().setPageSize(6).build();
 
-        ProductDataSourceFactory factory = new ProductDataSourceFactory(database.getReference("userReviews"));
+        ProductDataSourceFactory factory = new ProductDataSourceFactory(database);
 
         initRecyclerView();
 
