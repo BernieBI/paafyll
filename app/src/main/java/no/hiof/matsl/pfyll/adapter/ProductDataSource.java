@@ -3,14 +3,17 @@ package no.hiof.matsl.pfyll.adapter;
 import android.arch.paging.ItemKeyedDataSource;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,50 +21,50 @@ import java.util.concurrent.ExecutionException;
 
 import no.hiof.matsl.pfyll.model.Product;
 
-public class ProductDataSource extends ItemKeyedDataSource<String, Product> {
+public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
 
-    private DatabaseReference databaseReference;
+    //private DatabaseReference databaseReference;
+    private DocumentReference documentReference;
 
-    public ProductDataSource(DatabaseReference databaseReference) {
-        this.databaseReference = databaseReference;
+    public ProductDataSource(DocumentReference documentReference) {
+        this.documentReference = documentReference;
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams<String> params, @NonNull LoadInitialCallback<Product> callback) {
-        loadData("0", params.requestedLoadSize, callback, false, false);
+    public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull LoadInitialCallback<Product> callback) {
+        loadData(0, params.requestedLoadSize, callback, false, false);
     }
 
     @Override
-    public void loadAfter(@NonNull LoadParams<String> params, @NonNull LoadCallback<Product> callback) {
-        loadData("" + (Long.parseLong(params.key) + 1), params.requestedLoadSize, callback, true, false);
+    public void loadAfter(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<Product> callback) {
+        loadData(params.key + 1, params.requestedLoadSize, callback, true, false);
     }
 
     @Override
-    public void loadBefore(@NonNull LoadParams<String> params, @NonNull LoadCallback<Product> callback) {
+    public void loadBefore(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<Product> callback) {
         //loadData(params.key, params.requestedLoadSize, callback, true, true);
     }
 
     @NonNull
     @Override
-    public String getKey(@NonNull Product item) {
-        return item.getHovedGTIN();
+    public Integer getKey(@NonNull Product item) {
+        return item.getId();
     }
 
-    private void loadData(String key, int loadSize, @NonNull final LoadCallback<Product> callback, final boolean async, final boolean reverse) {
+    private void loadData(Integer key, int loadSize, @NonNull final LoadCallback<Product> callback, final boolean async, final boolean reverse) {
 
         final TaskCompletionSource<List<Product>> taskCompletionSource = new TaskCompletionSource<>();
-        Query query = databaseReference.child("Products").orderByKey();
-        if (reverse) {
-            query = query.endAt(key);
-        } else {
-            query = query.startAt(key);
-        }
-        query.limitToFirst(loadSize).addListenerForSingleValueEvent(new ValueEventListener() {
+        CollectionReference query = documentReference.collection("Products");
+
+        query.limit(loadSize).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
 
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 List<Product> products = new ArrayList<>();
 
+                if (task.isSuccessful()) {
+
+                }
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     Product product = child.getValue(Product.class);
                     if (product == null) {
