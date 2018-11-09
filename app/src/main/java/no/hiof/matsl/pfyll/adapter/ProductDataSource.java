@@ -68,50 +68,10 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
             else
                 loadDataByIdFilter(taskCompletionSource, new ArrayList<Product>(), 0);
         } else {
-            CollectionReference collection = database.collection("Produkter");
-            Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter(key).limit(loadSize);
-
-            boolean rangeSelector = false; // There can only be one
-            for (Filter filter : filters) {
-                switch (filter.getComparisonType()) {
-                    case EQUALS:
-                        query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
-                        break;
-                    case GREATER_THAN:
-                        if (rangeSelector)
-                            break;
-                        query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
-                        rangeSelector = true;
-                        break;
-                    case LESS_THAN:
-                        if (rangeSelector)
-                            break;
-                        query = query.whereLessThan(filter.getFieldName(), filter.getValue());
-                        rangeSelector = true;
-                        break;
-                }
-            }
-            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
-
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    List<Product> products = new ArrayList<>();
-
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        for (QueryDocumentSnapshot doc : task.getResult()){
-                            Product product = documentToProduct(doc);
-                            product.setBildeUrl(product.getVarenummer());
-                            products.add(product);
-                        }
-                    }
-
-                    if (!async) {
-                        taskCompletionSource.setResult(products);
-                    } else {
-                        callback.onResult(products);
-                    }
-                }
-            });
+            if (async)
+                loadDataByValueFilter(callback, key, loadSize);
+            else
+                loadDataByValueFilter(taskCompletionSource, key, loadSize);
         }
 
         if (async) {
@@ -133,6 +93,88 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
         }
     }
 
+    private void loadDataByValueFilter(@NonNull final LoadCallback<Product> callback, int key, int loadSize) {
+        CollectionReference collection = database.collection("Produkter");
+        Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter(key).limit(loadSize);
+
+        boolean rangeSelector = false; // There can only be one
+        for (Filter filter : filters) {
+            switch (filter.getComparisonType()) {
+                case EQUALS:
+                    query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
+                    break;
+                case GREATER_THAN:
+                    if (rangeSelector)
+                        break;
+                    query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
+                    rangeSelector = true;
+                    break;
+                case LESS_THAN:
+                    if (rangeSelector)
+                        break;
+                    query = query.whereLessThan(filter.getFieldName(), filter.getValue());
+                    rangeSelector = true;
+                    break;
+            }
+        }
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<Product> products = new ArrayList<>();
+
+                if (task.isSuccessful() && task.getResult() != null) {
+                    for (QueryDocumentSnapshot doc : task.getResult()){
+                        Product product = documentToProduct(doc);
+                        product.setBildeUrl(product.getVarenummer());
+                        products.add(product);
+                    }
+                }
+                callback.onResult(products);
+            }
+        });
+    }
+    private void loadDataByValueFilter(@NonNull final TaskCompletionSource<List<Product>> taskCompletionSource, int key, int loadSize) {
+        CollectionReference collection = database.collection("Produkter");
+        Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter(key).limit(loadSize);
+
+        boolean rangeSelector = false; // There can only be one
+        for (Filter filter : filters) {
+            switch (filter.getComparisonType()) {
+                case EQUALS:
+                    query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
+                    break;
+                case GREATER_THAN:
+                    if (rangeSelector)
+                        break;
+                    query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
+                    rangeSelector = true;
+                    break;
+                case LESS_THAN:
+                    if (rangeSelector)
+                        break;
+                    query = query.whereLessThan(filter.getFieldName(), filter.getValue());
+                    rangeSelector = true;
+                    break;
+            }
+        }
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
+
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<Product> products = new ArrayList<>();
+
+                if (task.isSuccessful() && task.getResult() != null) {
+                    for (QueryDocumentSnapshot doc : task.getResult()){
+                        Product product = documentToProduct(doc);
+                        product.setBildeUrl(product.getVarenummer());
+                        products.add(product);
+                    }
+                }
+                taskCompletionSource.setResult(products);
+            }
+        });
+    }
     private void loadDataByIdFilter(@NonNull final LoadCallback<Product> callback, @NonNull final List<Product> result, final int index) {
         final List<String> ids = idFilter.getIds();
         final int size = ids.size();
@@ -150,7 +192,6 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
             }
         );
     }
-
     private void loadDataByIdFilter(@NonNull final TaskCompletionSource<List<Product>> taskCompletionSource, @NonNull final List<Product> result, final int index) {
         final List<String> ids = idFilter.getIds();
         final int size = ids.size();
