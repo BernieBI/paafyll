@@ -17,14 +17,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import no.hiof.matsl.pfyll.model.BooleanFilter;
+import no.hiof.matsl.pfyll.model.Filter;
+import no.hiof.matsl.pfyll.model.NumberFilter;
 import no.hiof.matsl.pfyll.model.Product;
+import no.hiof.matsl.pfyll.model.StringFilter;
 
 public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
 
     private FirebaseFirestore database;
+    private List<Filter> filters;
 
-    public ProductDataSource(FirebaseFirestore database) {
+    public ProductDataSource(FirebaseFirestore database, List<Filter> filters) {
         this.database = database;
+        this.filters = filters;
     }
 
     @Override
@@ -54,6 +60,27 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
         CollectionReference collection = database.collection("Produkter");
 
         Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter(key).limit(loadSize);
+
+        boolean rangeSelector = false; // There can only be one
+        for (Filter filter : filters) {
+            switch (filter.getComparisonType()) {
+                case EQUALS:
+                    query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
+                    break;
+                case GREATER_THAN:
+                    if (rangeSelector)
+                        break;
+                    query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
+                    rangeSelector = true;
+                    break;
+                case LESS_THAN:
+                    if (rangeSelector)
+                        break;
+                    query = query.whereLessThan(filter.getFieldName(), filter.getValue());
+                    rangeSelector = true;
+                    break;
+            }
+        }
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
 
             @Override
