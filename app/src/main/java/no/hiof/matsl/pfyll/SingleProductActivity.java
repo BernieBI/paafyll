@@ -1,6 +1,9 @@
 package no.hiof.matsl.pfyll;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -9,11 +12,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,10 +34,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import no.hiof.matsl.pfyll.model.Product;
+import no.hiof.matsl.pfyll.model.Review;
 import no.hiof.matsl.pfyll.model.UserList;
+import no.hiof.matsl.pfyll.model.UserReview;
 
 public class SingleProductActivity extends AppCompatActivity {
     String TAG = "SingleProductActivity";
+    private String reviewText ="";
+    private float reviewValue = 0;
 
     private String productID;
     //firebase
@@ -39,7 +49,9 @@ public class SingleProductActivity extends AppCompatActivity {
     private DatabaseReference productsRef;
 
     private DatabaseReference userListRef = database.getReference("userLists");
+    private DatabaseReference userReviewRef = database.getReference("userReviews");
     private ValueEventListener userListListener;
+    private ValueEventListener userReviewsListener;
 
     //views
     private LinearLayout productDetails1, productDetails2, productDetails3;
@@ -78,6 +90,7 @@ public class SingleProductActivity extends AppCompatActivity {
         productID = intent.getStringExtra("ProductID");
         productsRef = database.getReference("Products/" + productID);
         userListRef = database.getReference("userLists");
+        userReviewRef = database.getReference("userReviews");
 
         GetData();
         GetUserLists();
@@ -250,6 +263,52 @@ public class SingleProductActivity extends AppCompatActivity {
                         startActivity(browserIntent);
                     }
                 });
+
+                Button reviewButton = findViewById(R.id.reviewButton);
+
+                reviewButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
+                        builder.setTitle("Gi din anbefaling");
+                        LinearLayout layout = new LinearLayout(SingleProductActivity.this);
+                        layout.setOrientation(LinearLayout.VERTICAL);
+
+                        final RatingBar ratingBar = new RatingBar(SingleProductActivity.this);
+                        ratingBar.setNumStars(5);
+                        ratingBar.setLayoutParams(new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT));
+                        layout.addView(ratingBar);
+
+                        final EditText input = new EditText(SingleProductActivity.this);
+                        input.setInputType(InputType.TYPE_CLASS_TEXT );
+                        layout.addView(input);
+                        builder.setView(layout);
+
+
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                reviewText = input.getText().toString();
+                                reviewValue = ratingBar.getRating();
+                                Review review = new Review(reviewText,reviewValue);
+                                UserReview userReview = new UserReview(productID, review);
+
+                                userReviewRef.push().setValue(userReview);
+                            }
+                        });
+                        builder.setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.show();
+
+                    }
+                });
+
             }
 
             @Override

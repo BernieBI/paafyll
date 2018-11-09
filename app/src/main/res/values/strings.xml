@@ -34,6 +34,7 @@
     <string name="product_enviromentalPackage">Miljosmart emballasje</string>
     <string name="product_Organic">Økologisk</string>
     <string name="product_webBtn">Se i nettbutikk</string>
+    <string name="product_reviewBtn">Gi en anbefaling</string>
 
     <!-- other -->
     <string name="centiLiter">Cl</string>
