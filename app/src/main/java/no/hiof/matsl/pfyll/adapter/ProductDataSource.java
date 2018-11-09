@@ -130,9 +130,7 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
 
                 if (task.isSuccessful() && task.getResult() != null) {
                     for (QueryDocumentSnapshot doc : task.getResult()){
-                        Product product = documentToProduct(doc);
-                        product.setBildeUrl(product.getVarenummer());
-                        products.add(product);
+                        products.add(documentToProduct(doc));
                     }
                 }
                 callback.onResult(products);
@@ -224,7 +222,7 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
     }
 
     private Product documentToProduct(DocumentSnapshot doc) {
-        return new Product(
+        Product product =  new Product(
                 Integer.parseInt(doc.getId()),
                 stringify(doc.get("Alkohol")),
                 stringify(doc.get("Argang")),
@@ -270,5 +268,7 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
                 stringify(doc.get("Volum")),
                 stringify(doc.get("HovedGTIN"))
         );
+        product.setBildeUrl(product.getVarenummer());
+        return product;
     }
 }
