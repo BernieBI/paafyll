@@ -46,7 +46,8 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
 
     @Override
     public void loadAfter(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<Product> callback) {
-        loadData(params.key + 1, params.requestedLoadSize, callback, true, false);
+        if (idFilter == null)
+            loadData(params.key + 1, params.requestedLoadSize, callback, true, false);
     }
 
     @Override
