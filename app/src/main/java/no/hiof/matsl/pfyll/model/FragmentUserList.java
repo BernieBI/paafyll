@@ -55,7 +55,7 @@ public class FragmentUserList extends Fragment {
         recyclerView = view.findViewById(R.id.userList_recycler_view);
         initRecyclerView();
 
-        //Getting list data'
+        //Getting list data
         addListBtn= view.findViewById(R.id.addListButton);
         addListBtn.setOnClickListener(new View.OnClickListener() {
 
