@@ -31,11 +31,11 @@ import no.hiof.matsl.pfyll.model.Product;
 public class ProductRecycleViewAdapter extends PagedListAdapter<Product, ProductRecycleViewAdapter.ViewHolder> {
 
     private static final String TAG = "ProductRVAdapter";
-    public boolean useListLayout = false;
+    public boolean useListLayout = true;
     private boolean isListActivity;
     private Bundle arguments;
     private  String userListID;
-    ArrayList<String> productsInList;
+    ArrayList<String> preSetProducts;
     //firebase
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -73,7 +73,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
                 isListActivity = true;
                 userListID = arguments.getString("userListId");
             }
-            productsInList = arguments.getStringArrayList("preSetProducts");
+            preSetProducts = arguments.getStringArrayList("preSetProducts");
 
         }
         return new ViewHolder(view);
@@ -94,10 +94,10 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             holder.removeFromListBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (productsInList.remove(current_product.getId()+"")){
-                        Log.d(TAG, "Removed from list, list: " + productsInList);
+                    if (preSetProducts.remove(current_product.getId()+"")){
+                        Log.d(TAG, "Removed from list, list: " + preSetProducts);
                         DatabaseReference userListRef = database.getReference("userLists");
-                        userListRef.child(userListID).child("products").setValue(productsInList);
+                        userListRef.child(userListID).child("products").setValue(preSetProducts);
                         Toast toast = Toast.makeText(context,  String.format("%s %s!", current_product.getVarenavn(),  context.getString(R.string.removed_from_list)), Toast.LENGTH_LONG);
                         toast.show();
                         holder.itemView.setVisibility(View.GONE);
