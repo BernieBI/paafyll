@@ -36,7 +36,7 @@
     <string name="product_enviromentalPackage">Miljosmart emballasje</string>
     <string name="product_Organic">Økologisk</string>
     <string name="product_webBtn">Se i nettbutikk</string>
-    <string name="product_reviewBtn">Gi en anbefaling</string>
+    <string name="product_reviewBtn">Anmeld produktet</string>
 
     <!-- other -->
     <string name="centiLiter">Cl</string>
@@ -55,5 +55,8 @@
         <item>Gaveposer</item>
         <item>Tilbehør</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

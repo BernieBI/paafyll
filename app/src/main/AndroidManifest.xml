@@ -24,7 +24,8 @@
         <activity android:name=".SingleProductActivity" />
         <activity android:name=".SingleUserListActivity" />
         <activity android:name=".ScanActivity" />
-        <activity android:name=".RecentProductsActivity"></activity>
+        <activity android:name=".RecentProductsActivity" />
+        <activity android:name=".FirebaseActivity"></activity>
     </application>
 
 </manifest>

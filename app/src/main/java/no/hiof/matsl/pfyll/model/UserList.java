@@ -9,9 +9,8 @@ public class UserList {
     private String id;
     public UserList(){ }
 
-    public UserList(String navn, String id, ArrayList<String> products ) {
+    public UserList(String navn, ArrayList<String> products ) {
         this.navn = navn;
-        this.id = id;
         this.products = products;
     }
 

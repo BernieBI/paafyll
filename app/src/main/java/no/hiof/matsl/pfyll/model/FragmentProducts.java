@@ -26,6 +26,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.ScanActivity;
@@ -40,7 +42,7 @@ public class FragmentProducts extends Fragment {
     private FloatingActionButton layoutButton;
     private ProductRecycleViewAdapter productAdapter;
     private int layoutColumns = 2;
-    private ArrayList<String> productsInList;
+    private ArrayList<String> preSetProducts;
     private GridLayoutManager gridLayoutManager;
 
     //firebase
@@ -59,7 +61,6 @@ public class FragmentProducts extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_products, container, false);
 
-        Log.d(TAG, "onCreate: Started " + layoutColumns + " columns");
 
         PagedList.Config config = new PagedList.Config.Builder().setPageSize(6).build();
         ProductDataSourceFactory  factory = new ProductDataSourceFactory(database);
@@ -67,16 +68,12 @@ public class FragmentProducts extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null){
             //Retrieving list of product IDs.
-            productsInList = bundle.getStringArrayList("preSetProducts");
-            Log.d(TAG, "Parameters: " + productsInList);
+            preSetProducts = bundle.getStringArrayList("preSetProducts");
             view.findViewById(R.id.filterField).setVisibility(View.GONE);
-
-            config = new PagedList.Config.Builder().setPageSize(productsInList.size()).build();
-            factory = new ProductDataSourceFactory(database, new IdFilter(productsInList));
+            Collections.reverse(preSetProducts);
+            factory = new ProductDataSourceFactory(database, new IdFilter(preSetProducts));
 
         }
-
-
 
         products = new LivePagedListBuilder<>(factory, config).build();
 

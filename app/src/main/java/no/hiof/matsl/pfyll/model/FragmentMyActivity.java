@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,8 +42,10 @@ public class FragmentMyActivity extends Fragment {
     private int layoutColumns = 2;
     private ArrayList<String> productsInList;
     private FloatingActionButton layoutButton;
+    private Button logoutButton;
     private GridLayoutManager gridLayoutManager;
     private ArrayList<UserReview> userReviews = new ArrayList<>();
+    FirebaseAuth auth = FirebaseAuth.getInstance();
 
     //firebase
     final private FirebaseFirestore database = FirebaseFirestore.getInstance();
@@ -68,7 +72,6 @@ public class FragmentMyActivity extends Fragment {
         layoutButton = view.findViewById(R.id.layoutButton);
         layoutButton.setOnClickListener(layoutSwitchListener);
 
-
         final Button recentProductsButton = view.findViewById(R.id.recentProductsButton);
         recentProductsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +81,15 @@ public class FragmentMyActivity extends Fragment {
             }
         });
 
+        logoutButton = view.findViewById(R.id.logOutButton);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                auth.signOut();
+                getActivity().finish();
+                getActivity().startActivity(getActivity().getIntent());
+            }
+        });
         return view;
     }
 

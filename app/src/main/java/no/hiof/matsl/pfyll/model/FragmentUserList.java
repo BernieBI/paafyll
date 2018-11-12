@@ -14,9 +14,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +30,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.SingleProductActivity;
@@ -39,9 +46,12 @@ public class FragmentUserList extends Fragment {
     private UserListRecycleViewAdapter userListAdapter;
     private FloatingActionButton addListBtn;
     private ArrayList<UserList> userLists = new ArrayList<>();
+    private Button logInButton;
+    private TextView logInInfo;
 
+    private FirebaseUser user;
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference userListRef = database.getReference("userLists");
+    private DatabaseReference userListRef;
 
     public FragmentUserList(){
     }
@@ -52,11 +62,14 @@ public class FragmentUserList extends Fragment {
         view = inflater.inflate(R.layout.fragment_userlists,container,false);
         Log.d(TAG, "onCreate: Started ");
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        userListRef = database.getReference("users/" + user.getUid() + "/userLists");
+
         recyclerView = view.findViewById(R.id.userList_recycler_view);
-        initRecyclerView();
 
         //Getting list data
-        addListBtn= view.findViewById(R.id.addListButton);
+        addListBtn = view.findViewById(R.id.addListButton);
         addListBtn.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -75,10 +88,11 @@ public class FragmentUserList extends Fragment {
                                     toast.show();
                                     return;
                                 }
-
                                 UserList newList = new UserList();
                                 newList.setNavn(editText.getText().toString());
+
                                 userListRef.push().setValue(newList);
+
                                 Log.d(TAG, "List created ");
                                 Toast toast = Toast.makeText(getActivity(), String.format("Listen %s ble opprettet!", newList.getNavn()), Toast.LENGTH_LONG);
                                 toast.show();
@@ -151,8 +165,6 @@ public class FragmentUserList extends Fragment {
         });
 
     }
-
-
 
     public void passUserListsToView (){
 
