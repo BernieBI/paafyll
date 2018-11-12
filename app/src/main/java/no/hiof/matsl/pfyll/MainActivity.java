@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private static int RC_SIGN_IN = 100;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    FirebaseAuth auth = FirebaseAuth.getInstance();
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference users = database.getReference("users");
 

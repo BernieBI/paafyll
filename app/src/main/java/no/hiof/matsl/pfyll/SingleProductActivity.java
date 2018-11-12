@@ -25,6 +25,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -64,16 +66,16 @@ public class SingleProductActivity extends AppCompatActivity {
     //firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference productRef = db.collection("Produkter");
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     /* */
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference productsRef;
     /* */
 
-    private DatabaseReference userListRef = database.getReference("userLists");
-    private DatabaseReference userReviewRef = database.getReference("userReviews");
-    private ValueEventListener userListListener;
-    private ValueEventListener userReviewsListener;
+    private DatabaseReference userListRef;
+    private DatabaseReference userReviewRef;
+
 
     //views
     private LinearLayout productDetails1, productDetails2, productDetails3;
@@ -98,6 +100,7 @@ public class SingleProductActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_product);
+        Log.d(TAG, "ID " + productID);
 
 
         //Populating text fields and other
@@ -124,23 +127,26 @@ public class SingleProductActivity extends AppCompatActivity {
         pieChartTannin = findViewById(R.id.pieChartTannin);
         pieChartBitterness = findViewById(R.id.pieChartBitterness);
 
-        Intent intent = getIntent();
-        productID = intent.getIntExtra("ProductID",-1);
-        productsRef = database.getReference("Products/" + productID);
-        userListRef = database.getReference("userLists");
-        userReviewRef = database.getReference("userReviews");
-        Log.d(TAG, "ID " + productID);
-
-        if (productID == -1){
-            Toast toast = Toast.makeText(SingleProductActivity.this,  "Fant ikke produktet", Toast.LENGTH_LONG);
+        if (productID == -1) {
+            Toast toast = Toast.makeText(SingleProductActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
             toast.show();
             onBackPressed();
         }
 
+        Intent intent = getIntent();
+        productID = intent.getIntExtra("ProductID", -1);
+        productsRef = database.getReference("Products/" + productID);
+
+
 
         //getting product and list data from firebase
         GetData();
-        GetUserLists();
+
+        if (user != null){
+            userListRef = database.getReference("users/" + user.getUid() + "/userLists");
+            userReviewRef = database.getReference("users/" + user.getUid() + "/userReviews");
+            GetUserLists();
+         }
 
         //Adding product to recently viewed producs
         CacheHandler cacheHandler = new CacheHandler(this, "Recent Products", "LocalCache");

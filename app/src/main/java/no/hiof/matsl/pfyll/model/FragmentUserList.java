@@ -154,7 +154,7 @@ public class FragmentUserList extends Fragment {
                         Log.d(TAG, "List added " + list.getNavn());
                 }
                 if (userLists.size() > 0)
-                passUserListsToView();
+                    passUserListsToView();
                 else
                     recyclerView.removeAllViewsInLayout();
             }

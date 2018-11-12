@@ -16,6 +16,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -32,6 +34,7 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
     private LayoutInflater inflater;
     private Context context;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     public UserListRecycleViewAdapter(Context context, ArrayList<UserList> lists) {
         this.lists = lists;
@@ -66,9 +69,11 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
                         .setPositiveButton("Slett", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                DatabaseReference userListRef = database.getReference("userLists/" + current_list.getId());
+
+                                DatabaseReference userListRef = database.getReference("users/" + user.getUid() + "/userLists/" + current_list.getId());
                                 userListRef.removeValue();
                                 notifyDataSetChanged();
+                                Log.d(TAG, userListRef.toString());
                             }
                         })
                         .setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
@@ -92,7 +97,6 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
 
             }
         });
-        Log.d(TAG, "onBindViewHolder: called." + lists);
     }
 
     @Override

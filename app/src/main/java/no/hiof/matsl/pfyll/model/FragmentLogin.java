@@ -43,6 +43,8 @@ public class FragmentLogin extends Fragment {
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
                                 .setAvailableProviders(providers)
+                                .setLogo(R.drawable.logo)
+                                .setTheme(R.style.AppTheme)
                                 .build(),
                         RC_SIGN_IN);
 

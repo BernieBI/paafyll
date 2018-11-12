@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -36,6 +38,8 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
     private Bundle arguments;
     private  String userListID;
     ArrayList<String> preSetProducts;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
     //firebase
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -96,10 +100,12 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
                 public void onClick(View v) {
                     if (preSetProducts.remove(current_product.getId()+"")){
                         Log.d(TAG, "Removed from list, list: " + preSetProducts);
-                        DatabaseReference userListRef = database.getReference("userLists");
-                        userListRef.child(userListID).child("products").setValue(preSetProducts);
+                        DatabaseReference userListRef = database.getReference("users/" + user.getUid() + "/userLists/" + userListID);
+                        userListRef.child("products").setValue(preSetProducts);
                         Toast toast = Toast.makeText(context,  String.format("%s %s!", current_product.getVarenavn(),  context.getString(R.string.removed_from_list)), Toast.LENGTH_LONG);
                         toast.show();
+
+                        if (preSetProducts.size() > 0)
                         holder.itemView.setVisibility(View.GONE);
                         //notifyItemRemoved(position);
                     }
