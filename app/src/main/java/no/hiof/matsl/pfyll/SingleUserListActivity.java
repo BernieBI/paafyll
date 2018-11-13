@@ -96,11 +96,14 @@ public class SingleUserListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 userList = dataSnapshot.getValue(UserList.class);
-                Log.d(TAG, "List: " + userList.getNavn());
-
+                if (userList == null)
+                    return;
                 listName = findViewById(R.id.listName);
                 listName.setText(userList.getNavn());
-                StartFragment();
+                if (userList.getProducts() != null) {
+                    StartFragment();
+                }else
+                    findViewById(R.id.emptyText).setVisibility(View.VISIBLE);
 
             }
 
@@ -114,6 +117,8 @@ public class SingleUserListActivity extends AppCompatActivity {
     }
 
     private void StartFragment(){
+        Log.d(TAG, "Fragment recreated: " + userList.getNavn());
+
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 

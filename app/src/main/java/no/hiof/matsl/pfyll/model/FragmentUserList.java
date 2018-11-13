@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -141,12 +142,17 @@ public class FragmentUserList extends Fragment {
                         UserList list = child.getValue(UserList.class);
                         list.setId(child.getKey());
                         userLists.add(list);
-                        Log.d(TAG, "List added " + list.getNavn());
                 }
-                if (userLists.size() > 0)
+                if (userLists.size() > 0) {
                     passUserListsToView();
-                else
+                    view.findViewById(R.id.emptyText).setVisibility(View.GONE);
+                    view.findViewById(R.id.emptyText2).setVisibility(View.GONE);
+                }
+                else {
                     recyclerView.removeAllViewsInLayout();
+                    view.findViewById(R.id.emptyText).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.emptyText2).setVisibility(View.VISIBLE);
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {

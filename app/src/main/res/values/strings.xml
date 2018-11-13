@@ -42,6 +42,8 @@
     <string name="centiLiter">Cl</string>
     <string name="currency">Kr</string>
     <string name="scan_for_product">Skann strekkode</string>
+    <string name="login_info">Logg inn for å få tilgang til en masse kule funksjoner!</string>
+    <string name="yes_please">Ja takk</string>
 
     <!-- UserLists -->
     <string name="selectList">Legg til i liste</string>
@@ -50,7 +52,10 @@
     <string name="removed_from_list">ble fjernet fra listen</string>
     <string name="confirm_delete_list">Er du sikker på at du vil slette denne listen?</string>
     <string name="require_name">Du må gi listen et navn</string>
-
+    <string name="list_require_login">Du må være logget inn for å bruke lister</string>
+    <string name="have_no_lists">Du har ingen lister ennå :(</string>
+    <string name="empty_list_message">Her var det tomt, gitt..</string>
+    <string name="add_lists">Legg til lister ved å trykke på knappen nede i hjørnet</string>
     <!--Reviews-->
     <string name="confirm_delete_review">Er du sikker på at du vil slette denne anmeldelsen?</string>
     <string name="already_reviewed">Du har allerede anmeldt dette produktet</string>

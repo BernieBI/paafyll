@@ -82,6 +82,7 @@ public class SingleProductActivity extends AppCompatActivity {
     private LinearLayout productDetails1, productDetails2, productDetails3;
     private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead;
     private ImageView productImage, drinkWith1, drinkWith2, drinkWith3;
+    private Button reviewButton;
     FloatingActionButton addToListBtn;
 
     //PieCharts
@@ -97,6 +98,7 @@ public class SingleProductActivity extends AppCompatActivity {
     private ArrayList<String> options = new ArrayList<>();
 
     private boolean hasDrinkWiths = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +108,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
         //Populating text fields and other
         white = getResources().getColor(R.color.white);
-
+        reviewButton = findViewById(R.id.reviewButton);
         productName = findViewById(R.id.productName);
         productTaste = findViewById(R.id.productTaste);
         productPrice = findViewById(R.id.productPrice);
@@ -115,6 +117,7 @@ public class SingleProductActivity extends AppCompatActivity {
         productDetails1 = findViewById(R.id.productDetails1);
         productDetails2 = findViewById(R.id.productDetails2);
         productDetails3 = findViewById(R.id.productDetails3);
+        addToListBtn = findViewById(R.id.addToListButton);
 
         productImage = findViewById(R.id.productImage);
         drinkWithhead = findViewById(R.id.drinkWith);
@@ -137,23 +140,32 @@ public class SingleProductActivity extends AppCompatActivity {
         Intent intent = getIntent();
         productID = intent.getIntExtra("ProductID", -1);
         productsRef = database.getReference("Products/" + productID);
-
-
+        //ref for all reviews
 
         //getting product and list data from firebase
         getData();
 
+
+
         if (user != null){
             userListRef = database.getReference("users/" + user.getUid() + "/userLists");
 
-            //ref for all reviews
-            reviewRef = database.getReference("/userReviews/" + productID);
-            //user specific
+            reviewRef = database.getReference("userReviews/" + productID);
             userReviewRef = database.getReference("users/" + user.getUid() + "/reviews");
 
             getUserLists();
             getUserReviews();
-         }
+            submitReview();
+
+         }else{
+            reviewButton.setVisibility(View.GONE);
+            addToListBtn.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.list_require_login), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            });
+        }
 
         //Adding product to recently viewed producs
         CacheHandler cacheHandler = new CacheHandler(this, "Recent Products", "LocalCache");
@@ -226,42 +238,50 @@ public class SingleProductActivity extends AppCompatActivity {
         };
         userListRef.addChildEventListener(userListListener);
 
-        addToListBtn = findViewById(R.id.addToListButton);
-        addToListBtn.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
-                builder.setTitle(R.string.selectList);
-                builder.setItems(options.toArray(new CharSequence[options.size()]), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+            addToListBtn.setOnClickListener(new View.OnClickListener() {
 
-                        ArrayList<String> products = new ArrayList<>();
+                public void onClick(View v) {
 
-                        if (userLists.get(which).getProducts() != null){
-
-                            if (!userLists.get(which).addProduct(productID+"")) {
-                                Toast toast = Toast.makeText(SingleProductActivity.this,  String.format("%s %s!",getString(R.string.already_exists), userLists.get(which).getNavn()), Toast.LENGTH_LONG);
-                                toast.show();
-                                return;
-                            }
-                        }else{
-                            products.add(productID+"");
-                            userLists.get(which).setProducts(products);
-                        }
-
-                        userListRef.child(userLists.get(which).getId()).child("products").setValue( userLists.get(which).getProducts());
-                        Toast toast = Toast.makeText(SingleProductActivity.this, String.format("%s %s!",getString(R.string.add_success), userLists.get(which).getNavn()), Toast.LENGTH_LONG);
+                    if (options.size() == 0){
+                        Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.have_no_lists), Toast.LENGTH_SHORT);
                         toast.show();
-                        Log.d(TAG, "Products in list: " + userLists.get(which).getProducts());
-                    }
-                });
-                builder.show();
-            }
-        });
+                    }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
+                    builder.setTitle(R.string.selectList);
+                    builder.setItems(options.toArray(new CharSequence[options.size()]), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            ArrayList<String> products = new ArrayList<>();
+
+                            if (userLists.get(which).getProducts() != null) {
+
+                                if (!userLists.get(which).addProduct(productID + "")) {
+                                    Toast toast = Toast.makeText(SingleProductActivity.this, String.format("%s %s!", getString(R.string.already_exists), userLists.get(which).getNavn()), Toast.LENGTH_SHORT);
+                                    toast.show();
+                                    return;
+                                }
+                            } else {
+                                products.add(productID + "");
+                                userLists.get(which).setProducts(products);
+                            }
+
+                            userListRef.child(userLists.get(which).getId()).child("products").setValue(userLists.get(which).getProducts());
+                            Toast toast = Toast.makeText(SingleProductActivity.this, String.format("%s %s!", getString(R.string.add_success), userLists.get(which).getNavn()), Toast.LENGTH_SHORT);
+                            toast.show();
+                            Log.d(TAG, "Products in list: " + userLists.get(which).getProducts());
+                        }
+                    });
+                    builder.show();
+                }
+                }
+            });
+
+
     }
     private void getUserReviews() {
-        reviewedProducts = new ArrayList<String>();
+        reviewedProducts = new ArrayList<>();
         ChildEventListener userReviewListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
@@ -293,6 +313,67 @@ public class SingleProductActivity extends AppCompatActivity {
         userReviewRef.addChildEventListener(userReviewListener);
 
     }
+
+    public void submitReview(){
+        reviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
+                builder.setTitle("Gi din anbefaling");
+                LinearLayout layout = new LinearLayout(SingleProductActivity.this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+
+                final RatingBar ratingBar = new RatingBar(SingleProductActivity.this);
+                ratingBar.setNumStars(5);
+                ratingBar.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
+                layout.addView(ratingBar);
+
+                final EditText input = new EditText(SingleProductActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT );
+                layout.addView(input);
+                builder.setView(layout);
+
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        reviewText = input.getText().toString();
+                        reviewValue = ratingBar.getRating();
+
+                        String username = "ukjent";
+                        if (user.getDisplayName()!= null)
+                            username = user.getDisplayName();
+
+                        Review review = new Review(reviewText,reviewValue, username);
+                        if (!reviewedProducts.contains(productID+"")){
+                            reviewedProducts.add(productID+"");
+                            reviewRef.child(user.getUid()).setValue(review);
+                            userReviewRef.setValue(reviewedProducts);
+                            Toast toast = Toast.makeText(SingleProductActivity.this,  getString(R.string.review_success), Toast.LENGTH_LONG);
+                            toast.show();
+
+                        }else{
+                            Toast toast = Toast.makeText(SingleProductActivity.this,  getString(R.string.already_reviewed), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+
+
+                    }
+                });
+                builder.setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+
+            }
+        });
+    }
+
     private void getData(){
         final DocumentReference productDoc = productRef.document(productID+"");
         productDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -301,7 +382,7 @@ public class SingleProductActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-
+                        findViewById(R.id.loadOverlay).setVisibility(View.GONE);
                         product = createProductObject(document);
 
                         Log.d(TAG, "Product name: " + product.getVarenavn());
@@ -377,66 +458,6 @@ public class SingleProductActivity extends AppCompatActivity {
                             }
                         });
 
-                        Button reviewButton = findViewById(R.id.reviewButton);
-
-                        reviewButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
-                                builder.setTitle("Gi din anbefaling");
-                                LinearLayout layout = new LinearLayout(SingleProductActivity.this);
-                                layout.setOrientation(LinearLayout.VERTICAL);
-
-                                final RatingBar ratingBar = new RatingBar(SingleProductActivity.this);
-                                ratingBar.setNumStars(5);
-                                ratingBar.setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT));
-                                layout.addView(ratingBar);
-
-                                final EditText input = new EditText(SingleProductActivity.this);
-                                input.setInputType(InputType.TYPE_CLASS_TEXT );
-                                layout.addView(input);
-                                builder.setView(layout);
-
-
-                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        reviewText = input.getText().toString();
-                                        reviewValue = ratingBar.getRating();
-
-                                        String username = "ukjent";
-                                        if (user.getDisplayName()!= null)
-                                            username = user.getDisplayName();
-
-                                        Review review = new Review(reviewText,reviewValue, username);
-                                        if (!reviewedProducts.contains(productID+"")){
-                                            reviewedProducts.add(productID+"");
-                                            reviewRef.child(user.getUid()).setValue(review);
-                                            userReviewRef.setValue(reviewedProducts);
-                                            Toast toast = Toast.makeText(SingleProductActivity.this,  getString(R.string.review_success), Toast.LENGTH_LONG);
-                                            toast.show();
-
-                                        }else{
-                                            Toast toast = Toast.makeText(SingleProductActivity.this,  getString(R.string.already_reviewed), Toast.LENGTH_LONG);
-                                            toast.show();
-                                        }
-
-
-                                    }
-                                });
-                                builder.setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-                                builder.show();
-
-                            }
-                        });
-
 
                     } else {
                         Log.d(TAG, "No such document");
@@ -447,7 +468,6 @@ public class SingleProductActivity extends AppCompatActivity {
             }
         });
     }
-
 
     //pass header text as "" if not to use
     public void createTextView(LinearLayout parent, String text, String headerText){
@@ -540,11 +560,13 @@ public class SingleProductActivity extends AppCompatActivity {
         //Configuring chart
         AnimatedPieViewConfig config = new AnimatedPieViewConfig();
         config.addData(new SimplePieInfo(value, getResources().getColor(R.color.secondaryDarkColor)));
-        config.addData(new SimplePieInfo(remaining, getResources().getColor(R.color.blank)));
+        config.addData(new SimplePieInfo(remaining, getResources().getColor(R.color.white)));
+
         config.canTouch(false);
         config.strokeMode(false);
+        config.splitAngle(2);
         config.pieRadius(40);
-        config.duration(100);
+        config.duration(1000);
         config.autoSize(true);
         pieView.applyConfig(config);
         pieView.start();

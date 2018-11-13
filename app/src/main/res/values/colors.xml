@@ -12,7 +12,8 @@
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#000000</color>
     <color name="white">#ffffff</color>
-    <color name="darkOverlay">#0f000000</color>
+    <color name="darkOverlay">#2c000000</color>
+    <color name="brightOverlay">#bdffffff</color>
     <color name="blank">#00000000</color>
     <color name="gold">#FFDF00</color>
 </resources>

@@ -86,12 +86,10 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
         holder.setItemClickUserListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLoading) {
-                if (current_list.getProducts() != null ) {
                     //Starting single product activity
                     Intent singleUserListIntent = new Intent(context, SingleUserListActivity.class);
                     singleUserListIntent.putExtra("UserListId", current_list.getId());
                     context.startActivity(singleUserListIntent);
-                }
 
             }
         });
