@@ -82,7 +82,7 @@ public class MyReviewsActivity extends AppCompatActivity {
 
                 current_review = dataSnapshot.getValue(Review.class);
                 userReviews.add(current_review);
-                reviewAdapter.notifyItemInserted(0);
+                reviewAdapter.notifyItemInserted(userReviews.size()-1);
                 Log.d(TAG, "Review: " + current_review.getReviewText());
             }
             @Override

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ import no.hiof.matsl.pfyll.model.Review;
 
 
 public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycleViewAdapter.ViewHolder> {
-    private static final String TAG = "ReviewRecycleViewAdapter";
+    private static final String TAG = "ReviewRVAdapter";
 
     private ArrayList<Review> reviews;
     private LayoutInflater inflater;
@@ -49,7 +50,7 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         final Review current_review = reviews.get(position);
-
+        Log.d(TAG, "review: " + current_review.getReviewText());
         holder.productName.setText(current_review.getReviewText());
         holder.reviewValue.setText(current_review.getReviewValue()+"");
 
