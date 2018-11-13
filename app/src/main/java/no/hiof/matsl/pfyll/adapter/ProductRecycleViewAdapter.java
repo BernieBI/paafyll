@@ -37,7 +37,8 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
     private boolean isListActivity;
     private Bundle arguments;
     private  String userListID;
-    ArrayList<String> preSetProducts;
+    private ArrayList<String> preSetProducts;
+
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     //firebase
@@ -78,17 +79,17 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
                 userListID = arguments.getString("userListId");
             }
             preSetProducts = arguments.getStringArrayList("preSetProducts");
-
         }
+
+
         return new ViewHolder(view);
 
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Product current_product = getItem(position);
-        if (current_product == null) {
+        if (current_product == null ) {
             return;
         }
 
@@ -99,15 +100,14 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
                 @Override
                 public void onClick(View v) {
                     if (preSetProducts.remove(current_product.getId()+"")){
+
                         Log.d(TAG, "Removed from list, list: " + preSetProducts);
+
                         DatabaseReference userListRef = database.getReference("users/" + user.getUid() + "/userLists/" + userListID);
                         userListRef.child("products").setValue(preSetProducts);
                         Toast toast = Toast.makeText(context,  String.format("%s %s!", current_product.getVarenavn(),  context.getString(R.string.removed_from_list)), Toast.LENGTH_LONG);
                         toast.show();
-
-                        if (preSetProducts.size() > 0)
-                        holder.itemView.setVisibility(View.GONE);
-                        //notifyItemRemoved(position);
+                        notifyItemRemoved(position);
                     }
 
                 }

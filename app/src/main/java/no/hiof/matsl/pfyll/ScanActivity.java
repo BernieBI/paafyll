@@ -1,6 +1,7 @@
 package no.hiof.matsl.pfyll;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -82,16 +83,24 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
-                            FragmentProducts.BarcodeReturn(Integer.parseInt(document.getId()));
+
+                            Toast toast = Toast.makeText(ScanActivity.this, "Henter produktet", Toast.LENGTH_SHORT);
+                            toast.show();
+
+                            Intent singleProductIntent = new Intent(ScanActivity.this, SingleProductActivity.class);
+                            singleProductIntent.putExtra("ProductID", Integer.parseInt(document.getId()));
+                            startActivity(singleProductIntent);
                             onBackPressed();
                         }
                     } else {
-                        Log.d(TAG, "Error getting documents: ", task.getException());
+                        Toast toast = Toast.makeText(ScanActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
+                        toast.show();
+                        onBackPressed();
                     }
                 }
             });
 
 
     }
+
 }

@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,11 +47,10 @@ public class FragmentProducts extends Fragment {
     private GridLayoutManager gridLayoutManager;
 
     //firebase
-    //final private FirebaseDatabase database = FirebaseDatabase.getInstance();
     final private FirebaseFirestore database = FirebaseFirestore.getInstance();
 
 
-    static View view;
+    View view;
     String TAG = "ProductsFragment";
 
     public FragmentProducts(){
@@ -68,11 +68,14 @@ public class FragmentProducts extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null){
             //Retrieving list of product IDs.
-            preSetProducts = bundle.getStringArrayList("preSetProducts");
-            view.findViewById(R.id.filterField).setVisibility(View.GONE);
-            Collections.reverse(preSetProducts);
-            factory = new ProductDataSourceFactory(database, new IdFilter(preSetProducts));
 
+            view.findViewById(R.id.filterField).setVisibility(View.GONE);
+
+            if (bundle.getStringArrayList("preSetProducts") != null){
+                preSetProducts = bundle.getStringArrayList("preSetProducts");
+                Collections.reverse(preSetProducts);
+                factory = new ProductDataSourceFactory(database, new IdFilter(preSetProducts));
+            }
         }
 
         products = new LivePagedListBuilder<>(factory, config).build();
@@ -98,7 +101,6 @@ public class FragmentProducts extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        initRecyclerView();
     }
 
     @Override
@@ -122,6 +124,7 @@ public class FragmentProducts extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+
     }
 
     private void initRecyclerView(){
@@ -135,7 +138,6 @@ public class FragmentProducts extends Fragment {
                 productAdapter.submitList(products);
             }
         });
-
     }
 
     private View.OnClickListener layoutSwitchListener = new View.OnClickListener() {
@@ -167,10 +169,5 @@ public class FragmentProducts extends Fragment {
         gridLayoutManager = new GridLayoutManager(getActivity(), layoutColumns); // (Context context, int spanCount)
         recyclerView.setLayoutManager(gridLayoutManager);
     }
-    public static void BarcodeReturn(int id){
-        Intent singleProductIntent = new Intent(view.getContext(), SingleProductActivity.class);
-        singleProductIntent.putExtra("ProductID", id);
-        view.getContext().startActivity(singleProductIntent);
 
-    }
 }

@@ -16,8 +16,6 @@ import java.util.List;
 
 import no.hiof.matsl.pfyll.R;
 
-import static no.hiof.matsl.pfyll.model.FragmentProducts.view;
-
 public class FragmentLogin extends Fragment {
 
     View view;

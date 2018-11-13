@@ -49,13 +49,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        CreateLayout();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        CreateLayout();
 
     }
 
@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG,"Response: " + response);
                 users.child(user.getUid()).child("Name").setValue(user.getDisplayName());
                 users.child(user.getUid()).child("Email").setValue(user.getEmail());
-
                 finish();
                 startActivity(getIntent());
 
