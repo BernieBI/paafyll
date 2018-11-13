@@ -145,8 +145,6 @@ public class SingleProductActivity extends AppCompatActivity {
         //getting product and list data from firebase
         getData();
 
-
-
         if (user != null){
             userListRef = database.getReference("users/" + user.getUid() + "/userLists");
 
@@ -175,7 +173,7 @@ public class SingleProductActivity extends AppCompatActivity {
         else
             recentProducts = cacheHandler.getRecentProducts();
 
-        if (recentProducts.size() >= 24)
+        if (recentProducts.size() >= 10)
             recentProducts.remove(0);
 
         if (recentProducts.contains(productID+""))

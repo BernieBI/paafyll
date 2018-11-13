@@ -23,8 +23,7 @@
         android:id="@+id/tabLayout"
         app:tabTextColor="@color/primaryTextColor"
         android:background="@color/primaryColor"
-        app:tabIndicatorHeight="4dp">
-    </android.support.design.widget.TabLayout>
+        app:tabIndicatorHeight="4dp"></android.support.design.widget.TabLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPagerid"

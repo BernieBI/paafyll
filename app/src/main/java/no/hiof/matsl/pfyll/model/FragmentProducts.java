@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import no.hiof.matsl.pfyll.CacheHandler;
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.ScanActivity;
 import no.hiof.matsl.pfyll.SingleProductActivity;
@@ -42,10 +43,13 @@ public class FragmentProducts extends Fragment {
     private RecyclerView recyclerView;
     private FloatingActionButton layoutButton;
     private ProductRecycleViewAdapter productAdapter;
-    private int layoutColumns = 2;
+    private int layoutColumns = 1;
     private ArrayList<String> preSetProducts;
     private GridLayoutManager gridLayoutManager;
-
+    private ProductDataSourceFactory  factory;
+    private PagedList.Config config;
+    private Boolean isRecent = false;
+    private Bundle bundle;
     //firebase
     final private FirebaseFirestore database = FirebaseFirestore.getInstance();
 
@@ -62,13 +66,15 @@ public class FragmentProducts extends Fragment {
         view = inflater.inflate(R.layout.fragment_products, container, false);
 
 
-        PagedList.Config config = new PagedList.Config.Builder().setPageSize(6).build();
-        ProductDataSourceFactory  factory = new ProductDataSourceFactory(database);
+       config = new PagedList.Config.Builder().setPageSize(6).build();
+        factory = new ProductDataSourceFactory(database);
 
-        Bundle bundle = getArguments();
+        layoutButton = view.findViewById(R.id.layoutButton);
+        layoutButton.setOnClickListener(layoutSwitchListener);
+
+        bundle = getArguments();
         if (bundle != null){
             //Retrieving list of product IDs.
-
             view.findViewById(R.id.filterField).setVisibility(View.GONE);
 
             if (bundle.getStringArrayList("preSetProducts") != null){
@@ -76,12 +82,11 @@ public class FragmentProducts extends Fragment {
                 Collections.reverse(preSetProducts);
                 factory = new ProductDataSourceFactory(database, new IdFilter(preSetProducts));
             }
+
+
         }
 
         products = new LivePagedListBuilder<>(factory, config).build();
-
-        layoutButton = view.findViewById(R.id.layoutButton);
-        layoutButton.setOnClickListener(layoutSwitchListener);
 
         initRecyclerView();
 
@@ -100,26 +105,8 @@ public class FragmentProducts extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onstop");
-    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -136,6 +123,7 @@ public class FragmentProducts extends Fragment {
             @Override
             public void onChanged(@Nullable PagedList<Product> products) {
                 productAdapter.submitList(products);
+                view.findViewById(R.id.progressBar).setVisibility(View.GONE);
             }
         });
     }

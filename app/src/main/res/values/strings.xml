@@ -44,7 +44,7 @@
     <string name="scan_for_product">Skann strekkode</string>
     <string name="login_info">Logg inn for å få tilgang til en masse kule funksjoner!</string>
     <string name="yes_please">Ja takk</string>
-
+    <string name="recent_products">Nylig viste produkter</string>
     <!-- UserLists -->
     <string name="selectList">Legg til i liste</string>
     <string name="already_exists">Produktet er allerede i</string>
