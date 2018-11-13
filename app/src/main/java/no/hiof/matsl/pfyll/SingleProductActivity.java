@@ -75,7 +75,8 @@ public class SingleProductActivity extends AppCompatActivity {
 
     private DatabaseReference userListRef;
     private DatabaseReference userReviewRef;
-
+    private DatabaseReference reviewRef;
+    private ArrayList<String> reviewedProducts;
 
     //views
     private LinearLayout productDetails1, productDetails2, productDetails3;
@@ -140,12 +141,18 @@ public class SingleProductActivity extends AppCompatActivity {
 
 
         //getting product and list data from firebase
-        GetData();
+        getData();
 
         if (user != null){
             userListRef = database.getReference("users/" + user.getUid() + "/userLists");
-            userReviewRef = database.getReference("users/" + user.getUid() + "/userReviews");
-            GetUserLists();
+
+            //ref for all reviews
+            reviewRef = database.getReference("/userReviews/" + productID);
+            //user specific
+            userReviewRef = database.getReference("users/" + user.getUid() + "/reviews");
+
+            getUserLists();
+            getUserReviews();
          }
 
         //Adding product to recently viewed producs
@@ -183,7 +190,7 @@ public class SingleProductActivity extends AppCompatActivity {
         outState.putInt("productID", productID);
     }
 
-    private void GetUserLists() {
+    private void getUserLists() {
 
         ChildEventListener userListListener = new ChildEventListener() {
             @Override
@@ -219,7 +226,6 @@ public class SingleProductActivity extends AppCompatActivity {
         };
         userListRef.addChildEventListener(userListListener);
 
-        //Getting list data'
         addToListBtn = findViewById(R.id.addToListButton);
         addToListBtn.setOnClickListener(new View.OnClickListener() {
 
@@ -254,8 +260,41 @@ public class SingleProductActivity extends AppCompatActivity {
             }
         });
     }
-    private void GetData(){
-        DocumentReference productDoc = productRef.document(productID+"");
+    private void getUserReviews() {
+        reviewedProducts = new ArrayList<String>();
+        ChildEventListener userReviewListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
+                reviewedProducts.add(dataSnapshot.getValue()+"");
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "postComments:onCancelled", databaseError.toException());
+            }
+        };
+        userReviewRef.addChildEventListener(userReviewListener);
+
+    }
+    private void getData(){
+        final DocumentReference productDoc = productRef.document(productID+"");
         productDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -366,10 +405,25 @@ public class SingleProductActivity extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         reviewText = input.getText().toString();
                                         reviewValue = ratingBar.getRating();
-                                        Review review = new Review(reviewText,reviewValue);
-                                        UserReview userReview = new UserReview(productID+"", review);
 
-                                        userReviewRef.push().setValue(userReview);
+                                        String username = "ukjent";
+                                        if (user.getDisplayName()!= null)
+                                            username = user.getDisplayName();
+
+                                        Review review = new Review(reviewText,reviewValue, username);
+                                        if (!reviewedProducts.contains(productID+"")){
+                                            reviewedProducts.add(productID+"");
+                                            reviewRef.child(user.getUid()).setValue(review);
+                                            userReviewRef.setValue(reviewedProducts);
+                                            Toast toast = Toast.makeText(SingleProductActivity.this,  getString(R.string.review_success), Toast.LENGTH_LONG);
+                                            toast.show();
+
+                                        }else{
+                                            Toast toast = Toast.makeText(SingleProductActivity.this,  getString(R.string.already_reviewed), Toast.LENGTH_LONG);
+                                            toast.show();
+                                        }
+
+
                                     }
                                 });
                                 builder.setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {

@@ -1,14 +1,37 @@
 package no.hiof.matsl.pfyll.model;
 
 public class Review {
+
     private String reviewText;
     private float reviewValue;
+    private String user;
+    private String Id;
 
-    public Review(String reviewText, float reviewValue) {
+    public Review(){}
+
+
+
+    public Review(String reviewText, float reviewValue, String user) {
         this.reviewText = reviewText;
         this.reviewValue = reviewValue;
+        this.user = user;
+    }
+    public String getUser() {
+        return user;
     }
 
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
 
     public String getReviewText() {
         return reviewText;

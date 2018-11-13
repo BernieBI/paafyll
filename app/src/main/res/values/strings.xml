@@ -42,6 +42,7 @@
     <string name="centiLiter">Cl</string>
     <string name="currency">Kr</string>
     <string name="scan_for_product">Skann strekkode</string>
+
     <!-- UserLists -->
     <string name="selectList">Legg til i liste</string>
     <string name="already_exists">Produktet er allerede i</string>
@@ -50,6 +51,10 @@
     <string name="confirm_delete_list">Er du sikker på at du vil slette denne listen?</string>
     <string name="require_name">Du må gi listen et navn</string>
 
+    <!--Reviews-->
+    <string name="confirm_delete_review">Er du sikker på at du vil slette denne anmeldelsen?</string>
+    <string name="already_reviewed">Du har allerede anmeldt dette produktet</string>
+    <string name="review_success">Din anmeldelse er registrert!</string>
     <string-array name="nonDrinkables">
         <item>Gaveesker</item>
         <item>Gaveposer</item>

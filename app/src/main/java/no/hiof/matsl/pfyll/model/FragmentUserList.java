@@ -1,7 +1,5 @@
 package no.hiof.matsl.pfyll.model;
 import android.app.AlertDialog;
-import android.arch.lifecycle.Observer;
-import android.arch.paging.PagedList;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,10 +17,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,13 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import no.hiof.matsl.pfyll.R;
-import no.hiof.matsl.pfyll.SingleProductActivity;
-import no.hiof.matsl.pfyll.adapter.ProductDataSourceFactory;
-import no.hiof.matsl.pfyll.adapter.ProductRecycleViewAdapter;
 import no.hiof.matsl.pfyll.adapter.UserListRecycleViewAdapter;
 
 public class FragmentUserList extends Fragment {
@@ -68,7 +59,6 @@ public class FragmentUserList extends Fragment {
 
         recyclerView = view.findViewById(R.id.userList_recycler_view);
 
-        //Getting list data
         addListBtn = view.findViewById(R.id.addListButton);
         addListBtn.setOnClickListener(new View.OnClickListener() {
 
