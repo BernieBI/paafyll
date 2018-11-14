@@ -56,11 +56,11 @@
             android:layout_margin="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="16dp"
             android:text="Pris"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@color/primaryTextColor"
-            android:textSize="12sp"
+            android:textSize="14sp"
             tool:layout_constraintBottom_toTopOf="@+id/product_taste"
             tool:layout_constraintStart_toStartOf="parent"
             tool:layout_constraintTop_toBottomOf="@+id/product_name"
@@ -74,7 +74,7 @@
             android:layout_margin="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="16dp"
             android:text="Land"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@color/primaryTextColor"
@@ -96,14 +96,21 @@
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintStart_toStartOf="parent" />
 
+
         <ImageButton
             android:id="@+id/removeFromListBtn"
             style="@android:style/Widget.Holo.ImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:background="@color/common_google_signin_btn_text_light_disabled"
+            android:elevation="0dp"
+            android:scaleType="fitCenter"
+            android:tint="@color/primaryTextColor"
             tool:layout_constraintEnd_toEndOf="parent"
-            tool:srcCompat="@android:drawable/btn_dialog" />
+            tool:layout_constraintTop_toTopOf="parent"
+            tool:srcCompat="@drawable/remove2" />
 
     </android.support.constraint.ConstraintLayout>
 
