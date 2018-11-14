@@ -72,7 +72,6 @@ public class UserListActivity extends AppCompatActivity {
                                 }
                                 UserList newList = new UserList();
                                 newList.setNavn(editText.getText().toString());
-
                                 userListRef.push().setValue(newList);
 
                                 Log.d(TAG, "List created ");
@@ -102,6 +101,8 @@ public class UserListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userLists.clear();
+                findViewById(R.id.progressBar).setVisibility(View.GONE);
+
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     UserList list = child.getValue(UserList.class);
                     list.setId(child.getKey());

@@ -261,6 +261,7 @@ public class SingleProductActivity extends AppCompatActivity {
                                     return;
                                 }
                             } else {
+                                Log.d(TAG, "this far: " + products);
                                 products.add(productID + "");
                                 userLists.get(which).setProducts(products);
                             }
