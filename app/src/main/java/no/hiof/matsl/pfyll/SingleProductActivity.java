@@ -103,7 +103,6 @@ public class SingleProductActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_product);
-        Log.d(TAG, "ID " + productID);
 
 
         //Populating text fields and other
@@ -131,21 +130,19 @@ public class SingleProductActivity extends AppCompatActivity {
         pieChartTannin = findViewById(R.id.pieChartTannin);
         pieChartBitterness = findViewById(R.id.pieChartBitterness);
 
+        Intent intent = getIntent();
+        productID = intent.getIntExtra("ProductID", -1);
+        productsRef = database.getReference("Products/" + productID);
+
         if (productID == -1) {
             Toast toast = Toast.makeText(SingleProductActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
             toast.show();
             onBackPressed();
         }
 
-        Intent intent = getIntent();
-        productID = intent.getIntExtra("ProductID", -1);
-        productsRef = database.getReference("Products/" + productID);
-        //ref for all reviews
 
         //getting product and list data from firebase
         getData();
-
-
 
         if (user != null){
             userListRef = database.getReference("users/" + user.getUid() + "/userLists");
@@ -175,7 +172,7 @@ public class SingleProductActivity extends AppCompatActivity {
         else
             recentProducts = cacheHandler.getRecentProducts();
 
-        if (recentProducts.size() >= 24)
+        if (recentProducts.size() >= 10)
             recentProducts.remove(0);
 
         if (recentProducts.contains(productID+""))
@@ -184,21 +181,17 @@ public class SingleProductActivity extends AppCompatActivity {
         recentProducts.add(productID+"");
         cacheHandler.setRecentProducts(recentProducts);
 
-        Log.d(TAG, "recents: " + cacheHandler.getRecentProducts());
-
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Log.d(TAG, "onRestoreInstanceState");
         productID = savedInstanceState.getInt("productID");
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(TAG, "onSaveInstanceState");
         outState.putInt("productID", productID);
     }
 
@@ -207,12 +200,10 @@ public class SingleProductActivity extends AppCompatActivity {
         ChildEventListener userListListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
                 UserList list = dataSnapshot.getValue(UserList.class);
                 list.setId(dataSnapshot.getKey());
                 userLists.add(list);
                 options.add(list.getNavn());
-                Log.d(TAG, "List added to dialog " + options);
             }
 
             @Override
@@ -270,7 +261,6 @@ public class SingleProductActivity extends AppCompatActivity {
                             userListRef.child(userLists.get(which).getId()).child("products").setValue(userLists.get(which).getProducts());
                             Toast toast = Toast.makeText(SingleProductActivity.this, String.format("%s %s!", getString(R.string.add_success), userLists.get(which).getNavn()), Toast.LENGTH_SHORT);
                             toast.show();
-                            Log.d(TAG, "Products in list: " + userLists.get(which).getProducts());
                         }
                     });
                     builder.show();
@@ -285,7 +275,6 @@ public class SingleProductActivity extends AppCompatActivity {
         ChildEventListener userReviewListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
                 reviewedProducts.add(dataSnapshot.getValue()+"");
             }
 
@@ -384,8 +373,6 @@ public class SingleProductActivity extends AppCompatActivity {
                     if (document.exists()) {
                         findViewById(R.id.loadOverlay).setVisibility(View.GONE);
                         product = createProductObject(document);
-
-                        Log.d(TAG, "Product name: " + product.getVarenavn());
 
                         if (product == null){
                             Toast toast = Toast.makeText(SingleProductActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);

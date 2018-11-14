@@ -81,9 +81,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             preSetProducts = arguments.getStringArrayList("preSetProducts");
         }
 
-
         return new ViewHolder(view);
-
     }
 
     @Override
@@ -109,7 +107,6 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
                         toast.show();
                         notifyItemRemoved(position);
                     }
-
                 }
             });
         }

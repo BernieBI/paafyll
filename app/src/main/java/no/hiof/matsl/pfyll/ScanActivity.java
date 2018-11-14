@@ -60,6 +60,7 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
                 zXingScannerView.startCamera();
 
             } else {
+                onBackPressed();
             }
         }
     }
@@ -72,35 +73,49 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void handleResult(Result result) {
-        Log.d(TAG, "handleresult");
+
+        Log.d(TAG, "handleResult: " + result.getBarcodeFormat());
+        if (result.getBarcodeFormat().toString() != "EAN_13"){
+            Toast toast = Toast.makeText(ScanActivity.this, "Feil type strekkode", Toast.LENGTH_LONG);
+            toast.show();
+            zXingScannerView.resumeCameraPreview(this);
+            return;
+        }
         zXingScannerView.stopCamera();
         ProgressBar progressBar = new ProgressBar(this);
         zXingScannerView.addView(progressBar);
+        Toast toast = Toast.makeText(ScanActivity.this, "Søker etter produkt", Toast.LENGTH_LONG);
+        toast.show();
         Query query = db.collection("Produkter").limit(1).whereEqualTo("HovedGTIN", Long.parseLong(result.getText()));
         query.get()
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-
-                            Toast toast = Toast.makeText(ScanActivity.this, "Henter produktet", Toast.LENGTH_SHORT);
-                            toast.show();
-
-                            Intent singleProductIntent = new Intent(ScanActivity.this, SingleProductActivity.class);
-                            singleProductIntent.putExtra("ProductID", Integer.parseInt(document.getId()));
-                            startActivity(singleProductIntent);
-                            onBackPressed();
-                        }
-                    } else {
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: " + task.getResult().size());
+                    if (task.getResult().size() == 0){
                         Toast toast = Toast.makeText(ScanActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
                         toast.show();
                         onBackPressed();
                     }
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+
+                        Toast toast = Toast.makeText(ScanActivity.this, "Henter produktet", Toast.LENGTH_SHORT);
+                        toast.show();
+
+                        Intent singleProductIntent = new Intent(ScanActivity.this, SingleProductActivity.class);
+                        singleProductIntent.putExtra("ProductID", Integer.parseInt(document.getId()));
+                        startActivity(singleProductIntent);
+                        onBackPressed();
+                    }
+                } else {
+                    Toast toast = Toast.makeText(ScanActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
+                    toast.show();
+                    onBackPressed();
                 }
-            });
-
-
+            }
+        });
     }
+
 
 }

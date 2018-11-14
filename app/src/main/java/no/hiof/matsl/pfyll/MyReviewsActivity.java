@@ -1,16 +1,13 @@
-package no.hiof.matsl.pfyll.model;
+package no.hiof.matsl.pfyll;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,11 +21,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import no.hiof.matsl.pfyll.R;
-import no.hiof.matsl.pfyll.RecentProductsActivity;
 import no.hiof.matsl.pfyll.adapter.ReviewRecycleViewAdapter;
+import no.hiof.matsl.pfyll.model.Review;
 
-public class FragmentMyActivity extends Fragment {
+public class MyReviewsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ReviewRecycleViewAdapter reviewAdapter;
     private GridLayoutManager gridLayoutManager;
@@ -47,43 +43,21 @@ public class FragmentMyActivity extends Fragment {
     View view;
     String TAG = "MyActivityFragment";
 
-    public FragmentMyActivity(){
-
-    }
-
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_myactivity,container,false);
-        Log.d(TAG, "onCreate: Started ");
-        recyclerView = view.findViewById(R.id.review_recycler_view);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my_reviews);
+
+        recyclerView = findViewById(R.id.review_recycler_view);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-
-        Button recentProductBtn = view.findViewById(R.id.recentProductsButton);
-        recentProductBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), RecentProductsActivity.class);
-                startActivity(intent);
-            }
-        });
-        Button logOutButton = view.findViewById(R.id.logOutButton);
-        logOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              auth.signOut();
-              getActivity().finish();
-              getActivity().startActivity(getActivity().getIntent());
-            }
-        });
 
         userReviewRef = database.getReference("users/" + user.getUid() + "/reviews");
         reviewRef = database.getReference("userReviews");
 
 
-        reviewAdapter = new ReviewRecycleViewAdapter(getActivity(), userReviews);
-        gridLayoutManager = new GridLayoutManager(getActivity(), 1);
+        reviewAdapter = new ReviewRecycleViewAdapter(MyReviewsActivity.this, userReviews);
+        gridLayoutManager = new GridLayoutManager(MyReviewsActivity.this, 1);
 
         createReviewListener();
         //Henter alle produktid'er fra brukeren
@@ -92,9 +66,15 @@ public class FragmentMyActivity extends Fragment {
             passReviews();
 
 
-        return view;
+
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        reviewAdapter.notifyDataSetChanged();
+    }
     private void createReviewListener() {
         reviewListener = new ValueEventListener() {
             @Override
@@ -102,7 +82,7 @@ public class FragmentMyActivity extends Fragment {
 
                 current_review = dataSnapshot.getValue(Review.class);
                 userReviews.add(current_review);
-                reviewAdapter.notifyItemInserted(0);
+                reviewAdapter.notifyItemInserted(userReviews.size()-1);
                 Log.d(TAG, "Review: " + current_review.getReviewText());
             }
             @Override
@@ -149,43 +129,9 @@ public class FragmentMyActivity extends Fragment {
         };
         userReviewRef.addChildEventListener(userReviewListener);
     }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume");
-        reviewAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onstop");
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-
     public void passReviews(){
         recyclerView.setAdapter(reviewAdapter);
         recyclerView.setLayoutManager(gridLayoutManager);
         reviewAdapter.notifyDataSetChanged();
     }
-
 }

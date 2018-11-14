@@ -53,7 +53,8 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         final UserList current_list = lists.get(position);
-
+        if (current_list == null)
+            return;
         holder.listName.setText(current_list.getNavn());
 
         holder.listCount.setText( (current_list.getProducts() == null ? "0" : current_list.getProducts().size() + "" )  );

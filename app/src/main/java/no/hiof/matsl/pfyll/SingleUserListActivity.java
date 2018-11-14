@@ -51,43 +51,8 @@ public class SingleUserListActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        //listID = savedInstanceState.getString("userListId");
         Intent intent = getIntent();
         listID = intent.getStringExtra("UserListId");
-        Log.d(TAG, "onRestoreInstanceState: ");
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.d(TAG, "savedInstanceState: " + listID);
-        outState.putString("userListId", listID);
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume");
-        GetData();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onstop");
     }
 
     private void GetData() {
@@ -96,14 +61,20 @@ public class SingleUserListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 userList = dataSnapshot.getValue(UserList.class);
+
                 if (userList == null)
                     return;
+
                 listName = findViewById(R.id.listName);
                 listName.setText(userList.getNavn());
-                if (userList.getProducts() != null) {
-                    StartFragment();
-                }else
+
+                if (userList.getProducts() == null) {
                     findViewById(R.id.emptyText).setVisibility(View.VISIBLE);
+                    return;
+                }
+
+                startFragment();
+
 
             }
 
@@ -116,22 +87,23 @@ public class SingleUserListActivity extends AppCompatActivity {
 
     }
 
-    private void StartFragment(){
-        Log.d(TAG, "Fragment recreated: " + userList.getNavn());
+    private void startFragment(){
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         // set Fragmentclass Arguments
+        if (userList.getProducts() == null)
+            return;
+
         FragmentProducts fragment = newInstance(userList.getProducts());
         fragmentTransaction.add(R.id.parent, fragment);
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
 
 
     }
     public static FragmentProducts newInstance(ArrayList<String> productList) {
         FragmentProducts fragment = new FragmentProducts();
-
         Bundle args = new Bundle();
         args.putStringArrayList("preSetProducts", productList );
         args.putString("userListId", listID);
