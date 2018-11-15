@@ -62,6 +62,7 @@ public class MyReviewsActivity extends AppCompatActivity {
         createReviewListener();
         //Henter alle produktid'er fra brukeren
         getReviewedProducts();
+
         if (userReviews.size() > 0) {
             passReviews();
         }
@@ -80,7 +81,9 @@ public class MyReviewsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 current_review = dataSnapshot.getValue(Review.class);
+                current_review.setId(dataSnapshot.getKey());
                 userReviews.add(current_review);
+                current_review.setProductId(reviewedProducts.get(userReviews.size()-1));
                 reviewAdapter.notifyItemInserted(userReviews.size()-1);
                 Log.d(TAG, "Review: " + current_review.getReviewText());
 
