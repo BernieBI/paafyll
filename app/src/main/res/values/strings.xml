@@ -44,7 +44,12 @@
     <string name="scan_for_product">Skann strekkode</string>
     <string name="login_info">Logg inn for å få tilgang til en masse kule funksjoner!</string>
     <string name="yes_please">Ja takk</string>
-    <string name="recent_products">Nylig viste produkter</string>
+    <string name="hello">Hei</string>
+    <string name="my_account_message">Her finnner du lister du har opprettet, produktene du har sett på sist og alle anmeldelsene dine.</string>
+    <string name="history">Historikk</string>
+    <string name="lists">Lister</string>
+    <string name="reviews">Anmeldelser</string>
+    <string name="logout">Logg ut</string>
     <!-- UserLists -->
     <string name="selectList">Legg til i liste</string>
     <string name="already_exists">Produktet er allerede i</string>

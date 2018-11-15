@@ -33,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+         setContentView(R.layout.activity_main);
+
         CreateLayout();
 
     }
@@ -75,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 user = FirebaseAuth.getInstance().getCurrentUser();
-                users.child(user.getUid()).child("Name").setValue(user.getDisplayName());
-                users.child(user.getUid()).child("Email").setValue(user.getEmail());
                 finish();
                 startActivity(getIntent());
 

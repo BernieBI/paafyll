@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,8 +46,13 @@ public class FragmentMyAccount extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_myaccount,container,false);
         Log.d(TAG, "onCreate: Started ");
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        TextView welcome = view.findViewById(R.id.welcomeField);
+        welcome.setText(String.format("%s, %s", getString(R.string.hello),user.getDisplayName()));
 
         buttons();
+
         return view;
     }
 

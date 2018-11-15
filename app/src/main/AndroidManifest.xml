@@ -14,7 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".Splashscreen" android:theme="@style/SplashScreenTheme">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,8 +27,9 @@
         <activity android:name=".SingleUserListActivity" />
         <activity android:name=".ScanActivity" />
         <activity android:name=".MyReviewsActivity" />
-        <activity android:name=".UserListActivity"></activity>
-        <activity android:name=".RecentProductsActivity"></activity>
+        <activity android:name=".UserListActivity" />
+        <activity android:name=".RecentProductsActivity" />
+        <activity android:name=".MainActivity"></activity>
     </application>
 
 </manifest>
