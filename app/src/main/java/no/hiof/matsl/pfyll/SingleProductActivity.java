@@ -172,7 +172,7 @@ public class SingleProductActivity extends AppCompatActivity {
         else
             recentProducts = cacheHandler.getRecentProducts();
 
-        if (recentProducts.size() >= 10)
+        if (recentProducts.size() >= 20)
             recentProducts.remove(0);
 
         if (recentProducts.contains(productID+""))

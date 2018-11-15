@@ -16,4 +16,10 @@
         <item name="colorControlNormal">@color/primaryLightColor</item>
         <item name="colorControlActivated">@color/gold</item>
     </style>
+
+    <!--Style for Splash Screen-->
+    <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name ="android:windowBackground"> @drawable/splashscreen_background</item>
+    </style>
+
 </resources>

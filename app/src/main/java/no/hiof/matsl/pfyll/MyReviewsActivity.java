@@ -62,10 +62,9 @@ public class MyReviewsActivity extends AppCompatActivity {
         createReviewListener();
         //Henter alle produktid'er fra brukeren
         getReviewedProducts();
-        if (userReviews.size() > 0)
+        if (userReviews.size() > 0) {
             passReviews();
-
-
+        }
 
     }
 
@@ -84,6 +83,7 @@ public class MyReviewsActivity extends AppCompatActivity {
                 userReviews.add(current_review);
                 reviewAdapter.notifyItemInserted(userReviews.size()-1);
                 Log.d(TAG, "Review: " + current_review.getReviewText());
+
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -103,6 +103,10 @@ public class MyReviewsActivity extends AppCompatActivity {
                     //Hvis den ikke finnes fra før så henter vi en ny
                     reviewRef.child(dataSnapshot.getValue() + "").child(user.getUid()).addListenerForSingleValueEvent(reviewListener);
                     reviewedProducts.add(dataSnapshot.getValue() + "");
+                }
+                findViewById(R.id.progressBar).setVisibility(View.GONE);
+                if (reviewedProducts.size() == 0){
+                    findViewById(R.id.emptyMessage).setVisibility(View.VISIBLE);
                 }
                 passReviews();
             }
