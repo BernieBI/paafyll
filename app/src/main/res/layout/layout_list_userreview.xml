@@ -71,25 +71,23 @@
             tool:layout_constraintStart_toEndOf="@+id/productImage"
             tool:layout_constraintTop_toBottomOf="@+id/productName" />
 
-        <RatingBar
+        <RatingBar xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tool="http://schemas.android.com/apk/res-auto"
             android:id="@+id/productRatingBar"
-            style="@style/-"
-            android:layout_width="220dp"
+            android:layout_width="184dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:gravity="center"
-            android:isIndicator="true"
+            android:isIndicator="false"
             android:numStars="5"
             android:progressDrawable="@drawable/bottle_ratingbar"
-            android:rating="2"
+            android:rating="0"
             android:scaleType="fitCenter"
-            android:stepSize="0.1"
+            android:stepSize="1"
             tool:layout_constraintBottom_toBottomOf="parent"
-            tool:layout_constraintEnd_toEndOf="parent"
-            tool:layout_constraintHorizontal_bias="1.0"
             tool:layout_constraintStart_toEndOf="@+id/productImage" />
+
 
     </android.support.constraint.ConstraintLayout>
 
