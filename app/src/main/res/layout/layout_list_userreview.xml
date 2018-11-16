@@ -50,7 +50,7 @@
         <ImageView
             android:id="@+id/productImage"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:adjustViewBounds="true"
             android:background="@color/white"
             android:contentDescription="@string/product_image"
@@ -78,14 +78,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:gravity="center"
-            android:isIndicator="false"
+            android:isIndicator="true"
             android:numStars="5"
             android:progressDrawable="@drawable/bottle_ratingbar"
             android:rating="0"
             android:scaleType="fitCenter"
             android:stepSize="1"
             tool:layout_constraintBottom_toBottomOf="parent"
+            tool:layout_constraintEnd_toEndOf="parent"
+            tool:layout_constraintHorizontal_bias="0.0"
             tool:layout_constraintStart_toEndOf="@+id/productImage" />
 
 
