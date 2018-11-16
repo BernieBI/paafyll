@@ -290,10 +290,10 @@ public class SingleProductActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Review> productReviews = new ArrayList<>();
+                commentswrapper.removeAllViews();
                 for (DataSnapshot reviewSnapShot: dataSnapshot.getChildren()) {
                     if (reviewSnapShot.exists())
                         productReviews.add( reviewSnapShot.getValue(Review.class));
-
                 }
                 if (productReviews.size() > 0){
 
