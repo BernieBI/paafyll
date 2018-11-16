@@ -82,7 +82,6 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
                                 .asBitmap()
                                 .load(product.getBildeUrl())
                                 .into(holder.productImage);
-                        Log.d(TAG, "review: " + product.getVarenavn() + " "+ current_review.getReviewValue());
 
                         holder.productName.setText(product.getVarenavn());
                         holder.reviewText.setText(current_review.getReviewText());
@@ -96,8 +95,10 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
                                         .setPositiveButton("Slett", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
+
                                                 DatabaseReference allReviewsRef = firebase.getReference("userReviews/" + product.getId() +"/"+ user.getUid() );
                                                 DatabaseReference userReviewRef = firebase.getReference("users/" + user.getUid() + "/reviews/" + current_review.getUserReviewId());
+                                                Log.d(TAG, "user level"+userReviewRef + " all: " + allReviewsRef );
                                                 allReviewsRef.removeValue();
                                                 userReviewRef.removeValue();
                                                 notifyItemRemoved(position);
