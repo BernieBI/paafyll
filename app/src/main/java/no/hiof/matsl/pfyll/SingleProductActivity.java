@@ -13,14 +13,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -76,13 +81,15 @@ public class SingleProductActivity extends AppCompatActivity {
     private DatabaseReference userListRef;
     private DatabaseReference userReviewRef;
     private DatabaseReference reviewRef;
-    private ArrayList<String> reviewedProducts;
+    private ArrayList<String> reviewedProducts = new ArrayList<>();
 
     //views
     private LinearLayout productDetails1, productDetails2, productDetails3;
-    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead;
+    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead, reviewCount;
     private ImageView productImage, drinkWith1, drinkWith2, drinkWith3;
     private Button reviewButton;
+    private RatingBar ratingBar;
+    private LinearLayout commentswrapper;
     FloatingActionButton addToListBtn;
 
     //PieCharts
@@ -117,9 +124,11 @@ public class SingleProductActivity extends AppCompatActivity {
         productDetails2 = findViewById(R.id.productDetails2);
         productDetails3 = findViewById(R.id.productDetails3);
         addToListBtn = findViewById(R.id.addToListButton);
-
+        ratingBar = findViewById(R.id.productRatingBar);
+        ratingBar.setRating(0);
+        commentswrapper = findViewById(R.id.reviewComments);
+        reviewCount = findViewById(R.id.reviewCount);
         productImage = findViewById(R.id.productImage);
-        drinkWithhead = findViewById(R.id.drinkWith);
         drinkWith1 = findViewById(R.id.drinkWith1);
         drinkWith2 = findViewById(R.id.drinkWith2);
         drinkWith3 = findViewById(R.id.drinkWith3);
@@ -142,7 +151,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
 
         //getting product and list data from firebase
-        getData();
+        getProductData();
 
         if (user != null){
             userListRef = database.getReference("users/" + user.getUid() + "/userLists");
@@ -271,99 +280,121 @@ public class SingleProductActivity extends AppCompatActivity {
 
     }
     private void getUserReviews() {
-        reviewedProducts = new ArrayList<>();
-        ChildEventListener userReviewListener = new ChildEventListener() {
+
+        reviewRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                reviewedProducts.add(dataSnapshot.getValue()+"");
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Review> productReviews = new ArrayList<>();
+                for (DataSnapshot reviewSnapShot: dataSnapshot.getChildren()) {
+                    if (reviewSnapShot.exists())
+                        productReviews.add( reviewSnapShot.getValue(Review.class));
+
+                }
+                if (productReviews.size() > 0){
+
+
+                    float total = 0;
+                    for (Review review : productReviews){
+                        total += review.getReviewValue();
+                        createTextView(commentswrapper, review.getReviewText(), review.getUser(), true);
+                    }
+                    ratingBar.setRating(total / productReviews.size());
+                    reviewCount.setText(String.format("(%s) basert på %s anmeldelser ", Math.round(total / productReviews.size()), productReviews.size()));
+                    commentswrapper.setVisibility(View.VISIBLE);
+                    findViewById(R.id.reviewsHeader).setVisibility(View.VISIBLE);
+                }else{
+                    commentswrapper.setVisibility(View.GONE);
+                    findViewById(R.id.reviewsHeader).setVisibility(View.GONE);
+                    reviewCount.setText(getString(R.string.no_reviews));
+                }
             }
 
             @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        userReviewRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                reviewedProducts.add(dataSnapshot.getValue() + "");
+            }
+            @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
 
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "postComments:onCancelled", databaseError.toException());
-            }
-        };
-        userReviewRef.addChildEventListener(userReviewListener);
-
-    }
-
-    public void submitReview(){
-        reviewButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
-                builder.setTitle("Gi din anbefaling");
-                LinearLayout layout = new LinearLayout(SingleProductActivity.this);
-                layout.setOrientation(LinearLayout.VERTICAL);
-
-                final RatingBar ratingBar = new RatingBar(SingleProductActivity.this);
-                ratingBar.setNumStars(5);
-                ratingBar.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-                layout.addView(ratingBar);
-
-                final EditText input = new EditText(SingleProductActivity.this);
-                input.setInputType(InputType.TYPE_CLASS_TEXT );
-                layout.addView(input);
-                builder.setView(layout);
-
-
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        reviewText = input.getText().toString();
-                        reviewValue = ratingBar.getRating();
-
-                        String username = "ukjent";
-                        if (user.getDisplayName()!= null)
-                            username = user.getDisplayName();
-
-                        Review review = new Review(reviewText,reviewValue, username);
-                        if (!reviewedProducts.contains(productID+"")){
-                            reviewedProducts.add(productID+"");
-                            reviewRef.child(user.getUid()).setValue(review);
-                            userReviewRef.setValue(reviewedProducts);
-                            Toast toast = Toast.makeText(SingleProductActivity.this,  getString(R.string.review_success), Toast.LENGTH_LONG);
-                            toast.show();
-
-                        }else{
-                            Toast toast = Toast.makeText(SingleProductActivity.this,  getString(R.string.already_reviewed), Toast.LENGTH_LONG);
-                            toast.show();
-                        }
-
-
-                    }
-                });
-                builder.setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-
             }
         });
     }
 
-    private void getData(){
+    public void submitReview(){
+
+
+
+        reviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (reviewedProducts.contains(productID+"")) {
+                        Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.already_reviewed), Toast.LENGTH_LONG);
+                        toast.show();
+
+                }else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
+                    builder.setTitle("Fortell hva du synes!");
+                    LinearLayout layout = new LinearLayout(SingleProductActivity.this);
+                    layout.setOrientation(LinearLayout.VERTICAL);
+
+                    final EditText input = new EditText(SingleProductActivity.this);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    layout.addView(input);
+                    builder.setView(layout);
+
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            reviewText = input.getText().toString();
+                            reviewValue = ratingBar.getRating();
+
+                            String username = "ukjent";
+                            if (user.getDisplayName() != null)
+                                username = user.getDisplayName();
+
+                            Review review = new Review(reviewText, reviewValue, username);
+
+                            reviewedProducts.add(productID + "");
+                            reviewRef.child(user.getUid()).setValue(review);
+                            userReviewRef.setValue(reviewedProducts);
+                            Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.review_success), Toast.LENGTH_LONG);
+                            toast.show();
+
+
+                        }
+                    });
+                    builder.setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                }
+            }
+        });
+    }
+
+    private void getProductData(){
         final DocumentReference productDoc = productRef.document(productID+"");
         productDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -372,7 +403,8 @@ public class SingleProductActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         findViewById(R.id.loadOverlay).setVisibility(View.GONE);
-                        product = createProductObject(document);
+
+                        product = new Product().documentToProduct(document);
 
                         if (product == null){
                             Toast toast = Toast.makeText(SingleProductActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
@@ -403,23 +435,23 @@ public class SingleProductActivity extends AppCompatActivity {
                         productVolume.setText(String.format( "%s %s", product.getVolum(), getString(R.string.centiLiter) ));
 
                         //Adding info related to product contents
-                        createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
-                        createTextView(productDetails1, product.getArgang() , getString(R.string.product_year));
-                        createTextView(productDetails1, product.getLagringsgrad(), getString(R.string.product_storage));
-                        createTextView(productDetails1, product.getFarge(), getString(R.string.product_color));
-                        createTextView(productDetails1, product.getLukt(), getString(R.string.product_smell));
-                        createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock));
+                        createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol), false);
+                        createTextView(productDetails1, product.getArgang() , getString(R.string.product_year),false);
+                        createTextView(productDetails1, product.getLagringsgrad(), getString(R.string.product_storage),false);
+                        createTextView(productDetails1, product.getFarge(), getString(R.string.product_color),false);
+                        createTextView(productDetails1, product.getLukt(), getString(R.string.product_smell),false);
+                        createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock),false);
 
                         //Adding info related to product production
-                        createTextView(productDetails2, product.getProdusent(), getString(R.string.product_producer));
-                        createTextView(productDetails2, product.getMetode(), getString(R.string.product_method));
-                        createTextView(productDetails2, product.getLand() , getString(R.string.product_country));
-                        createTextView(productDetails2, String.format("%s, %s",product.getDistrikt(), product.getUnderdistrikt()) , getString(R.string.product_district));
+                        createTextView(productDetails2, product.getProdusent(), getString(R.string.product_producer),false);
+                        createTextView(productDetails2, product.getMetode(), getString(R.string.product_method),false);
+                        createTextView(productDetails2, product.getLand() , getString(R.string.product_country),false);
+                        createTextView(productDetails2, String.format("%s, %s",product.getDistrikt(), product.getUnderdistrikt()) , getString(R.string.product_district),false);
 
                         //Other info
-                        createTextView(productDetails3, product.getEmballasjetype() , getString(R.string.product_packaging));
-                        createTextView(productDetails3, product.getButikkategori() , getString(R.string.product_category));
-                        createTextView(productDetails3, product.getGrossist() , getString(R.string.product_wholesaler));
+                        createTextView(productDetails3, product.getEmballasjetype() , getString(R.string.product_packaging),false);
+                        createTextView(productDetails3, product.getButikkategori() , getString(R.string.product_category),false);
+                        createTextView(productDetails3, product.getGrossist() , getString(R.string.product_wholesaler),false);
 
                         setDrinkWiths(drinkWith1, product.getPassertil01());
                         setDrinkWiths(drinkWith2, product.getPassertil02());
@@ -442,6 +474,7 @@ public class SingleProductActivity extends AppCompatActivity {
                                 Intent browserIntent = new Intent(Intent.ACTION_VIEW,
                                         Uri.parse(product.getVareurl()));
                                 startActivity(browserIntent);
+
                             }
                         });
 
@@ -457,7 +490,7 @@ public class SingleProductActivity extends AppCompatActivity {
     }
 
     //pass header text as "" if not to use
-    public void createTextView(LinearLayout parent, String text, String headerText){
+    public void createTextView(LinearLayout parent, String text, String headerText, Boolean isComment){
         if (text.equals("") || text.equals(null) || text.contains("Øvrige"))
              return;
 
@@ -471,11 +504,16 @@ public class SingleProductActivity extends AppCompatActivity {
         headerTextView.setText(String.format("%s: ",headerText));
         headerTextView.setTypeface(null, Typeface.BOLD);
 
+
         listElement.addView(headerTextView);
 
         TextView textView = new TextView(this);
         textView.setText(text);
         listElement.addView(textView);
+        if(isComment){
+            headerTextView.setTextSize(20);
+            headerTextView.setTextSize(20);
+        }
     }
 
     public void setDrinkWiths(ImageView view, String value) {
@@ -559,59 +597,4 @@ public class SingleProductActivity extends AppCompatActivity {
         pieView.start();
     }
 
-    private Product createProductObject (DocumentSnapshot doc) {
-        Product product = new Product(
-                Integer.parseInt(doc.getId()),
-                stringify(doc.get("Alkohol")),
-                stringify(doc.get("Argang")),
-                stringify(doc.get("Biodynamisk")),
-                stringify(doc.get("Bitterhet")),
-                stringify(doc.get("Butikkategori")),
-                stringify(doc.get("Datotid")),
-                stringify(doc.get("Distributor")),
-                stringify(doc.get("Distrikt")),
-                stringify(doc.get("Emballasjetype")),
-                stringify(doc.get("Fairtrade")),
-                stringify(doc.get("Farge")),
-                stringify(doc.get("Friskhet")),
-                stringify(doc.get("Fylde")),
-                stringify(doc.get("Garvestoffer")),
-                stringify(doc.get("Gluten_lav_pa")),
-                stringify(doc.get("Grossist")),
-                stringify(doc.get("Korktype")),
-                stringify(doc.get("Kosher")),
-                stringify(doc.get("Lagringsgrad")),
-                stringify(doc.get("Land")),
-                stringify(doc.get("Literpris")),
-                stringify(doc.get("Lukt")),
-                stringify(doc.get("Metode")),
-                stringify(doc.get("Miljosmart_emballasje")),
-                stringify(doc.get("Okologisk")),
-                stringify(doc.get("Passertil01")),
-                stringify(doc.get("Passertil02")),
-                stringify(doc.get("Passertil03")),
-                stringify(doc.get("Pris")),
-                stringify(doc.get("Produktutvalg")),
-                stringify(doc.get("Produsent")),
-                stringify(doc.get("Rastoff")),
-                stringify(doc.get("Smak")),
-                stringify(doc.get("Sodme")),
-                stringify(doc.get("Sukker")),
-                stringify(doc.get("Syre")),
-                stringify(doc.get("Underdistrikt")),
-                stringify(doc.get("Varenavn")),
-                stringify(doc.get("Varenummer")),
-                stringify(doc.get("Varetype")),
-                stringify(doc.get("Vareurl")),
-                stringify(doc.get("Volum")),
-                stringify(doc.get("HovedGTIN"))
-        );
-        product.setBildeUrl(product.getVarenummer());
-        return product;
-    }
-    private String stringify(Object object) {
-        return (object == null)
-                ? ""
-                : object.toString();
-    }
 }

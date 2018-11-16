@@ -36,7 +36,6 @@
     <string name="product_enviromentalPackage">Miljosmart emballasje</string>
     <string name="product_Organic">Økologisk</string>
     <string name="product_webBtn">Se i nettbutikk</string>
-    <string name="product_reviewBtn">Anmeld produktet</string>
 
     <!-- other -->
     <string name="centiLiter">Cl</string>
@@ -62,9 +61,12 @@
     <string name="empty_list_message">Her var det tomt, gitt..</string>
     <string name="add_lists">Legg til lister ved å trykke på knappen nede i hjørnet</string>
     <!--Reviews-->
+    <string name="product_reviewBtn">Anmeld</string>
     <string name="confirm_delete_review">Er du sikker på at du vil slette denne anmeldelsen?</string>
     <string name="already_reviewed">Du har allerede anmeldt dette produktet</string>
     <string name="review_success">Din anmeldelse er registrert!</string>
+    <string name="show_reviews">Vis kommentarer</string>
+    <string name="no_reviews">Ingen anmeldelser</string>
     <string-array name="nonDrinkables">
         <item>Gaveesker</item>
         <item>Gaveposer</item>

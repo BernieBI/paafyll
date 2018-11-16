@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 user = FirebaseAuth.getInstance().getCurrentUser();
+                users.child(user.getUid()).child("Name").setValue(user.getDisplayName());
                 finish();
                 startActivity(getIntent());
 

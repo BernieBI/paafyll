@@ -6,16 +6,24 @@ public class Review {
     private float reviewValue;
     private String user;
     private String Id;
+    private String productId;
 
     public Review(){}
-
-
 
     public Review(String reviewText, float reviewValue, String user) {
         this.reviewText = reviewText;
         this.reviewValue = reviewValue;
         this.user = user;
     }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
     public String getUser() {
         return user;
     }
