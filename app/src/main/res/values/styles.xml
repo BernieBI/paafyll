@@ -22,4 +22,18 @@
         <item name ="android:windowBackground"> @drawable/splashscreen_background</item>
     </style>
 
+    <style name="ratingBarTheme" parent="android:style/Widget.Material.RatingBar">
+        <item name="android:layout_width">160dp</item>
+        <item name="android:stepSize">1</item>
+        <item name="android:numStars">5</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:progressDrawable">@drawable/bottle_ratingbar_large</item>
+    </style>
+    <style name="ratingBarThemeSmall" parent="android:style/Widget.Material.RatingBar">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:stepSize">1</item>
+        <item name="android:numStars">5</item>
+        <item name="android:progressDrawable">@drawable/bottle_ratingbar_small</item>
+    </style>
 </resources>

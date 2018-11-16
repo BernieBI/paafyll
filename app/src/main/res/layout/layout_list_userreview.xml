@@ -11,7 +11,7 @@
     android:layout_marginTop="5dp"
     android:layout_marginRight="5dp"
     android:layout_marginBottom="5dp"
-    android:background="@color/secondaryLightColor"
+    android:background="@color/primaryColor"
     android:elevation="5dp"
     android:orientation="vertical"
     android:padding="0dp">
@@ -27,11 +27,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:textAlignment="textStart"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/primaryTextColor"
             android:textSize="18sp"
+            tool:layout_constraintEnd_toStartOf="@+id/removeReviewBtn"
+            tool:layout_constraintHorizontal_bias="0.0"
             tool:layout_constraintStart_toEndOf="@+id/productImage"
             tool:layout_constraintTop_toTopOf="parent" />
 
@@ -42,15 +45,15 @@
             android:layout_height="30dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/brightOverlay"
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintTop_toTopOf="parent"
             tool:srcCompat="@drawable/remove" />
 
         <ImageView
             android:id="@+id/productImage"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
             android:adjustViewBounds="true"
             android:background="@color/white"
             android:contentDescription="@string/product_image"
@@ -64,32 +67,31 @@
 
         <TextView
             android:id="@+id/reviewText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginTop="8dp"
+            android:background="@color/secondaryLightColor"
+            android:padding="8dp"
+            tool:layout_constraintBottom_toBottomOf="parent"
+            tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintStart_toEndOf="@+id/productImage"
-            tool:layout_constraintTop_toBottomOf="@+id/productName" />
+            tool:layout_constraintTop_toBottomOf="@+id/productRatingBar" />
 
         <RatingBar xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tool="http://schemas.android.com/apk/res-auto"
             android:id="@+id/productRatingBar"
-            android:layout_width="184dp"
-            android:layout_height="wrap_content"
+            style="@style/ratingBarThemeSmall"
             android:layout_gravity="center"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="center"
             android:isIndicator="true"
-            android:numStars="5"
-            android:progressDrawable="@drawable/bottle_ratingbar"
-            android:rating="0"
             android:scaleType="fitCenter"
-            android:stepSize="1"
-            tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintHorizontal_bias="0.0"
-            tool:layout_constraintStart_toEndOf="@+id/productImage" />
+            tool:layout_constraintStart_toEndOf="@+id/productImage"
+            tool:layout_constraintTop_toBottomOf="@+id/productName" />
 
 
     </android.support.constraint.ConstraintLayout>

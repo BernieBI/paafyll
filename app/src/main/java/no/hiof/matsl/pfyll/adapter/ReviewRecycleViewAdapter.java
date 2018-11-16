@@ -4,6 +4,7 @@ package no.hiof.matsl.pfyll.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import no.hiof.matsl.pfyll.R;
+import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.model.Product;
 import no.hiof.matsl.pfyll.model.Review;
 
@@ -42,6 +45,9 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
     private LayoutInflater inflater;
     private Context context;
     private FirebaseFirestore database = FirebaseFirestore.getInstance();
+    private FirebaseDatabase firebase = FirebaseDatabase.getInstance();
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
     public ReviewRecycleViewAdapter(Context context, ArrayList<Review> reviews) {
         this.reviews = reviews;
         this.context = context;
@@ -62,7 +68,6 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Review current_review = reviews.get(position);
 
-
         DocumentReference docRef = database.collection("Produkter").document(current_review.getProductId());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -71,16 +76,18 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
 
-                        Product product = new Product().documentToProduct(document);
+                        final Product product = new Product().documentToProduct(document);
 
                         Glide.with(context)
                                 .asBitmap()
                                 .load(product.getBildeUrl())
                                 .into(holder.productImage);
-                        Log.d(TAG, "review: " + current_review.getId());
+                        Log.d(TAG, "review: " + product.getVarenavn() + " "+ current_review.getReviewValue());
+
                         holder.productName.setText(product.getVarenavn());
                         holder.reviewText.setText(current_review.getReviewText());
                         holder.reviewValue.setRating(current_review.getReviewValue());
+
                         holder.removeReviewBtn.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -89,7 +96,11 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
                                         .setPositiveButton("Slett", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-
+                                                DatabaseReference allReviewsRef = firebase.getReference("userReviews/" + product.getId() +"/"+ user.getUid() );
+                                                DatabaseReference userReviewRef = firebase.getReference("users/" + user.getUid() + "/reviews/" + current_review.getUserReviewId());
+                                                allReviewsRef.removeValue();
+                                                userReviewRef.removeValue();
+                                                notifyItemRemoved(position);
                                             }
                                         })
                                         .setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
@@ -108,6 +119,17 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
                             }
                         });
 
+                        holder.setItemClickListener(new ItemClickListener(){
+                            @Override
+                            public void onClick(View view, int position, boolean isLoading) {
+
+                                //Starting single product activity
+                                Intent singleProductIntent = new Intent(context, SingleProductActivity.class);
+                                singleProductIntent.putExtra("ProductID", product.getId());
+                                context.startActivity(singleProductIntent);
+
+                            }
+                        });
                     } else {
                         return;
                     }
@@ -116,6 +138,7 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
                 }
             }
         });
+
     }
 
     @Override
@@ -123,6 +146,15 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
         return reviews.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 

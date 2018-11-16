@@ -11,30 +11,22 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
+
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
+import android.widget.ImageButton;
+
+
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
-import no.hiof.matsl.pfyll.CacheHandler;
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.ScanActivity;
-import no.hiof.matsl.pfyll.SingleProductActivity;
-import no.hiof.matsl.pfyll.adapter.ItemClickListener;
 import no.hiof.matsl.pfyll.adapter.ProductDataSourceFactory;
 import no.hiof.matsl.pfyll.adapter.ProductRecycleViewAdapter;
 
@@ -82,8 +74,6 @@ public class FragmentProducts extends Fragment {
                 Collections.reverse(preSetProducts);
                 factory = new ProductDataSourceFactory(database, new IdFilter(preSetProducts));
             }
-
-
         }
 
         products = new LivePagedListBuilder<>(factory, config).build();
@@ -101,12 +91,6 @@ public class FragmentProducts extends Fragment {
         return view;
 
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {

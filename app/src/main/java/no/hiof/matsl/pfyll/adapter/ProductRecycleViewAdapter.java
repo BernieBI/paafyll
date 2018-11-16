@@ -24,9 +24,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.SingleProductActivity;
+import no.hiof.matsl.pfyll.model.IdFilter;
 import no.hiof.matsl.pfyll.model.Product;
 
 
@@ -105,6 +107,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
                         userListRef.child("products").setValue(preSetProducts);
                         Toast toast = Toast.makeText(context,  String.format("%s %s!", current_product.getVarenavn(),  context.getString(R.string.removed_from_list)), Toast.LENGTH_LONG);
                         toast.show();
+
                         notifyItemRemoved(position);
                     }
                 }
@@ -133,7 +136,6 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
 
             }
         });
-        Log.d(TAG, "onBindViewHolder: called.");
 
     }
 

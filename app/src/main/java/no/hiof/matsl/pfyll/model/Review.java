@@ -7,6 +7,7 @@ public class Review {
     private String user;
     private String Id;
     private String productId;
+    private String userReviewId;
 
     public Review(){}
 
@@ -14,6 +15,14 @@ public class Review {
         this.reviewText = reviewText;
         this.reviewValue = reviewValue;
         this.user = user;
+    }
+
+    public String getUserReviewId() {
+        return userReviewId;
+    }
+
+    public void setUserReviewId(String userReviewId) {
+        this.userReviewId = userReviewId;
     }
 
     public String getProductId() {

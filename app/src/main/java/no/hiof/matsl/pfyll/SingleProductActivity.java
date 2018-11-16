@@ -6,13 +6,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.media.Rating;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,13 +157,13 @@ public class SingleProductActivity extends AppCompatActivity {
 
         //getting product and list data from firebase
         getProductData();
-
+        reviewRef = database.getReference("userReviews/" + productID);
+        getAllReviews();
         if (user != null){
             userListRef = database.getReference("users/" + user.getUid() + "/userLists");
 
-            reviewRef = database.getReference("userReviews/" + productID);
-            userReviewRef = database.getReference("users/" + user.getUid() + "/reviews");
 
+            userReviewRef = database.getReference("users/" + user.getUid() + "/reviews");
             getUserLists();
             getUserReviews();
             submitReview();
@@ -279,7 +284,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
 
     }
-    private void getUserReviews() {
+    private void getAllReviews() {
 
         reviewRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -296,15 +301,16 @@ public class SingleProductActivity extends AppCompatActivity {
                     float total = 0;
                     for (Review review : productReviews){
                         total += review.getReviewValue();
-                        createTextView(commentswrapper, review.getReviewText(), review.getUser(), true);
+                        createComment( review.getReviewText(), review.getUser(),review.getReviewValue());
                     }
-                    ratingBar.setRating(total / productReviews.size());
-                    reviewCount.setText(String.format("(%s) basert på %s anmeldelser ", Math.round(total / productReviews.size()), productReviews.size()));
+                    ratingBar.setRating((float)total / productReviews.size());
+                    Log.d(TAG, "rating: "+ ratingBar.getRating());
+                    reviewCount.setText(String.format("%s anmeldelse" +( productReviews.size()>1 ? "r" : "") , productReviews.size()));
                     commentswrapper.setVisibility(View.VISIBLE);
                     findViewById(R.id.reviewsHeader).setVisibility(View.VISIBLE);
                 }else{
                     commentswrapper.setVisibility(View.GONE);
-                    findViewById(R.id.reviewsHeader).setVisibility(View.GONE);
+                    findViewById(R.id.reviewsHeader).setVisibility(View.INVISIBLE);
                     reviewCount.setText(getString(R.string.no_reviews));
                 }
             }
@@ -315,6 +321,9 @@ public class SingleProductActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+    public void getUserReviews(){
         userReviewRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
@@ -338,7 +347,6 @@ public class SingleProductActivity extends AppCompatActivity {
             }
         });
     }
-
     public void submitReview(){
 
 
@@ -351,28 +359,44 @@ public class SingleProductActivity extends AppCompatActivity {
                         toast.show();
 
                 }else {
+                    float dpi = getResources().getDisplayMetrics().density;
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
                     builder.setTitle("Fortell hva du synes!");
                     LinearLayout layout = new LinearLayout(SingleProductActivity.this);
                     layout.setOrientation(LinearLayout.VERTICAL);
+                    final RatingBar newRatingBar = new RatingBar(new ContextThemeWrapper(SingleProductActivity.this, R.style.ratingBarTheme), null, 0);
+                    newRatingBar.setRating(1);
+                    newRatingBar.setNumStars(5);
+                    newRatingBar.setStepSize(1);
+
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams ((int)(160*dpi), ViewGroup.LayoutParams.WRAP_CONTENT); //Width, Height
+                    newRatingBar.setLayoutParams(params);
 
                     final EditText input = new EditText(SingleProductActivity.this);
                     input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    input.setHint("Skriv en kommentar");
+                    layout.setPadding((int)(30*dpi), (int)(8*dpi), (int)(30*dpi), (int)(5*dpi));
+                    layout.addView(newRatingBar);
                     layout.addView(input);
                     builder.setView(layout);
-
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+
                             reviewText = input.getText().toString();
-                            reviewValue = ratingBar.getRating();
+                            reviewValue = newRatingBar.getRating();
+
+                            if (reviewText == "" ){
+                                Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.require_comment), Toast.LENGTH_LONG);
+                                toast.show();
+                            }
 
                             String username = "ukjent";
                             if (user.getDisplayName() != null)
                                 username = user.getDisplayName();
 
                             Review review = new Review(reviewText, reviewValue, username);
-
                             reviewedProducts.add(productID + "");
                             reviewRef.child(user.getUid()).setValue(review);
                             userReviewRef.setValue(reviewedProducts);
@@ -435,23 +459,23 @@ public class SingleProductActivity extends AppCompatActivity {
                         productVolume.setText(String.format( "%s %s", product.getVolum(), getString(R.string.centiLiter) ));
 
                         //Adding info related to product contents
-                        createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol), false);
-                        createTextView(productDetails1, product.getArgang() , getString(R.string.product_year),false);
-                        createTextView(productDetails1, product.getLagringsgrad(), getString(R.string.product_storage),false);
-                        createTextView(productDetails1, product.getFarge(), getString(R.string.product_color),false);
-                        createTextView(productDetails1, product.getLukt(), getString(R.string.product_smell),false);
-                        createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock),false);
+                        createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
+                        createTextView(productDetails1, product.getArgang() , getString(R.string.product_year));
+                        createTextView(productDetails1, product.getLagringsgrad(), getString(R.string.product_storage));
+                        createTextView(productDetails1, product.getFarge(), getString(R.string.product_color));
+                        createTextView(productDetails1, product.getLukt(), getString(R.string.product_smell));
+                        createTextView(productDetails1, product.getRastoff(), getString(R.string.product_feedstock));
 
                         //Adding info related to product production
-                        createTextView(productDetails2, product.getProdusent(), getString(R.string.product_producer),false);
-                        createTextView(productDetails2, product.getMetode(), getString(R.string.product_method),false);
-                        createTextView(productDetails2, product.getLand() , getString(R.string.product_country),false);
-                        createTextView(productDetails2, String.format("%s, %s",product.getDistrikt(), product.getUnderdistrikt()) , getString(R.string.product_district),false);
+                        createTextView(productDetails2, product.getProdusent(), getString(R.string.product_producer));
+                        createTextView(productDetails2, product.getMetode(), getString(R.string.product_method));
+                        createTextView(productDetails2, product.getLand() , getString(R.string.product_country));
+                        createTextView(productDetails2, String.format("%s, %s",product.getDistrikt(), product.getUnderdistrikt()) , getString(R.string.product_district));
 
                         //Other info
-                        createTextView(productDetails3, product.getEmballasjetype() , getString(R.string.product_packaging),false);
-                        createTextView(productDetails3, product.getButikkategori() , getString(R.string.product_category),false);
-                        createTextView(productDetails3, product.getGrossist() , getString(R.string.product_wholesaler),false);
+                        createTextView(productDetails3, product.getEmballasjetype() , getString(R.string.product_packaging));
+                        createTextView(productDetails3, product.getButikkategori() , getString(R.string.product_category));
+                        createTextView(productDetails3, product.getGrossist() , getString(R.string.product_wholesaler));
 
                         setDrinkWiths(drinkWith1, product.getPassertil01());
                         setDrinkWiths(drinkWith2, product.getPassertil02());
@@ -490,9 +514,50 @@ public class SingleProductActivity extends AppCompatActivity {
     }
 
     //pass header text as "" if not to use
-    public void createTextView(LinearLayout parent, String text, String headerText, Boolean isComment){
+    public void createComment(String text, String headerText, Float rating){
         if (text.equals("") || text.equals(null) || text.contains("Øvrige"))
              return;
+        float dpi = getResources().getDisplayMetrics().density;
+        ConstraintLayout comment = new ConstraintLayout(this);
+        comment.setId((int)(Math.random() * rating*345));
+        ConstraintSet set = new ConstraintSet();
+        comment.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        comment.setPadding((int)(30*dpi), (int)(8*dpi), (int)(30*dpi), (int)(5*dpi));
+        commentswrapper.addView(comment);
+
+        TextView headerTextView = new TextView(this);
+        headerTextView.setText(headerText +" ");
+        headerTextView.setTextSize(20);
+        headerTextView.setId((int)(Math.random() * rating*100) * 238);
+        headerTextView.setTypeface(null, Typeface.BOLD);
+        comment.addView(headerTextView);
+
+        RatingBar newRatingBar = new RatingBar(new ContextThemeWrapper(SingleProductActivity.this, R.style.ratingBarThemeSmall), null, 0);
+        newRatingBar.setRating(rating);
+        newRatingBar.setNumStars(5);
+        newRatingBar.setId((int)(Math.random() * rating*100) * 5635);
+        newRatingBar.setIsIndicator(true);
+        newRatingBar.setStepSize(1);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams ((int)(80*dpi), (int)(30*dpi)); //Width, Height
+        newRatingBar.setLayoutParams(params);
+        comment.addView(newRatingBar);
+
+        TextView textView = new TextView(this);
+        textView.setText(String.format("- %s", text));
+        textView.setId((int)(Math.random() * rating*100) * 34958);
+        comment.addView(textView);
+
+        set.clone(comment);
+        set.connect(headerTextView.getId(), ConstraintSet.TOP, comment.getId(), ConstraintSet.TOP,  20);
+        set.connect(headerTextView.getId(), ConstraintSet.LEFT, comment.getId(), ConstraintSet.LEFT,  20);
+        set.connect(newRatingBar.getId(), ConstraintSet.TOP, comment.getId(), ConstraintSet.TOP,  20);
+        set.connect(newRatingBar.getId(), ConstraintSet.RIGHT, comment.getId(), ConstraintSet.RIGHT,  20);
+        set.connect(textView.getId(), ConstraintSet.TOP, headerTextView.getId(), ConstraintSet.BOTTOM,  20);
+        set.applyTo(comment);
+    }
+    public void createTextView(LinearLayout parent, String text, String headerText){
+        if (text.equals("") || text.equals(null) || text.contains("Øvrige"))
+            return;
 
         LinearLayout listElement = new LinearLayout(this);
         listElement.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -510,10 +575,6 @@ public class SingleProductActivity extends AppCompatActivity {
         TextView textView = new TextView(this);
         textView.setText(text);
         listElement.addView(textView);
-        if(isComment){
-            headerTextView.setTextSize(20);
-            headerTextView.setTextSize(20);
-        }
     }
 
     public void setDrinkWiths(ImageView view, String value) {

@@ -67,6 +67,7 @@
     <string name="review_success">Din anmeldelse er registrert!</string>
     <string name="show_reviews">Vis kommentarer</string>
     <string name="no_reviews">Ingen anmeldelser</string>
+    <string name="require_comment">Du må skrive en kommentar</string>
     <string-array name="nonDrinkables">
         <item>Gaveesker</item>
         <item>Gaveposer</item>

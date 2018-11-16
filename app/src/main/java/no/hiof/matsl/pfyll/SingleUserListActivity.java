@@ -75,12 +75,10 @@ public class SingleUserListActivity extends AppCompatActivity {
 
                 startFragment();
 
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         };
         listsRef.addValueEventListener(listListener);
