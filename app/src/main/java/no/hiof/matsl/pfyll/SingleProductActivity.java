@@ -10,7 +10,9 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.media.Rating;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.design.widget.FloatingActionButton;
@@ -59,6 +61,7 @@ import com.razerdp.widget.animatedpieview.AnimatedPieViewConfig;
 import com.razerdp.widget.animatedpieview.data.SimplePieInfo;
 
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -309,11 +312,12 @@ public class SingleProductActivity extends AppCompatActivity {
                     DecimalFormat df = new DecimalFormat("#.#");
                     String rating = df.format(total / productReviews.size());
                     ratingBar.setRating((float)total / productReviews.size());
-                    Log.d(TAG, "rating: "+ ratingBar.getRating());
+
                     reviewCount.setText(String.format("%s anmeldelse" +( productReviews.size()>1 ? "r" : "") , productReviews.size()));
                     productRating.setText("(" + rating + ")");
                     commentswrapper.setVisibility(View.VISIBLE);
                     findViewById(R.id.reviewsHeader).setVisibility(View.VISIBLE);
+
                 }else{
                     commentswrapper.setVisibility(View.GONE);
                     findViewById(R.id.reviewsHeader).setVisibility(View.INVISIBLE);
@@ -356,6 +360,7 @@ public class SingleProductActivity extends AppCompatActivity {
     public void submitReview(){
 
         reviewButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
                 if (reviewedProducts.contains(productID+"")) {
@@ -390,7 +395,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
                             reviewText = input.getText().toString();
                             reviewValue = newRatingBar.getRating();
-
+                            Log.d(TAG, "onClick rating: " + reviewValue);
                             if (reviewText == "" ){
                                 Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.require_comment), Toast.LENGTH_LONG);
                                 toast.show();
@@ -399,7 +404,9 @@ public class SingleProductActivity extends AppCompatActivity {
                             String username = "ukjent";
                             if (user.getDisplayName() != null)
                                 username = user.getDisplayName();
+
                             int index = productReviews.size() > 0 ? productReviews.get(productReviews.size()-1).getIndex()+1 : 0;
+
                             Review review = new Review(reviewText, reviewValue, username, index);
                             reviewedProducts.add(productID + "");
                             reviewRef.child(user.getUid()).setValue(review);
@@ -457,10 +464,10 @@ public class SingleProductActivity extends AppCompatActivity {
                         productTaste.setText(product.getSmak());
                         productTaste.setBackgroundColor(white);
 
-                        productLiterPrice.setText(String.format("%s %s %s", getString(R.string.currency), product.getLiterpris(), getString(R.string.product_perLiter)) );
-                        productLiterPrice.setBackgroundColor(white);
+                        productVolume.setText(String.format("%s l", product.getVolum()));
 
-                        productVolume.setText(String.format( "%s %s", product.getVolum(), getString(R.string.centiLiter) ));
+                        productLiterPrice.setText(String.format("%s kr/l", product.getLiterpris() ));
+                        productLiterPrice.setBackgroundColor(white);
 
                         //Adding info related to product contents
                         createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
@@ -518,38 +525,38 @@ public class SingleProductActivity extends AppCompatActivity {
     }
 
     //pass header text as "" if not to use
-    public void createComment(String text, String headerText, Float rating){
-        if (text.equals("") || text.equals(null) || text.contains("Øvrige"))
-             return;
+    public void createComment(String text, String userName, Float rating){
 
+        Timestamp time = new Timestamp(System.currentTimeMillis());
 
         float dpi = getResources().getDisplayMetrics().density;
         ConstraintLayout comment = new ConstraintLayout(this);
-        comment.setId((int)(Math.random() * rating*345));
+        comment.setId(1 + time.getNanos());
 
-        ConstraintSet set = new ConstraintSet();
-        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins((int)(30*dpi), (int)(8*dpi), (int)(30*dpi), (int)(5*dpi));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(4*dpi));
         comment.setLayoutParams(params);
+
         GradientDrawable shape =  new GradientDrawable();
         shape.setCornerRadius( 8 );
         shape.setColor(getResources().getColor(R.color.white));
+
         comment.setPadding((int)(16*dpi), (int)(16*dpi), (int)(16*dpi), (int)(16*dpi));
         comment.setBackground(shape);
         comment.setElevation((int)(3*dpi));
         commentswrapper.addView(comment);
 
         TextView headerTextView = new TextView(this);
-        headerTextView.setText(headerText +" ");
+        headerTextView.setText(userName +" ");
         headerTextView.setTextSize(20);
-        headerTextView.setId((int)(Math.random() * rating*100) * 238);
+        headerTextView.setId(2 + time.getNanos());
         headerTextView.setTypeface(null, Typeface.BOLD);
         comment.addView(headerTextView);
 
         RatingBar newRatingBar = new RatingBar(new ContextThemeWrapper(SingleProductActivity.this, R.style.ratingBarThemeSmall), null, 0);
         newRatingBar.setRating(rating);
         newRatingBar.setNumStars(5);
-        newRatingBar.setId((int)(Math.random() * rating*100) * 5635);
+        newRatingBar.setId( 3 + time.getNanos());
         newRatingBar.setIsIndicator(true);
         newRatingBar.setStepSize(1);
         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams ((int)(80*dpi), (int)(30*dpi)); //Width, Height
@@ -557,16 +564,19 @@ public class SingleProductActivity extends AppCompatActivity {
         comment.addView(newRatingBar);
 
         TextView textView = new TextView(this);
-        textView.setText(String.format("- %s", text));
-        textView.setId((int)(Math.random() * rating*100) * 34958);
-        comment.addView(textView);
+        textView.setText(text);
+        textView.setId(4 + time.getNanos());
+        if (text != "")
+            comment.addView(textView);
 
+        ConstraintSet set = new ConstraintSet();
         set.clone(comment);
         set.connect(headerTextView.getId(), ConstraintSet.TOP, comment.getId(), ConstraintSet.TOP,  20);
         set.connect(headerTextView.getId(), ConstraintSet.LEFT, comment.getId(), ConstraintSet.LEFT,  20);
         set.connect(newRatingBar.getId(), ConstraintSet.TOP, comment.getId(), ConstraintSet.TOP,  20);
         set.connect(newRatingBar.getId(), ConstraintSet.RIGHT, comment.getId(), ConstraintSet.RIGHT,  20);
-        set.connect(textView.getId(), ConstraintSet.TOP, headerTextView.getId(), ConstraintSet.BOTTOM,  20);
+        if (text != "")
+            set.connect(textView.getId(), ConstraintSet.TOP, headerTextView.getId(), ConstraintSet.BOTTOM,  20);
         set.applyTo(comment);
     }
     public void createTextView(LinearLayout parent, String text, String headerText){

@@ -41,7 +41,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="5dp">
+        android:layout_margin="2dp">
 
         <TextView
             android:id="@+id/product_name"
@@ -66,6 +66,7 @@
             android:layout_margin="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:text="pris"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@color/primaryTextColor"
             android:textSize="12sp"
@@ -74,35 +75,50 @@
 
         <TextView
             android:id="@+id/product_type"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_margin="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:text="Type"
+            android:textAlignment="textEnd"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@color/primaryTextColor"
-            android:textSize="12sp"
-            tool:layout_constraintBottom_toBottomOf="parent"
-            tool:layout_constraintStart_toStartOf="parent"
-            tool:layout_constraintTop_toBottomOf="@+id/product_price" />
-        <TextView
-            android:id="@+id/product_country"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/primaryTextColor"
-            android:textSize="12sp"
+            android:textSize="10sp"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
-            tool:layout_constraintTop_toBottomOf="@+id/product_name"
+            tool:layout_constraintStart_toEndOf="@+id/divider" />
+
+        <TextView
+            android:id="@+id/product_country"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="land"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="10sp"
+            tool:layout_constraintBottom_toBottomOf="parent"
+            tool:layout_constraintEnd_toStartOf="@+id/divider"
+            tool:layout_constraintStart_toStartOf="parent"
+            tool:layout_constraintTop_toBottomOf="@+id/product_price"
             tool:layout_constraintVertical_bias="1.0" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="?android:attr/listDivider"
+            android:visibility="invisible"
+            tool:layout_constraintBottom_toBottomOf="parent"
+            tool:layout_constraintEnd_toEndOf="parent"
+            tool:layout_constraintStart_toStartOf="parent"
+            tool:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 

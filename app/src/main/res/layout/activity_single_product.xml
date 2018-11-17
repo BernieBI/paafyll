@@ -63,65 +63,6 @@
                 </android.support.constraint.ConstraintLayout>
 
                 <android.support.constraint.ConstraintLayout
-                    android:id="@+id/constraintLayout2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintVertical_bias="0.173">
-
-                    <ImageView
-                        android:id="@+id/drinkWith2"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginTop="8dp"
-                        android:adjustViewBounds="false"
-                        android:background="@color/darkOverlay"
-                        android:cropToPadding="false"
-                        android:padding="0dp"
-                        android:visibility="visible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/drinkWith1"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginTop="8dp"
-                        android:adjustViewBounds="false"
-                        android:background="@color/darkOverlay"
-                        android:cropToPadding="false"
-                        android:padding="0dp"
-                        android:visibility="visible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/drinkWith2" />
-
-
-                    <ImageView
-                        android:id="@+id/drinkWith3"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginTop="8dp"
-                        android:adjustViewBounds="false"
-                        android:background="@color/darkOverlay"
-                        android:cropToPadding="false"
-                        android:padding="0dp"
-                        android:visibility="visible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/drinkWith1" />
-
-
-                </android.support.constraint.ConstraintLayout>
-
-                <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -156,7 +97,7 @@
 
                         <TextView
                             android:id="@+id/productPrice"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_marginTop="8dp"
@@ -171,14 +112,14 @@
 
                         <TextView
                             android:id="@+id/productVolume"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
                             android:textAlignment="viewStart"
-                            android:textColor="@color/primaryTextColor"
+                            android:textColor="@color/secondaryTextColor"
                             android:textSize="14sp" />
 
                     </LinearLayout>
@@ -205,29 +146,94 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
                         android:background="@android:color/darker_gray"
                         android:minWidth="200dp"
                         android:minHeight="50dp"
                         android:textColor="@color/secondaryTextColor"
-                        app:layout_constraintBottom_toTopOf="@+id/productRatingBar"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/productLiterPrice" />
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/drinkWiths"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/productTaste">
+
+                        <ImageView
+                            android:id="@+id/drinkWith2"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:adjustViewBounds="false"
+                            android:background="@color/darkOverlay"
+                            android:cropToPadding="false"
+                            android:padding="0dp"
+                            android:visibility="visible"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/drinkWith1"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/drinkWith1"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:adjustViewBounds="false"
+                            android:background="@color/darkOverlay"
+                            android:cropToPadding="false"
+                            android:padding="0dp"
+                            android:visibility="visible"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+
+                        <ImageView
+                            android:id="@+id/drinkWith3"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:adjustViewBounds="false"
+                            android:background="@color/darkOverlay"
+                            android:cropToPadding="false"
+                            android:padding="0dp"
+                            android:visibility="visible"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/drinkWith1"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+
+                    </android.support.constraint.ConstraintLayout>
 
                     <RatingBar
                         android:id="@+id/productRatingBar"
                         style="@style/ratingBarThemeSmall"
                         android:layout_gravity="center"
                         android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:gravity="center"
                         android:isIndicator="true"
                         android:progressDrawable="@drawable/bottle_ratingbar_small"
                         android:scaleType="fitCenter"
                         app:layout_constraintBottom_toTopOf="@+id/reviewCount"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/drinkWiths" />
 
                     <TextView
                         android:id="@+id/reviewCount"
@@ -247,11 +253,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
                         app:layout_constraintBottom_toBottomOf="@+id/productRatingBar"
                         app:layout_constraintStart_toEndOf="@+id/productRatingBar"
-                        app:layout_constraintTop_toBottomOf="@+id/productTaste" />
+                        app:layout_constraintTop_toTopOf="@+id/productRatingBar" />
 
 
                 </android.support.constraint.ConstraintLayout>
@@ -488,6 +492,7 @@
                 android:background="@color/darkOverlay"
                 android:divider="?android:listDivider"
                 android:orientation="vertical"
+                android:padding="8dp"
                 android:paddingBottom="16dp"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -96,7 +96,6 @@ public class MyReviewsActivity extends AppCompatActivity {
                 userReviews.clear();
                 reviewedProducts.clear();
                 userReviewIds.clear();
-                findViewById(R.id.progressBar).setVisibility(View.GONE);
 
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     reviewedProducts.add(child.getValue() + "");
