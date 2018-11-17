@@ -107,7 +107,6 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
                         userListRef.child("products").setValue(preSetProducts);
                         Toast toast = Toast.makeText(context,  String.format("%s %s!", current_product.getVarenavn(),  context.getString(R.string.removed_from_list)), Toast.LENGTH_LONG);
                         toast.show();
-
                         notifyItemRemoved(position);
                     }
                 }
@@ -117,7 +116,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
                 .asBitmap()
                 .load(current_product.getBildeUrl())
                 .into(holder.productImage);
-
+        holder.productType.setText(current_product.getVaretype());
         holder.productName.setText(current_product.getVarenavn());
         holder.productCountry.setText(current_product.getLand());
         holder.productPrice.setText(String.format("Kr %s",current_product.getPris()));
@@ -152,10 +151,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         ImageView productImage;
-        TextView productName;
-        TextView productPrice;
-        TextView productCountry;
-        TextView productTaste;
+        TextView productName, productPrice, productCountry,productTaste, productType;
         ImageButton removeFromListBtn;
 
         private ItemClickListener itemClickListener;
@@ -167,6 +163,7 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
             productPrice = itemView.findViewById(R.id.product_price);
             productCountry = itemView.findViewById(R.id.product_country);
             productTaste = itemView.findViewById(R.id.product_taste);
+            productType = itemView.findViewById(R.id.product_type);
             removeFromListBtn = itemView.findViewById(R.id.removeFromListBtn);
             itemView.setOnClickListener(this);
         }

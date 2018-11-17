@@ -1,6 +1,5 @@
 package no.hiof.matsl.pfyll;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,11 +7,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,22 +18,17 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import no.hiof.matsl.pfyll.adapter.ReviewRecycleViewAdapter;
 import no.hiof.matsl.pfyll.model.Review;
-import no.hiof.matsl.pfyll.model.UserList;
 
 public class MyReviewsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ReviewRecycleViewAdapter reviewAdapter;
     private GridLayoutManager gridLayoutManager;
-    private Button logoutButton;
     private ArrayList<Review> userReviews = new ArrayList<>();
     private ArrayList<String> reviewedProducts = new ArrayList<>();
     private ArrayList<String> userReviewIds = new ArrayList<>();
-
-    FirebaseAuth auth = FirebaseAuth.getInstance();
 
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -130,50 +122,7 @@ public class MyReviewsActivity extends AppCompatActivity {
 
             }
         });
-       /* ChildEventListener userReviewListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildAdded:" + dataSnapshot.getValue());
 
-                //Hvis den ikke finnes fra før så henter vi en ny
-                reviewRef.child(dataSnapshot.getValue() + "").child(user.getUid()).addListenerForSingleValueEvent(reviewListener);
-
-                reviewedProducts.add(dataSnapshot.getValue() + "");
-                userReviewids.add(dataSnapshot.getKey()+"");
-
-
-                if (reviewedProducts.size() == 0){
-                    recyclerView.removeAllViewsInLayout();
-                }
-                passReviews();
-            }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
-                if (reviewedProducts.contains(dataSnapshot.getValue()+"")) {
-                    userReviews.remove(userReviewids.indexOf(dataSnapshot.getKey()));
-                    reviewedProducts.remove(dataSnapshot.getValue()+"");
-                    userReviewids.remove(dataSnapshot.getKey()+"");
-                }
-                    reviewAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "postComments:onCancelled", databaseError.toException());
-            }
-        };
-        userReviewRef.orderByKey().addChildEventListener(userReviewListener);*/
     }
     public void passReviews(){
         findViewById(R.id.progressBar).setVisibility(View.GONE);

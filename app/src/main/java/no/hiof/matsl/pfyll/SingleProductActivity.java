@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.media.Rating;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -57,6 +59,7 @@ import com.razerdp.widget.animatedpieview.AnimatedPieViewConfig;
 import com.razerdp.widget.animatedpieview.data.SimplePieInfo;
 
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -87,10 +90,11 @@ public class SingleProductActivity extends AppCompatActivity {
     private DatabaseReference userReviewRef;
     private DatabaseReference reviewRef;
     private ArrayList<String> reviewedProducts = new ArrayList<>();
+    private ArrayList<Review> productReviews = new ArrayList<>();
 
     //views
     private LinearLayout productDetails1, productDetails2, productDetails3;
-    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead, reviewCount;
+    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead, reviewCount, productRating;
     private ImageView productImage, drinkWith1, drinkWith2, drinkWith3;
     private Button reviewButton;
     private RatingBar ratingBar;
@@ -131,6 +135,7 @@ public class SingleProductActivity extends AppCompatActivity {
         addToListBtn = findViewById(R.id.addToListButton);
         ratingBar = findViewById(R.id.productRatingBar);
         ratingBar.setRating(0);
+        productRating = findViewById(R.id.productRating);
         commentswrapper = findViewById(R.id.reviewComments);
         reviewCount = findViewById(R.id.reviewCount);
         productImage = findViewById(R.id.productImage);
@@ -286,26 +291,27 @@ public class SingleProductActivity extends AppCompatActivity {
     }
     private void getAllReviews() {
 
-        reviewRef.addValueEventListener(new ValueEventListener() {
+        reviewRef.orderByChild("index").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Review> productReviews = new ArrayList<>();
                 commentswrapper.removeAllViews();
+                productReviews.clear();
                 for (DataSnapshot reviewSnapShot: dataSnapshot.getChildren()) {
                     if (reviewSnapShot.exists())
                         productReviews.add( reviewSnapShot.getValue(Review.class));
                 }
                 if (productReviews.size() > 0){
-
-
                     float total = 0;
                     for (Review review : productReviews){
                         total += review.getReviewValue();
                         createComment( review.getReviewText(), review.getUser(),review.getReviewValue());
                     }
+                    DecimalFormat df = new DecimalFormat("#.#");
+                    String rating = df.format(total / productReviews.size());
                     ratingBar.setRating((float)total / productReviews.size());
                     Log.d(TAG, "rating: "+ ratingBar.getRating());
                     reviewCount.setText(String.format("%s anmeldelse" +( productReviews.size()>1 ? "r" : "") , productReviews.size()));
+                    productRating.setText("(" + rating + ")");
                     commentswrapper.setVisibility(View.VISIBLE);
                     findViewById(R.id.reviewsHeader).setVisibility(View.VISIBLE);
                 }else{
@@ -348,8 +354,6 @@ public class SingleProductActivity extends AppCompatActivity {
         });
     }
     public void submitReview(){
-
-
 
         reviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -395,8 +399,8 @@ public class SingleProductActivity extends AppCompatActivity {
                             String username = "ukjent";
                             if (user.getDisplayName() != null)
                                 username = user.getDisplayName();
-
-                            Review review = new Review(reviewText, reviewValue, username);
+                            int index = productReviews.size() > 0 ? productReviews.get(productReviews.size()-1).getIndex()+1 : 0;
+                            Review review = new Review(reviewText, reviewValue, username, index);
                             reviewedProducts.add(productID + "");
                             reviewRef.child(user.getUid()).setValue(review);
                             userReviewRef.setValue(reviewedProducts);
@@ -517,12 +521,22 @@ public class SingleProductActivity extends AppCompatActivity {
     public void createComment(String text, String headerText, Float rating){
         if (text.equals("") || text.equals(null) || text.contains("Øvrige"))
              return;
+
+
         float dpi = getResources().getDisplayMetrics().density;
         ConstraintLayout comment = new ConstraintLayout(this);
         comment.setId((int)(Math.random() * rating*345));
+
         ConstraintSet set = new ConstraintSet();
-        comment.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        comment.setPadding((int)(30*dpi), (int)(8*dpi), (int)(30*dpi), (int)(5*dpi));
+        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins((int)(30*dpi), (int)(8*dpi), (int)(30*dpi), (int)(5*dpi));
+        comment.setLayoutParams(params);
+        GradientDrawable shape =  new GradientDrawable();
+        shape.setCornerRadius( 8 );
+        shape.setColor(getResources().getColor(R.color.white));
+        comment.setPadding((int)(16*dpi), (int)(16*dpi), (int)(16*dpi), (int)(16*dpi));
+        comment.setBackground(shape);
+        comment.setElevation((int)(3*dpi));
         commentswrapper.addView(comment);
 
         TextView headerTextView = new TextView(this);
@@ -538,8 +552,8 @@ public class SingleProductActivity extends AppCompatActivity {
         newRatingBar.setId((int)(Math.random() * rating*100) * 5635);
         newRatingBar.setIsIndicator(true);
         newRatingBar.setStepSize(1);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams ((int)(80*dpi), (int)(30*dpi)); //Width, Height
-        newRatingBar.setLayoutParams(params);
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams ((int)(80*dpi), (int)(30*dpi)); //Width, Height
+        newRatingBar.setLayoutParams(params2);
         comment.addView(newRatingBar);
 
         TextView textView = new TextView(this);

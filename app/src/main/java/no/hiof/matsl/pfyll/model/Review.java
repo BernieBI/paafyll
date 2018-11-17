@@ -8,13 +8,23 @@ public class Review {
     private String Id;
     private String productId;
     private String userReviewId;
+    private int index;
 
     public Review(){}
 
-    public Review(String reviewText, float reviewValue, String user) {
+    public Review(String reviewText, float reviewValue, String user, int index) {
         this.reviewText = reviewText;
         this.reviewValue = reviewValue;
         this.user = user;
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public String getUserReviewId() {

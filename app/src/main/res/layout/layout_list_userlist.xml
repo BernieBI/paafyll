@@ -11,7 +11,7 @@
     android:layout_marginTop="5dp"
     android:layout_marginRight="5dp"
     android:layout_marginBottom="5dp"
-    android:background="@color/secondaryLightColor"
+    android:background="@color/primaryTextColor"
     android:elevation="5dp"
     android:orientation="vertical">
 
@@ -44,9 +44,9 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:gravity="center_vertical|center"
             android:alpha="0.5"
             android:background="@color/white"
+            android:gravity="center_vertical|center"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/secondaryTextColor"
@@ -62,11 +62,11 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/darkOverlay"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintTop_toTopOf="parent"
-            tool:srcCompat="@drawable/remove" />
+            tool:srcCompat="@drawable/remove2" />
 
     </android.support.constraint.ConstraintLayout>
 

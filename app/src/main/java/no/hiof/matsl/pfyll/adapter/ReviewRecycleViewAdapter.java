@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -82,7 +83,7 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
                                 .asBitmap()
                                 .load(product.getBildeUrl())
                                 .into(holder.productImage);
-
+                        holder.progressBar.setVisibility(View.GONE);
                         holder.productName.setText(product.getVarenavn());
                         holder.reviewText.setText(current_review.getReviewText());
                         holder.reviewValue.setRating(current_review.getReviewValue());
@@ -162,6 +163,7 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
         TextView productName;
         TextView reviewText;
         ImageView productImage;
+        ProgressBar progressBar;
         RatingBar reviewValue;
         ImageButton removeReviewBtn;
 
@@ -171,7 +173,7 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
             super(itemView);
             productName = itemView.findViewById(R.id.productName);
             reviewValue = itemView.findViewById(R.id.productRatingBar);
-
+            progressBar = itemView.findViewById(R.id.progressBar);
             productImage = itemView.findViewById(R.id.productImage);
             reviewText = itemView.findViewById(R.id.reviewText);
             removeReviewBtn = itemView.findViewById(R.id.removeReviewBtn);

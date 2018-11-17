@@ -22,9 +22,9 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_margin="8dp"
-        android:backgroundTint="@color/brightOverlay"
+        android:backgroundTint="@color/white"
         android:elevation="0dp"
-        tool:srcCompat="@drawable/remove" />
+        tool:srcCompat="@drawable/remove2" />
 
     <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/product_image"
@@ -66,15 +66,27 @@
             android:layout_margin="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="12sp"
+            tool:layout_constraintStart_toStartOf="parent"
+            tool:layout_constraintTop_toBottomOf="@+id/product_name" />
+
+        <TextView
+            android:id="@+id/product_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
+            android:text="Type"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@color/primaryTextColor"
             android:textSize="12sp"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintStart_toStartOf="parent"
-            tool:layout_constraintTop_toBottomOf="@+id/product_name"
-            tool:layout_constraintVertical_bias="1.0" />
-
+            tool:layout_constraintTop_toBottomOf="@+id/product_price" />
         <TextView
             android:id="@+id/product_country"
             android:layout_width="wrap_content"

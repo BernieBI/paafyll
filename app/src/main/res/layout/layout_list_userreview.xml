@@ -45,15 +45,15 @@
             android:layout_height="30dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/brightOverlay"
+            android:backgroundTint="@color/white"
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintTop_toTopOf="parent"
-            tool:srcCompat="@drawable/remove" />
+            tool:srcCompat="@drawable/remove2" />
 
         <ImageView
             android:id="@+id/productImage"
             android:layout_width="100dp"
-            android:layout_height="150dp"
+            android:layout_height="0dp"
             android:adjustViewBounds="true"
             android:background="@color/white"
             android:contentDescription="@string/product_image"
@@ -68,14 +68,12 @@
         <TextView
             android:id="@+id/reviewText"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/secondaryLightColor"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
             android:padding="8dp"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
-            tool:layout_constraintStart_toEndOf="@+id/productImage"
-            tool:layout_constraintTop_toBottomOf="@+id/productRatingBar" />
+            tool:layout_constraintStart_toEndOf="@+id/productImage" />
 
         <RatingBar xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tool="http://schemas.android.com/apk/res-auto"
@@ -84,14 +82,28 @@
             android:layout_gravity="center"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:gravity="center"
             android:isIndicator="true"
             android:scaleType="fitCenter"
-            tool:layout_constraintEnd_toEndOf="parent"
-            tool:layout_constraintHorizontal_bias="0.0"
+            tool:layout_constraintBottom_toTopOf="@+id/reviewText"
             tool:layout_constraintStart_toEndOf="@+id/productImage"
-            tool:layout_constraintTop_toBottomOf="@+id/productName" />
+            tool:layout_constraintTop_toBottomOf="@+id/productName"
+            tool:layout_constraintVertical_bias="1.0" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            tool:layout_constraintBottom_toBottomOf="parent"
+            tool:layout_constraintEnd_toStartOf="@+id/productRatingBar"
+            tool:layout_constraintStart_toStartOf="parent"
+            tool:layout_constraintTop_toTopOf="parent" />
 
 
     </android.support.constraint.ConstraintLayout>
