@@ -17,7 +17,7 @@
 
     <ImageView
         android:id="@+id/product_image"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:contentDescription="@string/product_image"
@@ -45,7 +45,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/primaryTextColor"
             tool:layout_constraintEnd_toStartOf="@+id/removeFromListBtn"
-            tool:layout_constraintStart_toStartOf="parent"
+            tool:layout_constraintStart_toEndOf="@+id/border"
             tool:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -61,7 +61,7 @@
             android:textColor="@color/primaryTextColor"
             android:textSize="14sp"
             tool:layout_constraintBottom_toTopOf="@+id/product_type"
-            tool:layout_constraintStart_toStartOf="parent"
+            tool:layout_constraintStart_toEndOf="@+id/border"
             tool:layout_constraintTop_toBottomOf="@+id/product_name"
             tool:layout_constraintVertical_bias="1.0" />
 
@@ -94,7 +94,7 @@
             android:textColor="@color/primaryTextColor"
             android:textSize="12sp"
             tool:layout_constraintBottom_toTopOf="@+id/product_taste"
-            tool:layout_constraintStart_toStartOf="parent" />
+            tool:layout_constraintStart_toEndOf="@+id/border" />
 
         <TextView
             android:id="@+id/product_taste"
@@ -106,7 +106,7 @@
             android:textSize="12sp"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
-            tool:layout_constraintStart_toStartOf="parent" />
+            tool:layout_constraintStart_toEndOf="@+id/border" />
 
         <ImageButton
             android:id="@+id/removeFromListBtn"
@@ -121,6 +121,17 @@
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintTop_toTopOf="parent"
             tool:srcCompat="@drawable/remove2" />
+
+        <LinearLayout
+            android:id="@+id/border"
+            android:layout_width="4dp"
+            android:layout_height="0dp"
+            android:background="@color/primaryLightColor"
+            android:orientation="horizontal"
+            tool:layout_constraintBottom_toBottomOf="parent"
+            tool:layout_constraintStart_toStartOf="parent"
+            tool:layout_constraintTop_toTopOf="parent"
+            tool:layout_constraintVertical_bias="0.0"></LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 

@@ -112,9 +112,12 @@ public class MyReviewsActivity extends AppCompatActivity {
                 if (reviewedProducts.size() == 0){
                     recyclerView.removeAllViewsInLayout();
                     findViewById(R.id.emptyMessage).setVisibility(View.VISIBLE);
-                }else
+                    findViewById(R.id.emptyReviewMessage).setVisibility(View.VISIBLE);
+                }else {
                     findViewById(R.id.emptyMessage).setVisibility(View.GONE);
-                    passReviews();
+                    findViewById(R.id.emptyReviewMessage).setVisibility(View.GONE);
+                }
+                passReviews();
 
             }
             @Override

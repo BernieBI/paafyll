@@ -73,7 +73,7 @@
             android:padding="8dp"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
-            tool:layout_constraintStart_toEndOf="@+id/productImage" />
+            tool:layout_constraintStart_toEndOf="@+id/border" />
 
         <RatingBar xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tool="http://schemas.android.com/apk/res-auto"
@@ -104,6 +104,16 @@
             tool:layout_constraintEnd_toStartOf="@+id/productRatingBar"
             tool:layout_constraintStart_toStartOf="parent"
             tool:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/border"
+            android:layout_width="4dp"
+            android:layout_height="0dp"
+            android:background="@color/primaryLightColor"
+            android:orientation="horizontal"
+            tool:layout_constraintBottom_toBottomOf="parent"
+            tool:layout_constraintStart_toEndOf="@+id/productImage"
+            tool:layout_constraintTop_toTopOf="parent"></LinearLayout>
 
 
     </android.support.constraint.ConstraintLayout>

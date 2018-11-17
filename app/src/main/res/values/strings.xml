@@ -49,6 +49,8 @@
     <string name="lists">Lister</string>
     <string name="reviews">Anmeldelser</string>
     <string name="logout">Logg ut</string>
+    <string name="empty_message">Her var det tomt, gitt..</string>
+
     <!-- UserLists -->
     <string name="selectList">Legg til i liste</string>
     <string name="already_exists">Produktet er allerede i</string>
@@ -58,7 +60,6 @@
     <string name="require_name">Du må gi listen et navn</string>
     <string name="list_require_login">Du må være logget inn for å bruke lister</string>
     <string name="have_no_lists">Du har ingen lister ennå :(</string>
-    <string name="empty_list_message">Her var det tomt, gitt..</string>
     <string name="add_lists">Legg til lister ved å trykke på knappen nede i hjørnet</string>
     <!--Reviews-->
     <string name="product_reviewBtn">Anmeld</string>
@@ -68,11 +69,7 @@
     <string name="show_reviews">Vis kommentarer</string>
     <string name="no_reviews">Ingen anmeldelser</string>
     <string name="require_comment">Du må skrive en kommentar</string>
-    <string-array name="nonDrinkables">
-        <item>Gaveesker</item>
-        <item>Gaveposer</item>
-        <item>Tilbehør</item>
-    </string-array>
+    <string name="empty_reviews">Skriv en anmeldelse til et produkt så dukker det opp her</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

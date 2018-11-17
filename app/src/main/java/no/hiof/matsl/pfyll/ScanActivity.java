@@ -109,8 +109,7 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
                         onBackPressed();
                     }
                 } else {
-                    Toast toast = Toast.makeText(ScanActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
-                    toast.show();
+
                     onBackPressed();
                 }
             }

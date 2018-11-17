@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,6 +25,7 @@ import no.hiof.matsl.pfyll.MyReviewsActivity;
 import no.hiof.matsl.pfyll.R;
 
 import no.hiof.matsl.pfyll.RecentProductsActivity;
+import no.hiof.matsl.pfyll.ScanActivity;
 import no.hiof.matsl.pfyll.UserListActivity;
 
 public class FragmentMyAccount extends Fragment {
@@ -32,6 +34,8 @@ public class FragmentMyAccount extends Fragment {
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseUser user;
+    ArrayList<String> products = new ArrayList<>();
+    Button recentButton;
 
 
     View view;
@@ -45,15 +49,28 @@ public class FragmentMyAccount extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_myaccount,container,false);
+
         Log.d(TAG, "onCreate: Started ");
         user = FirebaseAuth.getInstance().getCurrentUser();
-
+        recentButton = view.findViewById(R.id.recentButton);
         TextView welcome = view.findViewById(R.id.welcomeField);
         welcome.setText(String.format("%s, %s", getString(R.string.hello),user.getDisplayName()));
 
         buttons();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        CacheHandler cacheHandler = new CacheHandler(getContext(), "Recent Products", "LocalCache");
+        products = cacheHandler.getRecentProducts();
+        if (products != null)
+            recentButton.setAlpha((float)1);
+        else
+            recentButton.setAlpha((float)0.5);
+
     }
 
     private void buttons() {
@@ -74,12 +91,17 @@ public class FragmentMyAccount extends Fragment {
                 startActivity(userListIntent);
             }
         });
-        Button recentButton = view.findViewById(R.id.recentButton);
+
+
         recentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent recentProductIntent = new Intent(getContext(), RecentProductsActivity.class);
-                startActivity(recentProductIntent);
+
+                if (products != null){
+                    Intent recentProductIntent = new Intent(getContext(), RecentProductsActivity.class);
+                    startActivity(recentProductIntent);
+                }
+
             }
         });
         Button reviewsButton = view.findViewById(R.id.reviewsButton);
