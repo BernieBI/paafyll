@@ -97,7 +97,7 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
     }
 
     private Query addFilters(Query query) {
-        boolean rangeSelector = false; // There can only be one
+        String rangedField = "";
         if (filters != null) {
             for (Filter filter : filters) {
                 //query = query.orderBy(filter.getFieldName());
@@ -106,38 +106,38 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
                         query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
                         break;
                     case GREATER_THAN:
-                        if (rangeSelector)
+                        if (!rangedField.equals("") || !rangedField.equals(filter.getFieldName()))
                             break;
                         query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
-                        rangeSelector = true;
+                        rangedField = filter.getFieldName();
                         break;
                     case GREATER_THAN_OR_EQUALS:
-                        if (rangeSelector)
+                        if (!rangedField.equals("") || !rangedField.equals(filter.getFieldName()))
                             break;
                         query = query.whereGreaterThanOrEqualTo(filter.getFieldName(), filter.getValue());
-                        rangeSelector = true;
+                        rangedField = filter.getFieldName();
                         break;
                     case LESS_THAN:
-                        if (rangeSelector)
+                        if (!rangedField.equals("") || !rangedField.equals(filter.getFieldName()))
                             break;
                         query = query.whereLessThan(filter.getFieldName(), filter.getValue());
-                        rangeSelector = true;
+                        rangedField = filter.getFieldName();
                         break;
                     case LESS_THAN_OR_EQUALS:
-                        if (rangeSelector)
+                        if (!rangedField.equals("") || !rangedField.equals(filter.getFieldName()))
                             break;
                         query = query.whereLessThanOrEqualTo(filter.getFieldName(), filter.getValue());
-                        rangeSelector = true;
+                        rangedField = filter.getFieldName();
                         break;
                     case LIKE:
-                        if (rangeSelector)
+                        if (!rangedField.equals("") || !rangedField.equals(filter.getFieldName()))
                             break;
                         //query = query.orderBy(filter.getFieldName());
                         //query = query.whereGreaterThanOrEqualTo(filter.getFieldName(), filter.getValue());
                         //query = query.whereLessThan(filter.getFieldName(), filter.getValue() + "ZZZ");
                         //query = query.whereArrayContains(filter.getFieldName(), filter.getValue());
                         query = query.orderBy(filter.getFieldName()).startAt(filter.getValue()).endAt(filter.getValue() + "\uf8ff");
-                        rangeSelector = true;
+                        rangedField = filter.getFieldName();
                         break;
                 }
             }
