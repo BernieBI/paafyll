@@ -44,7 +44,7 @@ import no.hiof.matsl.pfyll.adapter.ProductDataSourceFactory;
 import no.hiof.matsl.pfyll.adapter.ProductRecycleViewAdapter;
 
 public class FragmentProducts extends Fragment{
-    private LiveData<PagedList<Product>> products;
+    private LiveData<PagedList<FirestoreProduct>> products;
     private RecyclerView recyclerView;
     private FloatingActionButton layoutButton;
     private ProductRecycleViewAdapter productAdapter;
@@ -418,9 +418,9 @@ public class FragmentProducts extends Fragment{
         recyclerView = view.findViewById(R.id.product_recycler_view);
         passProductsToView();
 
-        products.observe(this, new Observer<PagedList<Product>>() {
+        products.observe(this, new Observer<PagedList<FirestoreProduct>>() {
             @Override
-            public void onChanged(@Nullable PagedList<Product> products) {
+            public void onChanged(@Nullable PagedList<FirestoreProduct> products) {
                 productAdapter.submitList(products);
                 view.findViewById(R.id.progressBar).setVisibility(View.GONE);
 

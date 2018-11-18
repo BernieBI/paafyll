@@ -28,11 +28,12 @@ import java.util.Collections;
 
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.SingleProductActivity;
+import no.hiof.matsl.pfyll.model.FirestoreProduct;
 import no.hiof.matsl.pfyll.model.IdFilter;
 import no.hiof.matsl.pfyll.model.Product;
 
 
-public class ProductRecycleViewAdapter extends PagedListAdapter<Product, ProductRecycleViewAdapter.ViewHolder> {
+public class ProductRecycleViewAdapter extends PagedListAdapter<FirestoreProduct, ProductRecycleViewAdapter.ViewHolder> {
 
     private static final String TAG = "ProductRVAdapter";
     public boolean useListLayout = true;
@@ -46,14 +47,14 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
     //firebase
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    private static final DiffUtil.ItemCallback<Product> DIFF_CALLBACK = new DiffUtil.ItemCallback<Product>() {
+    private static final DiffUtil.ItemCallback<FirestoreProduct> DIFF_CALLBACK = new DiffUtil.ItemCallback<FirestoreProduct>() {
         @Override
-        public boolean areItemsTheSame(@NonNull Product p1, @NonNull Product p2) {
+        public boolean areItemsTheSame(@NonNull FirestoreProduct p1, @NonNull FirestoreProduct p2) {
             return p1.getVarenummer().equals(p2.getVarenummer());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull Product p1, @NonNull Product p2) {
+        public boolean areContentsTheSame(@NonNull FirestoreProduct p1, @NonNull FirestoreProduct p2) {
             return p1.getDatotid().equals(p2.getDatotid());
         }
     };
