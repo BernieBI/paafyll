@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 
 import com.google.android.flexbox.FlexDirection;
@@ -64,6 +65,7 @@ public class FragmentProducts extends Fragment{
     private ImageButton filterButton, scanButton, searchButton;
     private FlexboxLayout selectedFilters;
     private SearchView searchBar;
+    private TextView searchWord;
     private Drawable removeIcon;
 
     private String FILTER = "Filtrer";
@@ -90,12 +92,11 @@ public class FragmentProducts extends Fragment{
         margin = (int)(400*dpi);
 
         config = new PagedList.Config.Builder().setPageSize(6).build();
-
         factory = new ProductDataSourceFactory(database, filters);
         layoutButton = view.findViewById(R.id.layoutButton);
         layoutButton.setOnClickListener(layoutSwitchListener);
         removeIcon = getResources().getDrawable(R.drawable.remove);
-
+        searchWord = view.findViewById(R.id.searchWord);
         bundle = getArguments();
         if (bundle != null){
             //Retrieving list of product IDs.
@@ -134,30 +135,27 @@ public class FragmentProducts extends Fragment{
             public void onClick(View v) {
                 scanButton.setBackgroundColor(getResources().getColor(R.color.white));
                 scanButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
+                hideFilter();
+                hideSearch();
                 Intent intent = new Intent(getContext(), ScanActivity.class);
                 startActivity(intent);
             }
         });
 
         filterOptions =  view.findViewById(R.id.filterOptions);
-        //filterOptions.setTranslationY(-margin);
         filterOptions.setVisibility(View.GONE);
 
         filterButton = view.findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (filterOptions.getVisibility() == View.VISIBLE/*filterOptions.getTranslationY() == 0*/){
-                    filterButton.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
-                    filterButton.setColorFilter(getResources().getColor(R.color.white));
-                    //filterOptions.animate().translationY(-margin);
-                    filterOptions.setVisibility(View.GONE);
-                }else{
-                    filterButton.setBackgroundColor(getResources().getColor(R.color.white));
-                    filterButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
-                    //filterOptions.animate().translationY(0);
-                    filterOptions.setVisibility(View.VISIBLE);
+                if (filterOptions.getVisibility() == View.VISIBLE)
+                    hideFilter();
+                else {
+                    showFilter();
+                    hideSearch();
                 }
+
             }
         });
 
@@ -189,7 +187,14 @@ public class FragmentProducts extends Fragment{
                 numberFilterDialog("Alkohol");
             }
         });
-
+        searchWord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchWord.setVisibility(View.GONE);
+                productName = null;
+                submitSearch();
+            }
+        });
         searchBar = view.findViewById(R.id.searchBar);
         //searchBar.setTranslationY(-margin);
         searchBar.setVisibility(View.GONE);
@@ -198,22 +203,26 @@ public class FragmentProducts extends Fragment{
             @Override
             public boolean onQueryTextSubmit(String query) {
                 query = query.trim();
-                if (query.equals(""))
+                if (query.equals("")) {
                     productName = null;
-                else {
+                    searchWord.setVisibility(View.GONE);
+                }else {
+                    searchWord.setVisibility(View.VISIBLE);
+                    searchWord.setText(query);
                     productName = new StringFilter(
                             "Varenavn",
                             Filter.ComparisonType.EQUALS,
                             query
                     );
+
                 }
-                submitFilter();
+                submitSearch();
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return onQueryTextSubmit(newText);
+                return false;
             }
         });
 
@@ -221,21 +230,50 @@ public class FragmentProducts extends Fragment{
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (searchBar.getVisibility() == View.VISIBLE /*searchBar.getTranslationY() == 0*/){
-                    searchButton.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
-                    searchButton.setColorFilter(getResources().getColor(R.color.white));
-                   // searchBar.animate().translationY(-margin);
-                    searchBar.setVisibility(View.GONE);
-                } else {
-                    searchButton.setBackgroundColor(getResources().getColor(R.color.white));
-                    searchButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
-                    //searchBar.animate().translationY(0);
-                    searchBar.setVisibility(View.VISIBLE);
+                if (searchBar.getVisibility() == View.VISIBLE )
+                     hideSearch();
+                 else {
+                    showSearch();
+                    hideFilter();
                 }
             }
         });
     }
+    private void hideSearch(){
+        searchBar.onActionViewCollapsed();
+        searchButton.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
+        searchButton.setColorFilter(getResources().getColor(R.color.white));
+        searchBar.setVisibility(View.GONE);
+    }
+    private void showSearch(){
+        searchBar.onActionViewExpanded();
+        searchButton.setBackgroundColor(getResources().getColor(R.color.white));
+        searchButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
+        searchBar.setVisibility(View.VISIBLE);
+    }
+    private void hideFilter(){
+        filterButton.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
+        filterButton.setColorFilter(getResources().getColor(R.color.white));
+        filterOptions.setVisibility(View.GONE);
+    }
+    private void showFilter(){
+        filterButton.setBackgroundColor(getResources().getColor(R.color.white));
+        filterButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
+        filterOptions.setVisibility(View.VISIBLE);
+    }
+    private void submitSearch(){
+        view.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+        filters.clear();
+        selectedFilters.removeAllViews();
+        if (productName != null)
+            filters.add(productName);
+
+        factory = new ProductDataSourceFactory(database, filters);
+        products = new LivePagedListBuilder<>(factory, config).build();
+        initRecyclerView();
+    }
     public void submitFilter(){
+        searchWord.setVisibility(View.GONE);
         view.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         filters.clear();
 
@@ -250,9 +288,6 @@ public class FragmentProducts extends Fragment{
 
         if (filterAlcohol != null)
             filters.add(filterAlcohol);
-
-        if (productName != null)
-            filters.add(productName);
 
         factory = new ProductDataSourceFactory(database, filters);
         products = new LivePagedListBuilder<>(factory, config).build();
