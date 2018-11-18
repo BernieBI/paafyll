@@ -103,6 +103,7 @@ public class FragmentProducts extends Fragment{
             view.findViewById(R.id.filterField).setVisibility(View.GONE);
 
             if (bundle.getStringArrayList("preSetProducts") != null){
+                layoutButton.hide();
                 preSetProducts = bundle.getStringArrayList("preSetProducts");
                 Collections.reverse(preSetProducts);
                 factory = new ProductDataSourceFactory(database, new IdFilter(preSetProducts));
@@ -286,10 +287,11 @@ public class FragmentProducts extends Fragment{
         if (filterPriceFrom != null)
             filters.add(filterPriceFrom);
         if (filterPriceTo != null)
-
             filters.add(filterPriceTo);
 
         if (filterAlcoholFrom != null)
+            filters.add(filterAlcoholFrom);
+        if (filterAlcoholTo != null)
             filters.add(filterAlcoholTo);
 
         factory = new ProductDataSourceFactory(database, filters);
