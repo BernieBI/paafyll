@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 
 
 import com.google.android.flexbox.FlexDirection;
@@ -60,8 +61,9 @@ public class FragmentProducts extends Fragment{
     private NumberFilter filterPrice, filterAlcohol;
 
     private Button priceButton, categoryButton, countryButton, alcoholButton;
-    private ImageButton filterButton, scanButton;
+    private ImageButton filterButton, scanButton, searchButton;
     private FlexboxLayout selectedFilters;
+    private SearchView searchBar;
     private Drawable removeIcon;
 
     private String FILTER = "Filtrer";
@@ -138,20 +140,23 @@ public class FragmentProducts extends Fragment{
         });
 
         filterOptions =  view.findViewById(R.id.filterOptions);
-        filterOptions.setTranslationY(-margin);
+        //filterOptions.setTranslationY(-margin);
+        filterOptions.setVisibility(View.GONE);
 
         filterButton = view.findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (filterOptions.getTranslationY() == 0){
+                if (filterOptions.getVisibility() == View.VISIBLE/*filterOptions.getTranslationY() == 0*/){
                     filterButton.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
                     filterButton.setColorFilter(getResources().getColor(R.color.white));
-                    filterOptions.animate().translationY(-margin);
+                    //filterOptions.animate().translationY(-margin);
+                    filterOptions.setVisibility(View.GONE);
                 }else{
                     filterButton.setBackgroundColor(getResources().getColor(R.color.white));
                     filterButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
-                    filterOptions.animate().translationY(0);
+                    //filterOptions.animate().translationY(0);
+                    filterOptions.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -182,6 +187,35 @@ public class FragmentProducts extends Fragment{
             @Override
             public void onClick(View v) {
                 numberFilterDialog("Alkohol");
+            }
+        });
+
+        searchBar = view.findViewById(R.id.searchBar);
+        //searchBar.setTranslationY(-margin);
+        searchBar.setVisibility(View.GONE);
+        searchBar.setBackgroundColor(getResources().getColor(R.color.white));
+        searchBar.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+            }
+        });
+
+        searchButton = view.findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (searchBar.getVisibility() == View.VISIBLE /*searchBar.getTranslationY() == 0*/){
+                    searchButton.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
+                    searchButton.setColorFilter(getResources().getColor(R.color.white));
+                   // searchBar.animate().translationY(-margin);
+                    searchBar.setVisibility(View.GONE);
+                } else {
+                    searchButton.setBackgroundColor(getResources().getColor(R.color.white));
+                    searchButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
+                    //searchBar.animate().translationY(0);
+                    searchBar.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
