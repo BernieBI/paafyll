@@ -33,6 +33,7 @@
     <string name="product_smell">Lukt</string>
     <string name="product_method">Metode</string>
     <string name="product_category">Butikkategori</string>
+    <string name="product_type">Varetype</string>
     <string name="product_enviromentalPackage">Miljosmart emballasje</string>
     <string name="product_Organic">Økologisk</string>
     <string name="product_webBtn">Se i nettbutikk</string>
@@ -49,21 +50,33 @@
     <string name="lists">Lister</string>
     <string name="reviews">Anmeldelser</string>
     <string name="logout">Logg ut</string>
+    <string name="settings">Innstillinger</string>
     <string name="empty_message">Her var det tomt, gitt..</string>
     <string name="no_results">Vi fant ingen produkter</string>
+
+
+    <!-- imageButtons-->
+    <string name="filter_button">Produktfilter</string>
+    <string name="search_button">Produktsøk</string>
+    <string name="scan_button">Produktscan</string>
+
 
     <!-- UserLists -->
     <string name="selectList">Legg til i liste</string>
     <string name="already_exists">Produktet er allerede i</string>
     <string name="add_success">Produktet ble lagt i</string>
     <string name="removed_from_list">ble fjernet fra listen</string>
+    <string name="remove_from_list">Fjern fra listen</string>
+    <string name="remove_list">Slett liste</string>
     <string name="confirm_delete_list">Er du sikker på at du vil slette denne listen?</string>
     <string name="require_name">Du må gi listen et navn</string>
     <string name="list_require_login">Du må være logget inn for å bruke lister</string>
     <string name="have_no_lists">Du har ingen lister ennå :(</string>
     <string name="add_lists">Legg til lister ved å trykke på knappen nede i hjørnet</string>
+    <string name="list_hint">Navn på liste</string>
     <!--Reviews-->
     <string name="product_reviewBtn">Anmeld</string>
+    <string name="remove_review">Slett anmeldelse</string>
     <string name="confirm_delete_review">Er du sikker på at du vil slette denne anmeldelsen?</string>
     <string name="already_reviewed">Du har allerede anmeldt dette produktet</string>
     <string name="review_success">Din anmeldelse er registrert!</string>

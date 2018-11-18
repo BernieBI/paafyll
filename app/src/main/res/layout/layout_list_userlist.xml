@@ -63,6 +63,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:backgroundTint="@color/darkOverlay"
+            android:contentDescription="@string/remove_list"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintTop_toTopOf="parent"

@@ -26,7 +26,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 
 import com.google.android.flexbox.FlexDirection;
@@ -247,14 +246,14 @@ public class FragmentProducts extends Fragment{
 
         Dialog alertFilter = filterBuilder.create();
         alertFilter.show();
-        alertFilter.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, (int)(300*dpi));
+        alertFilter.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, (int)(500*dpi));
     }
 
     private void numberFilterDialog(final String fieldString) {
 
         final AlertDialog.Builder filterBuilder = new AlertDialog.Builder(getContext());
         filterBuilder.setTitle(fieldString)
-                .setView(getLayoutInflater().inflate(R.layout.price_filter, null))
+                .setView(getLayoutInflater().inflate(R.layout.number_filter, null))
                 .setPositiveButton("Bruk", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -340,7 +339,7 @@ public class FragmentProducts extends Fragment{
                 productAdapter.setLayout(true);
             }else{
                 layoutColumns = 2;
-                layoutButton.setImageDrawable(getActivity().getDrawable(R.drawable.list));
+                layoutButton.setImageDrawable(getActivity().getDrawable(R.drawable.rows));
                 productAdapter.setLayout(false);
             }
             gridLayoutManager.setSpanCount(layoutColumns);

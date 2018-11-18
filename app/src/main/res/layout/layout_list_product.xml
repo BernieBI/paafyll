@@ -13,7 +13,7 @@
     android:layout_marginBottom="5dp"
     android:background="@color/primaryColor"
     android:elevation="3dp"
-    android:gravity="right"
+    android:gravity="end"
     android:orientation="vertical">
 
     <ImageButton
@@ -23,6 +23,7 @@
         android:layout_height="40dp"
         android:layout_margin="8dp"
         android:backgroundTint="@color/white"
+        android:contentDescription="@string/remove_from_list"
         android:elevation="0dp"
         tool:srcCompat="@drawable/remove2" />
 
@@ -66,7 +67,6 @@
             android:layout_margin="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="pris"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@color/primaryTextColor"
             android:textSize="12sp"
@@ -81,7 +81,6 @@
             android:layout_margin="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
-            android:text="Type"
             android:textAlignment="textEnd"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@color/primaryTextColor"
@@ -97,7 +96,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="land"
             android:textColor="@color/primaryTextColor"
             android:textSize="10sp"
             tool:layout_constraintBottom_toBottomOf="parent"
@@ -110,13 +108,12 @@
             android:id="@+id/divider"
             android:layout_width="1dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:background="?android:attr/listDivider"
             android:visibility="invisible"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
+            tool:layout_constraintHorizontal_bias="0.45"
             tool:layout_constraintStart_toStartOf="parent"
             tool:layout_constraintTop_toTopOf="parent" />
 
