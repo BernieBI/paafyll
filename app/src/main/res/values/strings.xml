@@ -71,7 +71,137 @@
     <string name="require_comment">Du må skrive en kommentar</string>
     <string name="empty_reviews">Skriv en anmeldelse til et produkt så dukker det opp her</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="productCategories">
+        <item>Akevitt</item>
+        <item>Alkoholfri leskedrikk</item>
+        <item>Alkoholfri most</item>
+        <item>Alkoholfri musserende drikk</item>
+        <item>Alkoholfri vin</item>
+        <item>Alkoholfritt øl</item>
+        <item>Aromatisert vin</item>
+        <item>Barley wine</item>
+        <item>Bitter</item>
+        <item>Brennevin, annet</item>
+        <item>Brown ale</item>
+        <item>Champagne extra brut</item>
+        <item>Champagne, annen</item>
+        <item>Champagne, brut</item>
+        <item>Champagne, rosé</item>
+        <item>Champagne, sec</item>
+        <item>Druebrennevin</item>
+        <item>Fruktbrennevin</item>
+        <item>Fruktvin</item>
+        <item>Genever</item>
+        <item>Gin</item>
+        <item>Hveteøl</item>
+        <item>Hvitvin</item>
+        <item>India pale ale</item>
+        <item>Klosterstil</item>
+        <item>Likør</item>
+        <item>Lys ale</item>
+        <item>Lys lager</item>
+        <item>Madeira</item>
+        <item>Mjød</item>
+        <item>Musserende vin</item>
+        <item>Musserende vin, rosé</item>
+        <item>Mørk lager</item>
+        <item>Pale ale</item>
+        <item>Perlende vin, hvit</item>
+        <item>Perlende vin, rosé</item>
+        <item>Perlende vin, rød</item>
+        <item>Portvin</item>
+        <item>Red/amber</item>
+        <item>Rom</item>
+        <item>Rosévin</item>
+        <item>Rødvin</item>
+        <item>Saison farmhouse ale</item>
+        <item>Sake</item>
+        <item>Scotch ale</item>
+        <item>Sherry</item>
+        <item>Sider</item>
+        <item>Spesial</item>
+        <item>Sterkvin, annen</item>
+        <item>Surøl</item>
+        <item>Vermut</item>
+        <item>Vodka</item>
+        <item>Whisky</item>
+    </string-array>
 
+    <string-array name="productCountries">
+        <item>Amer. Jomfruøy.</item>
+        <item>Antillene</item>
+        <item>Argentina</item>
+        <item>Australia</item>
+        <item>Barbados</item>
+        <item>Belgia</item>
+        <item>Bermuda</item>
+        <item>Bosnia-Herceg.</item>
+        <item>Brasil</item>
+        <item>Brit. Jomfruøy.</item>
+        <item>Bulgaria</item>
+        <item>Canada</item>
+        <item>Chile</item>
+        <item>Colombia</item>
+        <item>Costa Rica</item>
+        <item>Cuba</item>
+        <item>Danmark</item>
+        <item>Dominik. rep.</item>
+        <item>England</item>
+        <item>Estland</item>
+        <item>EU</item>
+        <item>Finland</item>
+        <item>Frankrike</item>
+        <item>Georgia</item>
+        <item>Guatemala</item>
+        <item>Guyana</item>
+        <item>Haiti</item>
+        <item>Hellas</item>
+        <item>India</item>
+        <item>Irland</item>
+        <item>Island</item>
+        <item>Italia</item>
+        <item>Jamaica</item>
+        <item>Japan</item>
+        <item>Latvia</item>
+        <item>Libanon</item>
+        <item>Litauen</item>
+        <item>Luxemburg</item>
+        <item>Makedonia</item>
+        <item>Marokko</item>
+        <item>Martinique</item>
+        <item>Mauritius</item>
+        <item>Mexico</item>
+        <item>Moldova</item>
+        <item>Nederland</item>
+        <item>New Zealand</item>
+        <item>Nicaragua</item>
+        <item>Norge</item>
+        <item>Peru</item>
+        <item>Polen</item>
+        <item>Portugal</item>
+        <item>Puerto Rico</item>
+        <item>Romania</item>
+        <item>Russland</item>
+        <item>Skottland</item>
+        <item>Slovenia</item>
+        <item>Spania</item>
+        <item>Storbritannia</item>
+        <item>Sveits</item>
+        <item>Sverige</item>
+        <item>Sør-Afrika</item>
+        <item>Taiwan</item>
+        <item>Thailand</item>
+        <item>Trinidad,Tobago</item>
+        <item>Tsjekkia</item>
+        <item>Tyrkia</item>
+        <item>Tyskland</item>
+        <item>Ukraina</item>
+        <item>Ungarn</item>
+        <item>Uruguay</item>
+        <item>USA</item>
+        <item>Venezuela</item>
+        <item>Wales</item>
+        <item>Østerrike</item>
+        <item>Øvrige</item>
+    </string-array>
 </resources>

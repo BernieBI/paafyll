@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,18 +24,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import no.hiof.matsl.pfyll.model.FragmentLogin;
 import no.hiof.matsl.pfyll.model.FragmentMyAccount;
 import no.hiof.matsl.pfyll.model.FragmentProducts;
 import no.hiof.matsl.pfyll.model.ViewPagerAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
     String TAG = "MainActivity";
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
@@ -49,9 +53,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
          setContentView(R.layout.activity_main);
-        CreateLayout();
+         CreateLayout();
 
     }
+
 
     @Override
     protected void onResume() {
@@ -97,45 +102,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
 
             }
-    }
-    private void removeNonDrinkables(){
-
-        //Gaveesker
-        //Gaveposer
-        //Tilbehør
-
-        db.collection("Produkter").whereEqualTo("Varetype", "Gaveesker")
-        .get()
-        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        deleteItem(document);
-                    }
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            }
-        });
-    }
-
-    private void deleteItem(QueryDocumentSnapshot document) {
-
-        db.collection("Produkter").document(document.getId())
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting document", e);
-                    }
-                });
     }
 
 
