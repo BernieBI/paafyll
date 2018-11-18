@@ -19,10 +19,11 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import no.hiof.matsl.pfyll.model.Filter;
+import no.hiof.matsl.pfyll.model.FirestoreProduct;
 import no.hiof.matsl.pfyll.model.IdFilter;
 import no.hiof.matsl.pfyll.model.Product;
 
-public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
+public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, FirestoreProduct> {
     private static final String COLLECTION_PATH = "Produkter";
 
     private FirebaseFirestore database;
@@ -40,35 +41,35 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull LoadInitialCallback<Product> callback) {
-        loadData(0, params.requestedLoadSize, callback, false, false);
+    public void loadInitial(@NonNull LoadInitialParams<DocumentSnapshot> params, @NonNull LoadInitialCallback<FirestoreProduct> callback) {
+        loadData(null, params.requestedLoadSize, callback, false, false);
     }
 
     @Override
-    public void loadAfter(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<Product> callback) {
+    public void loadAfter(@NonNull LoadParams<DocumentSnapshot> params, @NonNull LoadCallback<FirestoreProduct> callback) {
         if (idFilter == null)
-            loadData(params.key + 1, params.requestedLoadSize, callback, true, false);
+            loadData(params.key, params.requestedLoadSize, callback, true, false);
     }
 
     @Override
-    public void loadBefore(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<Product> callback) {
+    public void loadBefore(@NonNull LoadParams<DocumentSnapshot> params, @NonNull LoadCallback<FirestoreProduct> callback) {
         //loadData(params.key, params.requestedLoadSize, callback, true, true);
     }
 
     @NonNull
     @Override
-    public Integer getKey(@NonNull Product item) {
-        return item.getId();
+    public DocumentSnapshot getKey(@NonNull FirestoreProduct item) {
+        return item.getDocumentSnapshot();
     }
 
-    private void loadData(Integer key, int loadSize, @NonNull final LoadCallback<Product> callback, final boolean async, final boolean reverse) {
-        final TaskCompletionSource<List<Product>> taskCompletionSource = new TaskCompletionSource<>();
+    private void loadData(DocumentSnapshot key, int loadSize, @NonNull final LoadCallback<FirestoreProduct> callback, final boolean async, final boolean reverse) {
+        final TaskCompletionSource<List<FirestoreProduct>> taskCompletionSource = new TaskCompletionSource<>();
 
         if (idFilter != null) {
             if (async)
-                loadDataByIdFilter(callback, new ArrayList<Product>(), 0);
+                loadDataByIdFilter(callback, new ArrayList<FirestoreProduct>(), 0);
             else
-                loadDataByIdFilter(taskCompletionSource, new ArrayList<Product>(), 0);
+                loadDataByIdFilter(taskCompletionSource, new ArrayList<FirestoreProduct>(), 0);
         } else {
             if (async)
                 loadDataByValueFilter(callback, key, loadSize);
@@ -80,7 +81,7 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
             return;
         }
 
-        Task<List<Product>> task = taskCompletionSource.getTask();
+        Task<List<FirestoreProduct>> task = taskCompletionSource.getTask();
 
         try {
             Tasks.await(task);
@@ -91,15 +92,11 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
         if (task.isSuccessful() && task.getResult() != null) {
             callback.onResult(task.getResult());
         } else {
-            callback.onResult(new ArrayList<Product>(loadSize));
+            callback.onResult(new ArrayList<FirestoreProduct>(loadSize));
         }
     }
 
-    // TODO: Refactor to remove duplicate code
-    private void loadDataByValueFilter(@NonNull final LoadCallback<Product> callback, int key, int loadSize) {
-        CollectionReference collection = database.collection(COLLECTION_PATH);
-        Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter(key).limit(loadSize);
-
+    private Query addFilters(Query query) {
         boolean rangeSelector = false; // There can only be one
         if (filters != null) {
             for (Filter filter : filters) {
@@ -113,74 +110,95 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
                         query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
                         rangeSelector = true;
                         break;
+                    case GREATER_THAN_OR_EQUALS:
+                        if (rangeSelector)
+                            break;
+                        query = query.whereGreaterThanOrEqualTo(filter.getFieldName(), filter.getValue());
+                        rangeSelector = true;
+                        break;
                     case LESS_THAN:
                         if (rangeSelector)
                             break;
                         query = query.whereLessThan(filter.getFieldName(), filter.getValue());
                         rangeSelector = true;
                         break;
+                    case LESS_THAN_OR_EQUALS:
+                        if (rangeSelector)
+                            break;
+                        query = query.whereLessThanOrEqualTo(filter.getFieldName(), filter.getValue());
+                        rangeSelector = true;
+                        break;
+                    case BETWEEN:
+                        if (rangeSelector)
+                            break;
+                        query = query.whereGreaterThanOrEqualTo(filter.getFieldName(), filter.getValue());
+                        query = query.whereLessThan(filter.getFieldName(), filter.getValue());
+                        rangeSelector = true;
+                        break;
                 }
             }
         }
+        return query;
+    }
+
+    // TODO: Refactor to remove duplicate code
+    private void loadDataByValueFilter(@NonNull final LoadCallback<FirestoreProduct> callback, DocumentSnapshot key, int loadSize) {
+        CollectionReference collection = database.collection(COLLECTION_PATH);
+
+        Query query;
+        if (key != null)
+            query = collection.startAfter(key);
+        else
+            query = collection;
+        query = query.limit(loadSize);
+
+        query = addFilters(query);
+
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
 
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<Product> products = new ArrayList<>();
+                List<FirestoreProduct> products = new ArrayList<>();
 
                 if (task.isSuccessful() && task.getResult() != null) {
                     for (QueryDocumentSnapshot doc : task.getResult()){
-                        products.add(new Product().documentToProduct(doc));
+                        products.add(FirestoreProduct.documentToProduct(doc));
                     }
                 }
                 callback.onResult(products);
             }
         });
     }
-    private void loadDataByValueFilter(@NonNull final TaskCompletionSource<List<Product>> taskCompletionSource, int key, int loadSize) {
+    private void loadDataByValueFilter(@NonNull final TaskCompletionSource<List<FirestoreProduct>> taskCompletionSource, DocumentSnapshot key, int loadSize) {
         CollectionReference collection = database.collection(COLLECTION_PATH);
-        Query query = collection.orderBy("Index", Query.Direction.ASCENDING).startAfter(key).limit(loadSize);
 
-        boolean rangeSelector = false; // There can only be one
-        if (filters != null) {
-            for (Filter filter : filters) {
-                switch (filter.getComparisonType()) {
-                    case EQUALS:
-                        query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
-                        break;
-                    case GREATER_THAN:
-                        if (rangeSelector)
-                            break;
-                        query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
-                        rangeSelector = true;
-                        break;
-                    case LESS_THAN:
-                        if (rangeSelector)
-                            break;
-                        query = query.whereLessThan(filter.getFieldName(), filter.getValue());
-                        rangeSelector = true;
-                        break;
-                }
-            }
-        }
+        Query query;
+        if (key != null)
+            query = collection.startAfter(key);
+        else
+            query = collection;
+        query = query.limit(loadSize);
+
+        query = addFilters(query);
 
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<Product> products = new ArrayList<>();
+                List<FirestoreProduct> products = new ArrayList<>();
 
                 if (task.isSuccessful() && task.getResult() != null) {
                     for (QueryDocumentSnapshot doc : task.getResult()){
-                        Product product =  new Product().documentToProduct(doc);
+                        FirestoreProduct product =  FirestoreProduct.documentToProduct(doc);
                         product.setBildeUrl(product.getVarenummer());
                         products.add(product);
                     }
                 }
+
                 taskCompletionSource.setResult(products);
             }
         });
     }
-    private void loadDataByIdFilter(@NonNull final LoadCallback<Product> callback, @NonNull final List<Product> result, final int index) {
+    private void loadDataByIdFilter(@NonNull final LoadCallback<FirestoreProduct> callback, @NonNull final List<FirestoreProduct> result, final int index) {
         final List<String> ids = idFilter.getIds();
         final int size = ids.size();
 
@@ -188,7 +206,7 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful() && task.getResult() != null)
-                        result.add(new Product().documentToProduct(task.getResult()));
+                        result.add(FirestoreProduct.documentToProduct(task.getResult()));
                     if ((index + 1) >= size)
                         callback.onResult(result);
                     else
@@ -197,15 +215,15 @@ public class ProductDataSource extends ItemKeyedDataSource<Integer, Product> {
             }
         );
     }
-    private void loadDataByIdFilter(@NonNull final TaskCompletionSource<List<Product>> taskCompletionSource, @NonNull final List<Product> result, final int index) {
+    private void loadDataByIdFilter(@NonNull final TaskCompletionSource<List<FirestoreProduct>> taskCompletionSource, @NonNull final List<FirestoreProduct> result, final int index) {
         final List<String> ids = idFilter.getIds();
         final int size = ids.size();
 
         database.collection("Produkter").document(ids.get(index)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                                                  @Override
-                                                                                                  public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+          @Override
+          public void onComplete(@NonNull Task<DocumentSnapshot> task) {
               if (task.isSuccessful() && task.getResult() != null)
-                  result.add(new Product().documentToProduct(task.getResult()));
+                  result.add(FirestoreProduct.documentToProduct(task.getResult()));
               if ((index + 1) >= size)
                   taskCompletionSource.setResult(result);
               else

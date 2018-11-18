@@ -8,7 +8,7 @@ public class Product {
     }
 
     private int id;
-    private String bildeUrl;
+    transient private String bildeUrl;
     private String alkohol;
     private String argang;
     private String biodynamisk;
@@ -99,6 +99,55 @@ public class Product {
         this.vareurl = vareurl;
         this.volum = volum;
         this.hovedGTIN = hovedGTIN;
+    }
+
+    public Product(Product other) {
+        this(
+            other.id,
+            other.alkohol,
+            other.argang,
+            other.biodynamisk,
+            other.bitterhet,
+            other.butikkategori,
+            other.datotid,
+            other.distributor,
+            other.distrikt,
+            other.emballasjetype,
+            other.fairtrade,
+            other.farge,
+            other.friskhet,
+            other.fylde,
+            other.garvestoffer,
+            other.gluten_lav_pa,
+            other.grossist,
+            other.korktype,
+            other.kosher,
+            other.lagringsgrad,
+            other.land,
+            other.literpris,
+            other.lukt,
+            other.metode,
+            other.miljosmart_emballasje,
+            other.okologisk,
+            other.passertil01,
+            other.passertil02,
+            other.passertil03,
+            other.pris,
+            other.produktutvalg,
+            other.produsent,
+            other.rastoff,
+            other.smak,
+            other.sodme,
+            other.sukker,
+            other.syre,
+            other.underdistrikt,
+            other.varenavn,
+            other.varenummer,
+            other.varetype,
+            other.vareurl,
+            other.volum,
+            other.hovedGTIN
+        );
     }
 
     public String getHovedGTIN() {
@@ -455,13 +504,13 @@ public class Product {
         this.volum = volum;
     }
 
-    private String stringify(Object object) {
+    private static String stringify(Object object) {
         return (object == null)
                 ? ""
                 : object.toString();
     }
 
-    public Product documentToProduct(DocumentSnapshot doc) {
+    public static Product documentToProduct(DocumentSnapshot doc) {
         Product product =  new Product(
                 Integer.parseInt(doc.getId()),
                 stringify(doc.get("Alkohol")),

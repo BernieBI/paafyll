@@ -3,16 +3,18 @@ package no.hiof.matsl.pfyll.adapter;
 import android.arch.paging.DataSource;
 import android.support.annotation.NonNull;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import no.hiof.matsl.pfyll.model.Filter;
+import no.hiof.matsl.pfyll.model.FirestoreProduct;
 import no.hiof.matsl.pfyll.model.IdFilter;
 import no.hiof.matsl.pfyll.model.Product;
 
-public class ProductDataSourceFactory extends DataSource.Factory<Integer, Product> {
+public class ProductDataSourceFactory extends DataSource.Factory<DocumentSnapshot, FirestoreProduct> {
 
     private FirebaseFirestore database;
     private List<Filter> filters;
@@ -32,7 +34,7 @@ public class ProductDataSourceFactory extends DataSource.Factory<Integer, Produc
     }
 
     @Override
-    public DataSource<Integer, Product> create() {
+    public DataSource<DocumentSnapshot, FirestoreProduct> create() {
         if (idFilter != null)
             return new ProductDataSource(database, idFilter);
         else
