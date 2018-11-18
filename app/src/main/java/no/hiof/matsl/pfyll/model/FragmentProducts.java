@@ -203,7 +203,7 @@ public class FragmentProducts extends Fragment{
                 else {
                     productName = new StringFilter(
                             "Varenavn",
-                            Filter.ComparisonType.BETWEEN,
+                            Filter.ComparisonType.EQUALS,
                             query
                     );
                 }

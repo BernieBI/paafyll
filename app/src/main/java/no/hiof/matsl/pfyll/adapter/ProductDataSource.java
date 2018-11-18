@@ -100,6 +100,7 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
         boolean rangeSelector = false; // There can only be one
         if (filters != null) {
             for (Filter filter : filters) {
+                //query = query.orderBy(filter.getFieldName());
                 switch (filter.getComparisonType()) {
                     case EQUALS:
                         query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
@@ -128,11 +129,14 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
                         query = query.whereLessThanOrEqualTo(filter.getFieldName(), filter.getValue());
                         rangeSelector = true;
                         break;
-                    case BETWEEN:
+                    case LIKE:
                         if (rangeSelector)
                             break;
-                        query = query.whereGreaterThanOrEqualTo(filter.getFieldName(), filter.getValue());
-                        query = query.whereLessThan(filter.getFieldName(), filter.getValue());
+                        //query = query.orderBy(filter.getFieldName());
+                        //query = query.whereGreaterThanOrEqualTo(filter.getFieldName(), filter.getValue());
+                        //query = query.whereLessThan(filter.getFieldName(), filter.getValue() + "ZZZ");
+                        //query = query.whereArrayContains(filter.getFieldName(), filter.getValue());
+                        query = query.orderBy(filter.getFieldName()).startAt(filter.getValue()).endAt(filter.getValue() + "\uf8ff");
                         rangeSelector = true;
                         break;
                 }
@@ -165,7 +169,9 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
 
                 if (task.isSuccessful() && task.getResult() != null) {
                     for (QueryDocumentSnapshot doc : task.getResult()){
-                        products.add(FirestoreProduct.documentToProduct(doc));
+                        FirestoreProduct product =  FirestoreProduct.documentToProduct(doc);
+                        product.setBildeUrl(product.getVarenummer());
+                        products.add(product);
                     }
                 }
                 callback.onResult(products);
@@ -184,6 +190,8 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
         } else
             query = collection;
         query = query.limit(loadSize);
+
+        query = addFilters(query);
 
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
