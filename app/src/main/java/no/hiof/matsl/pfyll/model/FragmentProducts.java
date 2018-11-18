@@ -306,13 +306,13 @@ public class FragmentProducts extends Fragment{
                 .setItems(elements, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         selectedFilters.removeView(view.findViewWithTag(field));
-                        final Button button = new Button(getContext());
-                        button.setTag(field);
-                        button.setText(elements[which]);
-                        button.setTextSize(11);
-                        button.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
+                        TextView activeFilter = new Button(getContext());
+                        activeFilter.setTag(field);
+                        activeFilter.setText(elements[which]);
+                        activeFilter.setTextSize(11);
+                        activeFilter.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
 
-                        button.setOnClickListener(new View.OnClickListener() {
+                        activeFilter.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 if (field.equals("Varetype")) {
@@ -325,7 +325,7 @@ public class FragmentProducts extends Fragment{
                             }
                         });
 
-                        selectedFilters.addView(button);
+                        selectedFilters.addView(activeFilter);
 
                         StringFilter filter = new StringFilter(field, comparisonType, elements[which]);
                         if (field.equals("Varetype"))
