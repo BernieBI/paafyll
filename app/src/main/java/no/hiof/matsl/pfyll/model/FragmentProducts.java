@@ -28,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.flexbox.FlexDirection;
@@ -352,16 +353,18 @@ public class FragmentProducts extends Fragment{
                         selectedFilters.removeView(view.findViewWithTag(fieldString));
                         EditText numFrom = ((AlertDialog)dialog).findViewById(R.id.from);
                         EditText numTo = ((AlertDialog)dialog).findViewById(R.id.to);
-                        float from = Integer.parseInt(numFrom.getText().toString());
-                        float to = Integer.parseInt(numTo.getText().toString());
+                        float from = Integer.parseInt(numFrom.getText().toString().equals("") ? "0" : numFrom.getText().toString() );
+                        float to = Integer.parseInt(numTo.getText().toString().equals("") ? "999999999" : numTo.getText().toString() );
 
                         NumberFilter fieldFrom = null;
                         NumberFilter fieldTo = null;
                             if (from < to) {
                                 fieldFrom = new NumberFilter(from, fieldString, Filter.ComparisonType.EQUALS);
-                                fieldTo = new NumberFilter(from, fieldString, Filter.ComparisonType.EQUALS);
+                                if (to < 999999999){
+                                    fieldTo = new NumberFilter(from, fieldString, Filter.ComparisonType.EQUALS);
+                                }
                             }else {
-                                //TODO
+                                Toast.makeText(getContext(),"Det går ikke!", Toast.LENGTH_SHORT);
                             }
 
                         String unit = "";
@@ -377,7 +380,8 @@ public class FragmentProducts extends Fragment{
 
                         TextView activeFilter = new Button(getContext());
                         activeFilter.setTag(fieldString);
-                        activeFilter.setText(String.format("%1$s%3$s - %2$s%3$s", from, to, unit));
+
+                        activeFilter.setText(String.format("%1$s%3$s - %2$s", (int)from, to >= 999999999 ? ">" : (int)to + " " +unit, unit));
                         activeFilter.setTextSize(11);
                         activeFilter.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
                         activeFilter.setOnClickListener(new View.OnClickListener() {
