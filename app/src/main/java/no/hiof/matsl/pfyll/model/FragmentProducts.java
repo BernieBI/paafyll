@@ -359,9 +359,9 @@ public class FragmentProducts extends Fragment{
                         NumberFilter fieldFrom = null;
                         NumberFilter fieldTo = null;
                             if (from < to) {
-                                fieldFrom = new NumberFilter(from, fieldString, Filter.ComparisonType.EQUALS);
+                                fieldFrom = new NumberFilter(from, fieldString, Filter.ComparisonType.GREATER_THAN_OR_EQUALS);
                                 if (to < 999999999){
-                                    fieldTo = new NumberFilter(from, fieldString, Filter.ComparisonType.EQUALS);
+                                    fieldTo = new NumberFilter(to, fieldString, Filter.ComparisonType.LESS_THAN_OR_EQUALS);
                                 }
                             }else {
                                 Toast.makeText(getContext(),"Det går ikke!", Toast.LENGTH_SHORT);
@@ -380,8 +380,7 @@ public class FragmentProducts extends Fragment{
 
                         TextView activeFilter = new Button(getContext());
                         activeFilter.setTag(fieldString);
-
-                        activeFilter.setText(String.format("%1$s%3$s - %2$s", (int)from, to >= 999999999 ? ">" : (int)to + " " +unit, unit));
+                        activeFilter.setText(String.format("%1$s %3$s - %2$s", (int)from, to >= 999999999 ? ">" : (int)to + " " +unit, unit));
                         activeFilter.setTextSize(11);
                         activeFilter.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
                         activeFilter.setOnClickListener(new View.OnClickListener() {
