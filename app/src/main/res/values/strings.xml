@@ -50,6 +50,7 @@
     <string name="reviews">Anmeldelser</string>
     <string name="logout">Logg ut</string>
     <string name="empty_message">Her var det tomt, gitt..</string>
+    <string name="no_results">Vi fant ingen produkter</string>
 
     <!-- UserLists -->
     <string name="selectList">Legg til i liste</string>

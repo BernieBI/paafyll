@@ -94,6 +94,7 @@ public class SingleProductActivity extends AppCompatActivity {
     private DatabaseReference reviewRef;
     private ArrayList<String> reviewedProducts = new ArrayList<>();
     private ArrayList<Review> productReviews = new ArrayList<>();
+    float dpi;
 
     //views
     private LinearLayout productDetails1, productDetails2, productDetails3;
@@ -123,6 +124,7 @@ public class SingleProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_product);
 
+        dpi = getResources().getDisplayMetrics().density;
 
         //Populating text fields and other
         white = getResources().getColor(R.color.white);
@@ -368,7 +370,6 @@ public class SingleProductActivity extends AppCompatActivity {
                         toast.show();
 
                 }else {
-                    float dpi = getResources().getDisplayMetrics().density;
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
                     builder.setTitle("Fortell hva du synes!");
@@ -529,7 +530,6 @@ public class SingleProductActivity extends AppCompatActivity {
 
         Timestamp time = new Timestamp(System.currentTimeMillis());
 
-        float dpi = getResources().getDisplayMetrics().density;
         ConstraintLayout comment = new ConstraintLayout(this);
         comment.setId(1 + time.getNanos());
 

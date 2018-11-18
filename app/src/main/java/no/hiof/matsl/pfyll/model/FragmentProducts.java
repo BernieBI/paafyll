@@ -1,18 +1,22 @@
 package no.hiof.matsl.pfyll.model;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 
 import android.support.v7.widget.RecyclerView;
@@ -22,20 +26,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.google.firebase.database.DatabaseReference;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.ScanActivity;
@@ -60,10 +65,15 @@ public class FragmentProducts extends Fragment{
     private StringFilter selectedCategory, selectedCountry;
     private NumberFilter filterPriceFrom, filterPriceTo;
 
-    private Button submitFilter;
+    private Button submitFilter, priceButton, categoryButton, countryButton;
+    private ImageButton filterButton;
+    private FlexboxLayout selectedFilters;
+
     private String FILTER = "Filtrer";
     private String RESETFILTER = "Fjern filter";
-    private int margin = 900;
+    float dpi;
+
+    private int margin;
     //firebase
     final private FirebaseFirestore database = FirebaseFirestore.getInstance();
 
@@ -79,10 +89,12 @@ public class FragmentProducts extends Fragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_products, container, false);
 
+        dpi = getResources().getDisplayMetrics().density;
+        margin = (int)(400*dpi);
 
-       config = new PagedList.Config.Builder().setPageSize(6).build();
+        config = new PagedList.Config.Builder().setPageSize(6).build();
 
-       factory = new ProductDataSourceFactory(database, filters);
+        factory = new ProductDataSourceFactory(database, filters);
         layoutButton = view.findViewById(R.id.layoutButton);
         layoutButton.setOnClickListener(layoutSwitchListener);
 
@@ -97,9 +109,12 @@ public class FragmentProducts extends Fragment{
                 factory = new ProductDataSourceFactory(database, new IdFilter(preSetProducts));
             }
         }
-
         products = new LivePagedListBuilder<>(factory, config).build();
         initRecyclerView();
+
+        selectedFilters = view.findViewById(R.id.selectedFilters);
+        selectedFilters.setFlexDirection(FlexDirection.ROW);
+        selectedFilters.setFlexWrap(FlexWrap.WRAP);
 
         buttons();
 
@@ -120,7 +135,7 @@ public class FragmentProducts extends Fragment{
         filterOptions =  view.findViewById(R.id.filterOptions);
         filterOptions.setTranslationY(-margin);
 
-        final ImageButton filterButton = view.findViewById(R.id.filterButton);
+        filterButton = view.findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,21 +149,21 @@ public class FragmentProducts extends Fragment{
             }
         });
 
-        final Button categoryButton = view.findViewById(R.id.filterCategory);
+        categoryButton = view.findViewById(R.id.filterCategory);
         categoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                filterDialog(categoryButton, getResources().getStringArray(R.array.productCategories), "Varetype", Filter.ComparisonType.EQUALS);
+                stringFilterDialog( getResources().getStringArray(R.array.productCategories), "Varetype", Filter.ComparisonType.EQUALS);
             }
         });
-        final Button countryButton = view.findViewById(R.id.filterCountry);
+        countryButton = view.findViewById(R.id.filterCountry);
         countryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                filterDialog(countryButton, getResources().getStringArray(R.array.productCountries), "Land", Filter.ComparisonType.EQUALS );
+                stringFilterDialog( getResources().getStringArray(R.array.productCountries), "Land", Filter.ComparisonType.EQUALS );
             }
         });
-        Button priceButton= view.findViewById(R.id.filterPrice);
+        priceButton = view.findViewById(R.id.filterPrice);
         priceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,59 +196,67 @@ public class FragmentProducts extends Fragment{
                 filterBuilder.show();
             }
         });
-
-        submitFilter = view.findViewById(R.id.submitFilter);
-        submitFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                view.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-                filters.clear();
-
-                if (submitFilter.getText().equals(FILTER)){
-
-                    submitFilter.setText(RESETFILTER);
-                    if (selectedCategory != null)
-                        filters.add(selectedCategory);
-                    if (selectedCountry != null)
-                        filters.add(selectedCountry);
-                    if (filterPriceFrom != null)
-                        filters.add(filterPriceFrom);
-                    if (filterPriceTo != null)
-                        filters.add(filterPriceTo);
-
-                }else {
-                    submitFilter.setText(FILTER);
-                    countryButton.setText("Land");
-                    categoryButton.setText("Varetype");
-                }
-                factory = new ProductDataSourceFactory(database, filters);
-                products = new LivePagedListBuilder<>(factory, config).build();
-                initRecyclerView();
-
-            }
-        });
     }
+    public void submitFilter(){
+        view.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+        filters.clear();
 
-    private void filterDialog(final Button button, final String[] elements, final String field, final Filter.ComparisonType comparator) {
+        if (selectedCategory != null)
+            filters.add(selectedCategory);
+        if (selectedCountry != null)
+            filters.add(selectedCountry);
+        if (filterPriceFrom != null)
+            filters.add(filterPriceFrom);
+        if (filterPriceTo != null)
+            filters.add(filterPriceTo);
+
+        factory = new ProductDataSourceFactory(database, filters);
+        products = new LivePagedListBuilder<>(factory, config).build();
+        initRecyclerView();
+    }
+    private void stringFilterDialog( final String[] elements, final String field, final Filter.ComparisonType comparator) {
 
         AlertDialog.Builder filterBuilder = new AlertDialog.Builder(getContext());
         filterBuilder.setTitle(field)
                 .setItems(elements, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
-                        submitFilter.setText(FILTER);
-
+                        selectedFilters.removeView(view.findViewWithTag(field));
+                        final Button button = new Button(getContext());
+                        button.setTag(field);
                         button.setText(elements[which]);
+                        button.setTextSize(11);
+                        Drawable removeIcon = getResources().getDrawable(R.drawable.remove);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (field.equals("Varetype")) {
+                                    selectedCategory = null;
+                                    selectedFilters.removeView(view.findViewWithTag(field));
+                                } else if(field.equals("Land")){
+                                    selectedCountry = null;
+                                    selectedFilters.removeView(view.findViewWithTag(field));
+                                }
+                                submitFilter();
+                            }
+                        });
+
+                        button.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
+                        selectedFilters.addView(button);
+
                         StringFilter filter = new StringFilter(field, comparator, elements[which]);
 
                         if (field.equals("Varetype"))
                             selectedCategory = filter;
                         else if(field.equals("Land"))
                             selectedCountry = filter;
+
+                        submitFilter();
                     }
                 });
 
-        filterBuilder.show();
+        Dialog alertFilter = filterBuilder.create();
+        alertFilter.show();
+        alertFilter.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, (int)(300*dpi));
     }
 
     @Override
