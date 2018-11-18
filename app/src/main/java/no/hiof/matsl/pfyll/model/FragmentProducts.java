@@ -57,7 +57,7 @@ public class FragmentProducts extends Fragment{
 
     private ConstraintLayout filterOptions;
     private ArrayList<Filter> filters = new ArrayList<>();
-    private StringFilter selectedCategory, selectedCountry;
+    private StringFilter selectedCategory, selectedCountry, productName;
     private NumberFilter filterPrice, filterAlcohol;
 
     private Button priceButton, categoryButton, countryButton, alcoholButton;
@@ -194,10 +194,26 @@ public class FragmentProducts extends Fragment{
         //searchBar.setTranslationY(-margin);
         searchBar.setVisibility(View.GONE);
         searchBar.setBackgroundColor(getResources().getColor(R.color.white));
-        searchBar.setOnSearchClickListener(new View.OnClickListener() {
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onClick(View v) {
-                
+            public boolean onQueryTextSubmit(String query) {
+                query = query.trim();
+                if (query.equals(""))
+                    productName = null;
+                else {
+                    productName = new StringFilter(
+                            "Varenavn",
+                            Filter.ComparisonType.EQUALS,
+                            query
+                    );
+                }
+                submitFilter();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return onQueryTextSubmit(newText);
             }
         });
 
@@ -235,6 +251,8 @@ public class FragmentProducts extends Fragment{
         if (filterAlcohol != null)
             filters.add(filterAlcohol);
 
+        if (productName != null)
+            filters.add(productName);
 
         factory = new ProductDataSourceFactory(database, filters);
         products = new LivePagedListBuilder<>(factory, config).build();
