@@ -59,7 +59,7 @@ public class FragmentProducts extends Fragment{
     private ConstraintLayout filterOptions;
     private ArrayList<Filter> filters = new ArrayList<>();
     private StringFilter selectedCategory, selectedCountry, productName;
-    private NumberFilter filterPrice, filterAlcohol;
+    private NumberFilter filterPriceFrom, filterPriceTo, filterAlcoholFrom, filterAlcoholTo;
 
     private Button priceButton, categoryButton, countryButton, alcoholButton;
     private ImageButton filterButton, scanButton, searchButton;
@@ -283,11 +283,14 @@ public class FragmentProducts extends Fragment{
         if (selectedCountry != null)
             filters.add(selectedCountry);
 
-        if (filterPrice != null)
-            filters.add(filterPrice);
+        if (filterPriceFrom != null)
+            filters.add(filterPriceFrom);
+        if (filterPriceTo != null)
 
-        if (filterAlcohol != null)
-            filters.add(filterAlcohol);
+            filters.add(filterPriceTo);
+
+        if (filterAlcoholFrom != null)
+            filters.add(filterAlcoholTo);
 
         factory = new ProductDataSourceFactory(database, filters);
         products = new LivePagedListBuilder<>(factory, config).build();
@@ -345,40 +348,52 @@ public class FragmentProducts extends Fragment{
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         selectedFilters.removeView(view.findViewWithTag(fieldString));
-                        EditText priceFrom = ((AlertDialog)dialog).findViewById(R.id.priceFrom);
-                        float from = Integer.parseInt(priceFrom.getText().toString());
+                        EditText numFrom = ((AlertDialog)dialog).findViewById(R.id.from);
+                        EditText numTo = ((AlertDialog)dialog).findViewById(R.id.to);
+                        float from = Integer.parseInt(numFrom.getText().toString());
+                        float to = Integer.parseInt(numTo.getText().toString());
 
-                        NumberFilter field = null;
-
-                            field = new NumberFilter(from,fieldString, Filter.ComparisonType.EQUALS );
+                        NumberFilter fieldFrom = null;
+                        NumberFilter fieldTo = null;
+                            if (from < to) {
+                                fieldFrom = new NumberFilter(from, fieldString, Filter.ComparisonType.EQUALS);
+                                fieldTo = new NumberFilter(from, fieldString, Filter.ComparisonType.EQUALS);
+                            }else {
+                                //TODO
+                            }
 
                         String unit = "";
                         if (fieldString == "Pris"){
-                            filterPrice = field;
+                            filterPriceFrom = fieldFrom;
+                            filterPriceTo = fieldTo;
                             unit = "kr";
                         }else if( fieldString == "Alkohol") {
-                            filterAlcohol = field;
+                            filterAlcoholFrom = fieldFrom;
+                            filterAlcoholTo = fieldTo;
                             unit = "%";
                         }
 
-                        Button button = new Button(getContext());
-                        button.setTag(fieldString);
-                        button.setText(String.format("%s %s%s", fieldString, from, unit));
-                        button.setTextSize(11);
-                        button.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
-                        button.setOnClickListener(new View.OnClickListener() {
+                        TextView activeFilter = new Button(getContext());
+                        activeFilter.setTag(fieldString);
+                        activeFilter.setText(String.format("%1$s%3$s - %2$s%3$s", from, to, unit));
+                        activeFilter.setTextSize(11);
+                        activeFilter.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
+                        activeFilter.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 if (fieldString.equals("Pris")) {
-                                    filterPrice = null;
+                                    filterPriceFrom = null;
+                                    filterPriceTo = null;
+
                                 } else if(fieldString.equals("Alkohol")){
-                                    filterAlcohol = null;
+                                    filterAlcoholFrom = null;
+                                    filterAlcoholTo = null;
                                 }
                                 selectedFilters.removeView(view.findViewWithTag(fieldString));
                                 submitFilter();
                             }
                         });
-                        selectedFilters.addView(button);
+                        selectedFilters.addView(activeFilter);
                         submitFilter();
                     }
                 })
