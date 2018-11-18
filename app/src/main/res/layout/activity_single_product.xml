@@ -156,13 +156,15 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/productLiterPrice" />
 
-                    <android.support.constraint.ConstraintLayout
+                    <LinearLayout
                         android:id="@+id/drinkWiths"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
+                        android:gravity="left"
+                        android:orientation="horizontal"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/productTaste">
@@ -219,7 +221,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
 
-                    </android.support.constraint.ConstraintLayout>
+                    </LinearLayout>
 
                     <RatingBar
                         android:id="@+id/productRatingBar"
@@ -235,6 +237,7 @@
                         android:scaleType="fitCenter"
                         app:layout_constraintBottom_toTopOf="@+id/reviewCount"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/drinkWiths" />
 
@@ -245,7 +248,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
-                        android:textAlignment="center"
+                        android:textAlignment="textStart"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:textSize="10sp"
                         app:layout_constraintBottom_toBottomOf="parent"

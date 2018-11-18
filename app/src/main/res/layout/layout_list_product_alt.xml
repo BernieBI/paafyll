@@ -12,7 +12,7 @@
     android:layout_marginRight="5dp"
     android:layout_marginBottom="5dp"
     android:background="@color/primaryColor"
-    android:elevation="10dp"
+    android:elevation="3dp"
     android:orientation="horizontal">
 
     <ImageView

@@ -25,11 +25,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity  {
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
     private ViewPager viewPager;
-
+    ArrayList<String> cats= new ArrayList<>();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -54,6 +56,29 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
          setContentView(R.layout.activity_main);
          CreateLayout();
+        // getCategories();
+    }
+
+    private void getCategories() {
+
+        db.collection("Produkter")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if (!cats.contains(document.get("Varetype").toString()))
+                                cats.add(document.get("Varetype").toString());
+                            }
+                            Collections.sort(cats);
+                            for (String cat : cats){
+                                Log.d(TAG, "<item>" + cat + "</item>");
+                            }
+                        } else {
+                        }
+                    }
+                });
 
     }
 
@@ -98,8 +123,6 @@ public class MainActivity extends AppCompatActivity  {
                 users.child(user.getUid()).child("Name").setValue(user.getDisplayName());
                 finish();
                 startActivity(getIntent());
-
-            } else {
 
             }
     }

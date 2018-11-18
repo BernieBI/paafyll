@@ -79,6 +79,7 @@
         <item>Alkoholfri musserende drikk</item>
         <item>Alkoholfri vin</item>
         <item>Alkoholfritt øl</item>
+        <item>Alkoholfritt, øvrig</item>
         <item>Aromatisert vin</item>
         <item>Barley wine</item>
         <item>Bitter</item>
@@ -147,9 +148,9 @@
         <item>Cuba</item>
         <item>Danmark</item>
         <item>Dominik. rep.</item>
+        <item>EU</item>
         <item>England</item>
         <item>Estland</item>
-        <item>EU</item>
         <item>Finland</item>
         <item>Frankrike</item>
         <item>Georgia</item>
@@ -160,9 +161,11 @@
         <item>India</item>
         <item>Irland</item>
         <item>Island</item>
+        <item>Israel</item>
         <item>Italia</item>
         <item>Jamaica</item>
         <item>Japan</item>
+        <item>Kroatia</item>
         <item>Latvia</item>
         <item>Libanon</item>
         <item>Litauen</item>
@@ -173,33 +176,38 @@
         <item>Mauritius</item>
         <item>Mexico</item>
         <item>Moldova</item>
+        <item>Montenegro</item>
         <item>Nederland</item>
         <item>New Zealand</item>
         <item>Nicaragua</item>
         <item>Norge</item>
+        <item>Panama</item>
         <item>Peru</item>
         <item>Polen</item>
         <item>Portugal</item>
         <item>Puerto Rico</item>
         <item>Romania</item>
         <item>Russland</item>
+        <item>Serbia</item>
         <item>Skottland</item>
+        <item>Slovakia</item>
         <item>Slovenia</item>
         <item>Spania</item>
         <item>Storbritannia</item>
         <item>Sveits</item>
         <item>Sverige</item>
         <item>Sør-Afrika</item>
+        <item>Sør-Korea</item>
         <item>Taiwan</item>
         <item>Thailand</item>
         <item>Trinidad,Tobago</item>
         <item>Tsjekkia</item>
         <item>Tyrkia</item>
         <item>Tyskland</item>
+        <item>USA</item>
         <item>Ukraina</item>
         <item>Ungarn</item>
         <item>Uruguay</item>
-        <item>USA</item>
         <item>Venezuela</item>
         <item>Wales</item>
         <item>Østerrike</item>
