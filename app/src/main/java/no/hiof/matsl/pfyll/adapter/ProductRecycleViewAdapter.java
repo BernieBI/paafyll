@@ -107,7 +107,8 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<Product, Product
                         userListRef.child("products").setValue(preSetProducts);
                         Toast toast = Toast.makeText(context,  String.format("%s %s!", current_product.getVarenavn(),  context.getString(R.string.removed_from_list)), Toast.LENGTH_LONG);
                         toast.show();
-                        notifyItemRemoved(position);
+                        //notifyItemRemoved(position);
+                        holder.itemView.setVisibility(View.GONE);
                     }
                 }
             });
