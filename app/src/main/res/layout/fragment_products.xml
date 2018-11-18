@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:background="@color/secondaryLightColor">
 
     <android.support.v7.widget.RecyclerView
@@ -122,13 +123,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/filterField" />
 
+    <SearchView
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:visibility="visible"
+        android:background="@color/white"
+        android:elevation="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filterOptions" />
+
     <LinearLayout
         android:id="@+id/border"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/primaryLightColor"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/filterField">
+        app:layout_constraintTop_toBottomOf="@+id/searchBar">
 
     </LinearLayout>
 
