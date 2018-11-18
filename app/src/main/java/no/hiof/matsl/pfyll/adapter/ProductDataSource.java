@@ -72,9 +72,9 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
                 loadDataByIdFilter(taskCompletionSource, new ArrayList<FirestoreProduct>(), 0);
         } else {
             if (async)
-                loadDataByValueFilter(callback, key, loadSize);
+                loadDataByValueFilter(callback, key, loadSize, reverse);
             else
-                loadDataByValueFilter(taskCompletionSource, key, loadSize);
+                loadDataByValueFilter(taskCompletionSource, key, loadSize, reverse);
         }
 
         if (async) {
@@ -142,13 +142,16 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
     }
 
     // TODO: Refactor to remove duplicate code
-    private void loadDataByValueFilter(@NonNull final LoadCallback<FirestoreProduct> callback, DocumentSnapshot key, int loadSize) {
+    private void loadDataByValueFilter(@NonNull final LoadCallback<FirestoreProduct> callback, DocumentSnapshot key, int loadSize, boolean reverse) {
         CollectionReference collection = database.collection(COLLECTION_PATH);
 
         Query query;
-        if (key != null)
-            query = collection.startAfter(key);
-        else
+        if (key != null) {
+            if (reverse)
+                query = collection.endBefore(key);
+            else
+                query = collection.startAfter(key);
+        } else
             query = collection;
         query = query.limit(loadSize);
 
@@ -169,17 +172,18 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
             }
         });
     }
-    private void loadDataByValueFilter(@NonNull final TaskCompletionSource<List<FirestoreProduct>> taskCompletionSource, DocumentSnapshot key, int loadSize) {
+    private void loadDataByValueFilter(@NonNull final TaskCompletionSource<List<FirestoreProduct>> taskCompletionSource, DocumentSnapshot key, int loadSize, boolean reverse) {
         CollectionReference collection = database.collection(COLLECTION_PATH);
 
         Query query;
-        if (key != null)
-            query = collection.startAfter(key);
-        else
+        if (key != null) {
+            if (reverse)
+                query = collection.endBefore(key);
+            else
+                query = collection.startAfter(key);
+        } else
             query = collection;
         query = query.limit(loadSize);
-
-        query = addFilters(query);
 
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
