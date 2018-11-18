@@ -60,8 +60,8 @@ public class FragmentProducts extends Fragment{
     private StringFilter selectedCategory, selectedCountry;
     private NumberFilter filterPrice, filterAlcohol;
 
-    private Button submitFilter, priceButton, categoryButton, countryButton, alcoholButton;
-    private ImageButton filterButton;
+    private Button priceButton, categoryButton, countryButton, alcoholButton;
+    private ImageButton filterButton, scanButton;
     private FlexboxLayout selectedFilters;
     private Drawable removeIcon;
 
@@ -119,11 +119,20 @@ public class FragmentProducts extends Fragment{
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        scanButton.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
+        scanButton.setColorFilter(getResources().getColor(R.color.white));
+    }
+
     private void buttons() {
-        ImageButton button = view.findViewById(R.id.startScan);
-        button.setOnClickListener(new View.OnClickListener() {
+        scanButton= view.findViewById(R.id.startScan);
+        scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                scanButton.setBackgroundColor(getResources().getColor(R.color.white));
+                scanButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
                 Intent intent = new Intent(getContext(), ScanActivity.class);
                 startActivity(intent);
             }
@@ -137,12 +146,12 @@ public class FragmentProducts extends Fragment{
             @Override
             public void onClick(View v) {
                 if (filterOptions.getTranslationY() == 0){
-                    filterButton.setBackgroundColor(getResources().getColor(R.color.white));
-                    filterButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
-                    filterOptions.animate().translationY(-margin);
-                }else{
                     filterButton.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
                     filterButton.setColorFilter(getResources().getColor(R.color.white));
+                    filterOptions.animate().translationY(-margin);
+                }else{
+                    filterButton.setBackgroundColor(getResources().getColor(R.color.white));
+                    filterButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
                     filterOptions.animate().translationY(0);
                 }
             }
