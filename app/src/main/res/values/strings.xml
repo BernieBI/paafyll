@@ -205,4 +205,11 @@
         <item>Østerrike</item>
         <item>Øvrige</item>
     </string-array>
+
+    <!--Spinner themes-->
+    <string-array name="themes">
+        <item>Velg et Tema</item>
+        <item>Default</item>
+        <item>Natt</item>
+    </string-array>
 </resources>

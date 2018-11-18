@@ -1,18 +1,23 @@
 package no.hiof.matsl.pfyll.model;
 
+import android.app.AlertDialog;
+
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,14 +26,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 import no.hiof.matsl.pfyll.CacheHandler;
+import no.hiof.matsl.pfyll.MainActivity;
 import no.hiof.matsl.pfyll.MyReviewsActivity;
 import no.hiof.matsl.pfyll.R;
 
 import no.hiof.matsl.pfyll.RecentProductsActivity;
-import no.hiof.matsl.pfyll.ScanActivity;
+
 import no.hiof.matsl.pfyll.UserListActivity;
 
-public class FragmentMyAccount extends Fragment {
+
+public class FragmentMyAccount extends Fragment implements AdapterView.OnItemSelectedListener {
+    SharedPref sharedPref;
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
     //firebase
@@ -45,10 +53,13 @@ public class FragmentMyAccount extends Fragment {
 
     }
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_myaccount,container,false);
+        sharedPref = new SharedPref(getContext());
 
         Log.d(TAG, "onCreate: Started ");
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -112,7 +123,46 @@ public class FragmentMyAccount extends Fragment {
                 startActivity(reviewsIntent);
             }
         });
+
+        ImageButton settingsButton = view.findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                View mview = getLayoutInflater().inflate(R.layout.layout_themedialog, null);
+                builder.setTitle("Velg tema");
+                Spinner spinner = mview.findViewById(R.id.themeSpinner);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.themes));
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(adapter);
+                spinner.setOnItemSelectedListener(FragmentMyAccount.this);
+                builder.setView(mview);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
     }
 
+    public void restartApp(){
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        startActivity(intent);
+    }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String text = parent.getItemAtPosition(position).toString();
+        if(text.equals("Default")){
+            sharedPref.setTheme(0);
+            restartApp();
+        }
+        if(text.equals("Natt")){
+            sharedPref.setTheme(1);
+            restartApp();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }

@@ -1,11 +1,13 @@
 <resources>
 
-    <!-- Base application theme. -->
+    <!-- Default application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorAccent">@color/secondaryColor</item>
+        <item name="backgroundcolor">@color/secondaryLightColor</item>
+        <item name="textcolor">@android:color/tab_indicator_text</item>
     </style>
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
@@ -35,5 +37,12 @@
         <item name="android:stepSize">1</item>
         <item name="android:numStars">5</item>
         <item name="android:progressDrawable">@drawable/bottle_ratingbar_small</item>
+    </style>
+    <!-- Night / Dark Mode theme. -->
+    <style name="Night" parent="Theme.AppCompat.Light.DarkActionBar" >
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/secondaryColor</item>
+        <item name="android:windowBackground">@color/primaryDarkColor</item>
     </style>
 </resources>
