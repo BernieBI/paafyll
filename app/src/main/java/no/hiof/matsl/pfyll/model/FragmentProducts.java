@@ -202,9 +202,9 @@ public class FragmentProducts extends Fragment{
                     productName = null;
                 else {
                     productName = new StringFilter(
-                            "Varenavn",
-                            Filter.ComparisonType.EQUALS,
-                            query
+                            "Sokeord",
+                            Filter.ComparisonType.LIKE,
+                            query.toLowerCase()
                     );
                 }
                 submitFilter();

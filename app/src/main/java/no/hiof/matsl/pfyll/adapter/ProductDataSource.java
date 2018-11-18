@@ -135,8 +135,8 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
                         //query = query.orderBy(filter.getFieldName());
                         //query = query.whereGreaterThanOrEqualTo(filter.getFieldName(), filter.getValue());
                         //query = query.whereLessThan(filter.getFieldName(), filter.getValue() + "ZZZ");
-                        //query = query.whereArrayContains(filter.getFieldName(), filter.getValue());
-                        query = query.orderBy(filter.getFieldName()).startAt(filter.getValue()).endAt(filter.getValue() + "\uf8ff");
+                        query = query.whereArrayContains(filter.getFieldName(), filter.getValue());
+                        //query = query.orderBy(filter.getFieldName()).startAt(filter.getValue()).endAt(filter.getValue() + "\uf8ff");
                         rangedField = filter.getFieldName();
                         break;
                 }
