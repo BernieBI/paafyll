@@ -6,8 +6,9 @@
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorAccent">@color/secondaryColor</item>
-        <item name="backgroundcolor">@color/secondaryLightColor</item>
-        <item name="textcolor">@android:color/tab_indicator_text</item>
+        <item name="android:windowBackground">@color/secondaryLightColor</item>
+        <item name="android:buttonTint">@color/white</item>
+        <item name="colorButtonNormal">@color/brightOverlay</item>
     </style>
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
@@ -42,7 +43,10 @@
     <style name="Night" parent="Theme.AppCompat.Light.DarkActionBar" >
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorAccent">@color/secondaryColor</item>
-        <item name="android:windowBackground">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/primaryColor</item>
+        <item name="android:windowBackground">@color/primaryColor</item>
+        <item name="android:textColor">#196aff</item>
+        <item name="android:buttonTint">#A9A9A9</item>
+        <item name="colorButtonNormal">#141414</item>
     </style>
 </resources>

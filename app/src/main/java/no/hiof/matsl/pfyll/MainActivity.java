@@ -26,7 +26,6 @@ import no.hiof.matsl.pfyll.model.ViewPagerAdapter;
 
 
 public class MainActivity extends AppCompatActivity  {
-    public SharedPref sharedPref;
     String TAG = "MainActivity";
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        sharedPref = new SharedPref(this);
+        SharedPref sharedPref = new SharedPref(this);
         if (sharedPref.loadThemeState()==0){
             setTheme(R.style.AppTheme);
         }

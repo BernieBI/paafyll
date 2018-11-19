@@ -11,7 +11,6 @@
     android:layout_marginTop="5dp"
     android:layout_marginRight="5dp"
     android:layout_marginBottom="5dp"
-    android:background="@color/primaryColor"
     android:elevation="10dp"
     android:orientation="horizontal">
 
@@ -43,7 +42,6 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@color/primaryTextColor"
             tool:layout_constraintEnd_toStartOf="@+id/removeFromListBtn"
             tool:layout_constraintStart_toEndOf="@+id/border"
             tool:layout_constraintTop_toTopOf="parent" />
@@ -58,7 +56,6 @@
             android:layout_marginBottom="8dp"
             android:text="Pris"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/primaryTextColor"
             android:textSize="14sp"
             tool:layout_constraintBottom_toTopOf="@+id/product_type"
             tool:layout_constraintStart_toEndOf="@+id/border"
@@ -76,7 +73,6 @@
             android:text="Land"
             android:textAlignment="textEnd"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/primaryTextColor"
             android:textSize="12sp"
             tool:layout_constraintBottom_toTopOf="@+id/product_taste"
             tool:layout_constraintEnd_toEndOf="parent" />
@@ -91,7 +87,6 @@
             android:layout_marginBottom="8dp"
             android:text="Type"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/primaryTextColor"
             android:textSize="12sp"
             tool:layout_constraintBottom_toTopOf="@+id/product_taste"
             tool:layout_constraintStart_toEndOf="@+id/border" />
@@ -100,9 +95,7 @@
             android:id="@+id/product_taste"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/white"
             android:padding="8dp"
-            android:textColor="@color/secondaryTextColor"
             android:textSize="12sp"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
@@ -126,13 +119,11 @@
             android:id="@+id/border"
             android:layout_width="4dp"
             android:layout_height="0dp"
-            android:background="@color/primaryLightColor"
             android:orientation="horizontal"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintStart_toStartOf="parent"
             tool:layout_constraintTop_toTopOf="parent"
             tool:layout_constraintVertical_bias="0.0"></LinearLayout>
-
     </android.support.constraint.ConstraintLayout>
 
 

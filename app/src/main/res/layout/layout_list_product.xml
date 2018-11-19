@@ -11,7 +11,6 @@
     android:layout_marginTop="5dp"
     android:layout_marginRight="5dp"
     android:layout_marginBottom="5dp"
-    android:background="@color/primaryColor"
     android:elevation="5dp"
     android:gravity="right"
     android:orientation="vertical">
@@ -22,7 +21,6 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_margin="8dp"
-        android:backgroundTint="@color/white"
         android:elevation="0dp"
         tool:srcCompat="@drawable/remove2" />
 
@@ -53,7 +51,6 @@
             android:layout_marginTop="64dp"
             android:layout_marginEnd="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@color/primaryTextColor"
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintStart_toStartOf="parent"
             tool:layout_constraintTop_toTopOf="parent" />
@@ -68,7 +65,6 @@
             android:layout_marginTop="8dp"
             android:text="pris"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/primaryTextColor"
             android:textSize="12sp"
             tool:layout_constraintStart_toStartOf="parent"
             tool:layout_constraintTop_toBottomOf="@+id/product_name" />
@@ -83,9 +79,8 @@
             android:layout_marginBottom="8dp"
             android:text="Type"
             android:textAlignment="textEnd"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/primaryTextColor"
-            android:textSize="10sp"
+
+            android:textSize="12sp"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintStart_toEndOf="@+id/divider" />
@@ -98,8 +93,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="land"
-            android:textColor="@color/primaryTextColor"
-            android:textSize="10sp"
+            android:textSize="12sp"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toStartOf="@+id/divider"
             tool:layout_constraintStart_toStartOf="parent"

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/secondaryLightColor"
     tools:context=".MyReviewsActivity">
 
     <android.support.v7.widget.RecyclerView
@@ -22,12 +21,10 @@
         android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/primaryColor"
         android:elevation="3dp"
         android:padding="8dp"
         android:text="@string/reviews"
         android:textAlignment="center"
-        android:textColor="@color/primaryTextColor"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

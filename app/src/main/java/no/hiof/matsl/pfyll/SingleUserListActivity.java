@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import no.hiof.matsl.pfyll.model.FragmentProducts;
+import no.hiof.matsl.pfyll.model.SharedPref;
 import no.hiof.matsl.pfyll.model.UserList;
 
 public class SingleUserListActivity extends AppCompatActivity {
@@ -39,6 +40,13 @@ public class SingleUserListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPref sharedPref = new SharedPref(this);
+        if (sharedPref.loadThemeState()==0){
+            setTheme(R.style.AppTheme);
+        }
+        if (sharedPref.loadThemeState()==1) {
+            setTheme(R.style.Night);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_list);
 

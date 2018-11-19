@@ -69,6 +69,7 @@ import java.util.List;
 
 import no.hiof.matsl.pfyll.model.Product;
 import no.hiof.matsl.pfyll.model.Review;
+import no.hiof.matsl.pfyll.model.SharedPref;
 import no.hiof.matsl.pfyll.model.UserList;
 import no.hiof.matsl.pfyll.model.UserReview;
 
@@ -121,13 +122,20 @@ public class SingleProductActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPref sharedPref = new SharedPref(this);
+        if (sharedPref.loadThemeState()==0){
+            setTheme(R.style.AppTheme);
+        }
+        if (sharedPref.loadThemeState()==1) {
+            setTheme(R.style.Night);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_product);
 
         dpi = getResources().getDisplayMetrics().density;
 
         //Populating text fields and other
-        white = getResources().getColor(R.color.white);
+        //white = getResources().getColor(R.color.white);
         reviewButton = findViewById(R.id.reviewButton);
         productName = findViewById(R.id.productName);
         productTaste = findViewById(R.id.productTaste);
@@ -178,7 +186,7 @@ public class SingleProductActivity extends AppCompatActivity {
             getUserReviews();
             submitReview();
 
-         }else{
+        }else{
             reviewButton.setVisibility(View.GONE);
             addToListBtn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -254,14 +262,14 @@ public class SingleProductActivity extends AppCompatActivity {
         userListRef.addChildEventListener(userListListener);
 
 
-            addToListBtn.setOnClickListener(new View.OnClickListener() {
+        addToListBtn.setOnClickListener(new View.OnClickListener() {
 
-                public void onClick(View v) {
+            public void onClick(View v) {
 
-                    if (options.size() == 0){
-                        Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.have_no_lists), Toast.LENGTH_SHORT);
-                        toast.show();
-                    }else{
+                if (options.size() == 0){
+                    Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.have_no_lists), Toast.LENGTH_SHORT);
+                    toast.show();
+                }else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
                     builder.setTitle(R.string.selectList);
                     builder.setItems(options.toArray(new CharSequence[options.size()]), new DialogInterface.OnClickListener() {
@@ -289,8 +297,8 @@ public class SingleProductActivity extends AppCompatActivity {
                     });
                     builder.show();
                 }
-                }
-            });
+            }
+        });
 
 
     }
@@ -366,8 +374,8 @@ public class SingleProductActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (reviewedProducts.contains(productID+"")) {
-                        Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.already_reviewed), Toast.LENGTH_LONG);
-                        toast.show();
+                    Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.already_reviewed), Toast.LENGTH_LONG);
+                    toast.show();
 
                 }else {
 
@@ -457,18 +465,18 @@ public class SingleProductActivity extends AppCompatActivity {
                         productImage.setContentDescription(product.getVarenavn());
 
                         productName.setText(product.getVarenavn());
-                        productName.setBackgroundColor(white);
+                        //productName.setBackgroundColor(white);
 
                         productPrice.setText(String.format( "%s %s", getString(R.string.currency), product.getPris() ));
-                        productPrice.setBackgroundColor(white);
+                        //productPrice.setBackgroundColor(white);
 
                         productTaste.setText(product.getSmak());
-                        productTaste.setBackgroundColor(white);
+                        //productTaste.setBackgroundColor(white);
 
                         productVolume.setText(String.format("%s l", product.getVolum()));
 
                         productLiterPrice.setText(String.format("%s kr/l", product.getLiterpris() ));
-                        productLiterPrice.setBackgroundColor(white);
+                        //productLiterPrice.setBackgroundColor(white);
 
                         //Adding info related to product contents
                         createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
@@ -539,7 +547,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
         GradientDrawable shape =  new GradientDrawable();
         shape.setCornerRadius( 8 );
-        shape.setColor(getResources().getColor(R.color.white));
+        shape.setColor(getResources().getColor(R.color.brightOverlay));
 
         comment.setPadding((int)(16*dpi), (int)(16*dpi), (int)(16*dpi), (int)(16*dpi));
         comment.setBackground(shape);

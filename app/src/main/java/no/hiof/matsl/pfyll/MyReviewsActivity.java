@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import no.hiof.matsl.pfyll.adapter.ReviewRecycleViewAdapter;
 import no.hiof.matsl.pfyll.model.Review;
+import no.hiof.matsl.pfyll.model.SharedPref;
 
 public class MyReviewsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -41,6 +42,13 @@ public class MyReviewsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPref sharedPref = new SharedPref(this);
+        if (sharedPref.loadThemeState()==0){
+            setTheme(R.style.AppTheme);
+        }
+        if (sharedPref.loadThemeState()==1) {
+            setTheme(R.style.Night);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_reviews);
 

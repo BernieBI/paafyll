@@ -132,12 +132,13 @@ public class FragmentMyAccount extends Fragment implements AdapterView.OnItemSel
                 View mview = getLayoutInflater().inflate(R.layout.layout_themedialog, null);
                 builder.setTitle("Velg tema");
                 Spinner spinner = mview.findViewById(R.id.themeSpinner);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.themes));
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.themes));
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(adapter);
                 spinner.setOnItemSelectedListener(FragmentMyAccount.this);
                 builder.setView(mview);
                 AlertDialog dialog = builder.create();
+                dialog.getWindow();
                 dialog.show();
             }
         });

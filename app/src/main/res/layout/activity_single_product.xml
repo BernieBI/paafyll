@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/secondaryLightColor">
+    android:layout_height="match_parent">
 
 
     <ScrollView
@@ -28,9 +27,9 @@
                 android:id="@+id/productHeader"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
                 android:elevation="3dp"
                 android:orientation="horizontal"
+                android:background="@color/white"
                 android:padding="5dp"
                 android:paddingBottom="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +40,6 @@
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:background="@color/white"
                     android:minWidth="100dp">
 
                     <ImageView
@@ -49,7 +47,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
-                        android:background="@color/white"
                         android:contentDescription="@string/product_image"
                         android:maxWidth="200dp"
                         android:maxHeight="300dp"
@@ -74,10 +71,8 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:background="@android:color/darker_gray"
                         android:minWidth="200dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                        android:textColor="@color/secondaryTextColor"
                         android:textSize="24sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
@@ -104,11 +99,9 @@
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
-                            android:background="@android:color/darker_gray"
                             android:minWidth="100dp"
                             android:textAlignment="viewStart"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                            android:textColor="@color/secondaryTextColor"
                             android:textSize="18sp" />
 
                         <TextView
@@ -120,7 +113,6 @@
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
                             android:textAlignment="viewStart"
-                            android:textColor="@color/secondaryTextColor"
                             android:textSize="14sp" />
 
                     </LinearLayout>
@@ -132,9 +124,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:background="@android:color/darker_gray"
                         android:minWidth="100dp"
-                        android:textColor="@color/secondaryTextColor"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
@@ -147,22 +137,22 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:background="@android:color/darker_gray"
                         android:minWidth="200dp"
                         android:minHeight="50dp"
-                        android:textColor="@color/secondaryTextColor"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/productLiterPrice" />
 
-                    <android.support.constraint.ConstraintLayout
+                    <LinearLayout
                         android:id="@+id/drinkWiths"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
+                        android:gravity="start"
+                        android:orientation="horizontal"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/productTaste">
@@ -175,7 +165,7 @@
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
                             android:adjustViewBounds="false"
-                            android:background="@color/darkOverlay"
+                            android:contentDescription="@string/product_drinkWith"
                             android:cropToPadding="false"
                             android:padding="0dp"
                             android:visibility="visible"
@@ -192,7 +182,7 @@
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
                             android:adjustViewBounds="false"
-                            android:background="@color/darkOverlay"
+                            android:contentDescription="@string/product_drinkWith"
                             android:cropToPadding="false"
                             android:padding="0dp"
                             android:visibility="visible"
@@ -210,7 +200,7 @@
                             android:layout_marginTop="8dp"
                             android:layout_marginBottom="8dp"
                             android:adjustViewBounds="false"
-                            android:background="@color/darkOverlay"
+                            android:contentDescription="@string/product_drinkWith"
                             android:cropToPadding="false"
                             android:padding="0dp"
                             android:visibility="visible"
@@ -219,7 +209,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
 
-                    </android.support.constraint.ConstraintLayout>
+                    </LinearLayout>
 
                     <RatingBar
                         android:id="@+id/productRatingBar"
@@ -235,6 +225,7 @@
                         android:scaleType="fitCenter"
                         app:layout_constraintBottom_toTopOf="@+id/reviewCount"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/drinkWiths" />
 
@@ -245,9 +236,9 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
-                        android:textAlignment="center"
+                        android:textAlignment="textStart"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textSize="10sp"
+                        android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -274,7 +265,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:background="@color/white"
                 android:elevation="3dp"
                 android:gravity="center"
                 android:orientation="horizontal"
@@ -374,7 +364,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:background="@color/white"
                 android:divider="?android:listDivider"
                 android:elevation="2dp"
                 android:orientation="vertical"
@@ -392,7 +381,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:background="@color/white"
                 android:divider="?android:listDivider"
                 android:elevation="2dp"
                 android:orientation="vertical"
@@ -409,7 +397,6 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:background="@color/white"
                 android:divider="?android:listDivider"
                 android:elevation="2dp"
                 android:orientation="vertical"
@@ -426,10 +413,9 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp"
-                android:background="@color/white"
                 android:drawableTop="@drawable/logout"
                 android:elevation="3dp"
-                android:padding="4dp"
+                android:padding="8dp"
                 android:text="@string/product_webBtn"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
@@ -444,10 +430,9 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:background="@color/white"
                 android:drawableTop="@drawable/review"
                 android:elevation="3dp"
-                android:padding="4dp"
+                android:padding="8dp"
                 android:text="@string/product_reviewBtn"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -477,11 +462,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@color/darkOverlay"
                 android:padding="8dp"
                 android:text="@string/reviews"
                 android:textAlignment="center"
-                android:textColor="@color/primaryTextColor"
                 android:textSize="18sp"
                 android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -493,7 +476,7 @@
                 android:id="@+id/reviewComments"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/darkOverlay"
+
                 android:divider="?android:listDivider"
                 android:orientation="vertical"
                 android:padding="8dp"
@@ -512,8 +495,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/loadOverlay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/brightOverlay">
+        android:layout_height="match_parent">
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -536,7 +518,6 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_gravity="end|bottom"
         android:layout_marginEnd="8dp"

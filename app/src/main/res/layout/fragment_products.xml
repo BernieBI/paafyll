@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/secondaryLightColor">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/product_recycler_view"
@@ -55,7 +54,6 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_margin="0dp"
-            android:background="@color/white"
             android:padding="5dp"
             android:scaleType="fitCenter"
             android:src="@drawable/filter"
@@ -72,7 +70,6 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:adjustViewBounds="false"
-            android:background="@color/white"
             android:cropToPadding="false"
             android:padding="5dp"
             android:scaleType="fitCenter"
@@ -90,7 +87,6 @@
             style="@android:style/Widget.Material.ImageButton"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:background="@color/white"
             android:cropToPadding="true"
             android:padding="10dp"
             android:scaleType="fitCenter"
