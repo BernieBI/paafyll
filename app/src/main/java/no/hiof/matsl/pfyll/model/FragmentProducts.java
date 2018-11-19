@@ -198,12 +198,9 @@ public class FragmentProducts extends Fragment{
             @Override
             public boolean onQueryTextSubmit(String query) {
                 query = query.trim();
-                if (query.equals(""))
+                if (query.equals("")) {
                     productName = null;
-                    searchWord.setVisibility(View.GONE);
-                }else {
-                    searchWord.setVisibility(View.VISIBLE);
-                    searchWord.setText(query);
+                } else {
                     if (query.contains(" ")) {
                         productName = new StringFilter(
                                 "Varenavn",
