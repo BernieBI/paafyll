@@ -212,9 +212,9 @@ public class FragmentProducts extends Fragment{
                     searchWord.setVisibility(View.VISIBLE);
                     searchWord.setText(query);
                     productName = new StringFilter(
-                            "Varenavn",
-                            Filter.ComparisonType.EQUALS,
-                            query
+                            "Sokeord",
+                            Filter.ComparisonType.LIKE,
+                            query.toLowerCase()
                     );
 
                 }
