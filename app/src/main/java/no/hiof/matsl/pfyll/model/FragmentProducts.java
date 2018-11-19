@@ -151,11 +151,13 @@ public class FragmentProducts extends Fragment{
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (filterOptions.getVisibility() == View.VISIBLE)
+                if (filterOptions.getVisibility() == View.VISIBLE) {
                     hideFilter();
-                else {
-                    showFilter();
                     hideSearch();
+                }else {
+                    showFilter();
+                    showSearch();
+                   // hideSearch();
                 }
 
             }
@@ -194,7 +196,7 @@ public class FragmentProducts extends Fragment{
             public void onClick(View v) {
                 searchWord.setVisibility(View.GONE);
                 productName = null;
-                submitSearch();
+                submitFilter();
             }
         });
         searchBar = view.findViewById(R.id.searchBar);
@@ -204,12 +206,13 @@ public class FragmentProducts extends Fragment{
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                selectedFilters.removeView(view.findViewWithTag("search"));
                 query = query.trim();
                 if (query.equals("")) {
                     productName = null;
-                    searchWord.setVisibility(View.GONE);
+                    //searchWord.setVisibility(View.GONE);
                 }else {
-                    searchWord.setVisibility(View.VISIBLE);
+                    //searchWord.setVisibility(View.VISIBLE);
                     searchWord.setText(query);
                     productName = new StringFilter(
                             "Sokeord",
@@ -217,8 +220,23 @@ public class FragmentProducts extends Fragment{
                             query.toLowerCase()
                     );
 
+                    TextView activeFilter = new Button(getContext());
+                    activeFilter.setTag("search");
+                    activeFilter.setText("\"" +query +"\"");
+                    activeFilter.setTextSize(11);
+                    activeFilter.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
+
+                    activeFilter.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            productName = null;
+                            selectedFilters.removeView(view.findViewWithTag("search"));
+                            submitFilter();
+                        }
+                    });
+                    selectedFilters.addView(activeFilter);
                 }
-                submitSearch();
+                submitFilter();
                 return true;
             }
 
@@ -236,7 +254,7 @@ public class FragmentProducts extends Fragment{
                      hideSearch();
                  else {
                     showSearch();
-                    hideFilter();
+                   // hideFilter();
                 }
             }
         });
@@ -294,6 +312,9 @@ public class FragmentProducts extends Fragment{
             filters.add(filterAlcoholFrom);
         if (filterAlcoholTo != null)
             filters.add(filterAlcoholTo);
+
+        if (productName != null)
+            filters.add(productName);
 
         factory = new ProductDataSourceFactory(database, filters);
         products = new LivePagedListBuilder<>(factory, config).build();
