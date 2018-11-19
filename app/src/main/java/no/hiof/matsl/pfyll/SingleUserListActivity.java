@@ -1,6 +1,8 @@
 package no.hiof.matsl.pfyll;
 
+import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,7 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,6 +55,42 @@ public class SingleUserListActivity extends AppCompatActivity {
         listID = intent.getStringExtra("UserListId");
         listsRef = database.getReference("users/" + user.getUid() + "/userLists/" + listID);
         GetData();
+
+        ImageButton editList = findViewById(R.id.editList);
+        editList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SingleUserListActivity.this);
+
+                builder.setTitle("Endre listenavn");
+                builder.setView(getLayoutInflater().inflate(R.layout.addlistfields,null))
+                        .setPositiveButton("Lagre", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditText editText = ((AlertDialog)dialog).findViewById(R.id.newListName);
+
+                                if (editText.getText().length() == 0){
+                                    Toast toast = Toast.makeText(SingleUserListActivity.this, getString(R.string.require_name), Toast.LENGTH_LONG);
+                                    toast.show();
+                                    return;
+                                }
+                                userList.setNavn(editText.getText().toString());
+                                listsRef.setValue(userList);
+
+                                Toast toast = Toast.makeText(SingleUserListActivity.this, "Navnet ble endret!", Toast.LENGTH_LONG);
+                                toast.show();
+                            }
+                        })
+                        .setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                builder.show();
+            }
+        });
+
     }
 
     @Override

@@ -5,13 +5,13 @@
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/white</item>
         <item name="colorPrimaryLight">@color/white</item>
-        <item name="colorSecondary">@color/darkOverlay</item>
+        <item name="colorSecondary">@color/white</item>
         <item name="colorSecondaryDark">@color/white</item>
         <item name="colorSecondaryLight">@color/white</item>
         <item name="colorPrimaryText">@color/white</item>
         <item name="colorSecondaryText">@color/white</item>
         <item name="colorAccent">@color/white</item>
-        <item name="android:windowBackground">@color/darkOverlay</item>
+        <item name="android:windowBackground">@color/white</item>
         <item name="android:buttonTint">@color/white</item>
         <item name="colorButtonNormal">@color/white</item>
         <item name="colorButton">@color/white</item>
@@ -92,7 +92,7 @@
         <item name="colorButtonAlt">@color/absint_secondaryLightColor</item>
     </style>
 
-    <style name="Rødvin" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Vin" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/redwine_primaryColor</item>
         <item name="colorPrimaryDark">@color/redwine_primaryDarkColor</item>
         <item name="colorPrimaryLight">@color/redwine_primaryLightColor</item>

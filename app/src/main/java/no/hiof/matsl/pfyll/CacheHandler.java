@@ -34,7 +34,14 @@ public class CacheHandler {
     public String getTheme( ){
         SharedPreferences sharedPref = context.getSharedPreferences(filename, Context.MODE_PRIVATE);
         String response = sharedPref.getString(key , "Standard");
-        return response;
+        String[] themes = context.getResources().getStringArray(R.array.themes);
+        int i = 0;
+        while(i < themes.length){
+            if (themes[i].equals(response))
+                return themes[i];
+            i++;
+        }
+        return themes[0];
 
     }
     public void setRecentProducts(ArrayList<String> recents){
