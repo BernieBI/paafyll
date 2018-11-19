@@ -157,9 +157,8 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
                 query = collection.startAfter(key);
         } else
             query = collection;
-        query = query.limit(loadSize);
-
         query = addFilters(query);
+        query = query.limit(loadSize);
 
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
 
@@ -189,9 +188,9 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
                 query = collection.startAfter(key);
         } else
             query = collection;
-        query = query.limit(loadSize);
 
         query = addFilters(query);
+        query = query.limit(loadSize);
 
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
