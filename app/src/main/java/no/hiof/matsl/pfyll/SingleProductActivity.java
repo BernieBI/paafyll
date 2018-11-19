@@ -664,6 +664,8 @@ public class SingleProductActivity extends AppCompatActivity {
     }
     public void createPieCharts(String headerText, int value,AnimatedPieView pieView){
 
+        if(((LinearLayout)pieView.getParent()).findViewWithTag(headerText) != null)
+            return;
         if (value == 0) {
             ((LinearLayout)pieView.getParent()).setVisibility(View.GONE);
             return;
@@ -674,19 +676,26 @@ public class SingleProductActivity extends AppCompatActivity {
 
         int remaining = 10 - value;
 
+        theme.resolveAttribute(R.attr.colorPrimaryText, typedValue, true);
+        @ColorInt int color = typedValue.data;
 
         //Adding chart and text to section
+
         TextView headerTextView = new TextView(this);
         headerTextView.setText(headerText);
+        headerTextView.setTag(headerText);
+        headerTextView.setTextColor(color);
         headerTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         ((LinearLayout)pieView.getParent()).addView(headerTextView);
 
         //Configuring chart
         AnimatedPieViewConfig config = new AnimatedPieViewConfig();
         theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
-        @ColorInt int color = typedValue.data;
+        color = typedValue.data;
         config.addData(new SimplePieInfo(value, color));
-        config.addData(new SimplePieInfo(remaining, getResources().getColor(R.color.white)));
+        theme.resolveAttribute(R.attr.colorPrimaryLight, typedValue, true);
+        color = typedValue.data;
+        config.addData(new SimplePieInfo(remaining, color));
         config.canTouch(false);
         config.strokeMode(false);
         config.splitAngle(2);
