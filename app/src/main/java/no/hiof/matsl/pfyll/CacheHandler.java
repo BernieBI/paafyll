@@ -21,7 +21,22 @@ public class CacheHandler {
         this.key = key;
         this.filename = filename;
     }
+    public void setTheme(String themeName ){
 
+        SharedPreferences sharedPref = context.getSharedPreferences(filename, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor;
+        editor = sharedPref.edit();
+        editor.remove(key).commit();
+        editor.putString(key, themeName);
+        editor.commit();
+
+    }
+    public String getTheme( ){
+        SharedPreferences sharedPref = context.getSharedPreferences(filename, Context.MODE_PRIVATE);
+        String response = sharedPref.getString(key , "Standard");
+        return response;
+
+    }
     public void setRecentProducts(ArrayList<String> recents){
         SharedPreferences sharedPref = context.getSharedPreferences(filename, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor;

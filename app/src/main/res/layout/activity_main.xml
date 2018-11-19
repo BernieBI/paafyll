@@ -14,21 +14,23 @@
         android:elevation="20dp"
         android:id="@+id/appBarid">
     </android.support.design.widget.AppBarLayout>
+
     <android.support.design.widget.TabLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        app:tabGravity="fill"
-        app:tabMode="fixed"
-        android:elevation="20dp"
         android:id="@+id/tabLayout"
-        app:tabTextColor="@color/primaryTextColor"
-        android:background="@color/primaryColor"
-        app:tabIndicatorHeight="4dp"></android.support.design.widget.TabLayout>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:elevation="20dp"
+        app:tabGravity="fill"
+        app:tabIndicatorHeight="4dp"
+        app:tabMode="fixed"
+        app:tabTextColor="@color/primaryTextColor"></android.support.design.widget.TabLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPagerid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/secondaryLightColor">
 
     </android.support.v4.view.ViewPager>
 

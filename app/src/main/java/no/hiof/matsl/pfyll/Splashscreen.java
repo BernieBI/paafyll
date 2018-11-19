@@ -6,11 +6,13 @@ import android.os.Bundle;
 
 import no.hiof.matsl.pfyll.MainActivity;
 import no.hiof.matsl.pfyll.R;
+import no.hiof.matsl.pfyll.model.SharedPref;
 
 public class Splashscreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
 

@@ -40,13 +40,9 @@ public class SingleUserListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPref sharedPref = new SharedPref(this);
-        if (sharedPref.loadThemeState()==0){
-            setTheme(R.style.AppTheme);
-        }
-        if (sharedPref.loadThemeState()==1) {
-            setTheme(R.style.Night);
-        }
+        CacheHandler themeGetter = new CacheHandler(this, "theme", "theme-cache");
+        setTheme(getResources().getIdentifier(themeGetter.getTheme(), "style", this.getPackageName()));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_list);
 

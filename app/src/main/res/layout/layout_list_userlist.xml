@@ -11,8 +11,8 @@
     android:layout_marginTop="5dp"
     android:layout_marginRight="5dp"
     android:layout_marginBottom="5dp"
+    android:background="?attr/colorPrimary"
     android:elevation="5dp"
-    android:background="@color/brightOverlay"
     android:orientation="vertical">
 
     <android.support.constraint.ConstraintLayout
@@ -30,6 +30,7 @@
             android:layout_marginBottom="8dp"
             android:textAlignment="textStart"
             android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="?attr/colorPrimaryText"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintStart_toStartOf="parent"
             tool:layout_constraintTop_toTopOf="parent"
@@ -47,6 +48,7 @@
             android:gravity="center_vertical|center"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="?attr/colorPrimaryText"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toStartOf="@+id/removeListBtn"
             tool:layout_constraintTop_toTopOf="parent" />
@@ -59,7 +61,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/darkOverlay"
+            android:backgroundTint="?attr/colorSecondary"
+            android:tint="?attr/colorPrimaryText"
             tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintTop_toTopOf="parent"

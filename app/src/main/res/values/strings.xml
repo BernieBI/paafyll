@@ -208,8 +208,9 @@
 
     <!--Spinner themes-->
     <string-array name="themes">
-        <item>Velg et Tema</item>
-        <item>Default</item>
+        <item>Standard</item>
         <item>Natt</item>
+        <item>Livlig</item>
+        <item>Absint</item>
     </string-array>
 </resources>
