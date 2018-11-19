@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity  {
         else
             adapter.AddFragment(new FragmentLogin(), "");
 
-        
+
         //Adapter setup
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);

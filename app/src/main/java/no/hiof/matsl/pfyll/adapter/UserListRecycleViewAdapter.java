@@ -84,14 +84,13 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
                 builder.show();
             }
         });
-        holder.setItemClickUserListener(new ItemClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view, int position, boolean isLoading) {
-                    //Starting single product activity
-                    Intent singleUserListIntent = new Intent(context, SingleUserListActivity.class);
-                    singleUserListIntent.putExtra("UserListId", current_list.getId());
-                    context.startActivity(singleUserListIntent);
-
+            public void onClick(View v) {
+                //Starting single product activity
+                Intent singleUserListIntent = new Intent(context, SingleUserListActivity.class);
+                singleUserListIntent.putExtra("UserListId", current_list.getId());
+                context.startActivity(singleUserListIntent);
             }
         });
     }
@@ -102,30 +101,20 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView listName;
         TextView listCount;
         ImageButton removeListBtn;
 
-        private ItemClickListener itemClickUserListener;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             listName = itemView.findViewById(R.id.list_name);
             listCount = itemView.findViewById(R.id.list_count);
             removeListBtn = itemView.findViewById(R.id.removeListBtn);
-            itemView.setOnClickListener(this);
         }
 
-        public void setItemClickUserListener(ItemClickListener itemClickUserListener){
-            this.itemClickUserListener = itemClickUserListener;
-        }
-
-        @Override
-        public void onClick(View v) {
-            itemClickUserListener.onClick(v, getAdapterPosition(), false);
-        }
 
     }
 

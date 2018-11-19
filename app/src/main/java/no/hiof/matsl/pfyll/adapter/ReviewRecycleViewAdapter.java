@@ -114,24 +114,17 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
                                 builder.show();
                             }
                         });
-                        holder.setItemClickListener(new ItemClickListener() {
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onClick(View view, int position, boolean isLoading) {
-
-                            }
-                        });
-
-                        holder.setItemClickListener(new ItemClickListener(){
-                            @Override
-                            public void onClick(View view, int position, boolean isLoading) {
-
+                            public void onClick(View v) {
                                 //Starting single product activity
                                 Intent singleProductIntent = new Intent(context, SingleProductActivity.class);
                                 singleProductIntent.putExtra("ProductID", product.getId());
                                 context.startActivity(singleProductIntent);
-
                             }
                         });
+
+
                     } else {
                         return;
                     }
@@ -158,7 +151,7 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
         return position;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView productName;
         TextView reviewText;
@@ -166,8 +159,6 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
         ProgressBar progressBar;
         RatingBar reviewValue;
         ImageButton removeReviewBtn;
-
-        private ItemClickListener itemClickListener;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -177,17 +168,7 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
             productImage = itemView.findViewById(R.id.productImage);
             reviewText = itemView.findViewById(R.id.reviewText);
             removeReviewBtn = itemView.findViewById(R.id.removeReviewBtn);
-            itemView.setOnClickListener(this);
-        }
-
-        public void setItemClickListener(ItemClickListener itemClickUserReviewener){
-            this.itemClickListener = itemClickUserReviewener;
-        }
-
-        @Override
-        public void onClick(View v) {
-            itemClickListener.onClick(v, getAdapterPosition(), false);
-        }
+            }
 
     }
 

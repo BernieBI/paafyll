@@ -126,15 +126,13 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<FirestoreProduct
             holder.productTaste.setText(current_product.getSmak());
         }
 
-        holder.setItemClickListener(new ItemClickListener(){
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view, int position, boolean isLoading) {
-
+            public void onClick(View v) {
                 //Starting single product activity
                 Intent singleProductIntent = new Intent(context, SingleProductActivity.class);
                 singleProductIntent.putExtra("ProductID", current_product.getId());
                 context.startActivity(singleProductIntent);
-
             }
         });
 
@@ -150,13 +148,11 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<FirestoreProduct
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
         ImageView productImage;
         TextView productName, productPrice, productCountry,productTaste, productType;
         ImageButton removeFromListBtn;
-
-        private ItemClickListener itemClickListener;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -167,16 +163,6 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<FirestoreProduct
             productTaste = itemView.findViewById(R.id.product_taste);
             productType = itemView.findViewById(R.id.product_type);
             removeFromListBtn = itemView.findViewById(R.id.removeFromListBtn);
-            itemView.setOnClickListener(this);
-        }
-
-        public void setItemClickListener(ItemClickListener itemClickListener){
-            this.itemClickListener = itemClickListener;
-        }
-
-        @Override
-        public void onClick(View v) {
-            itemClickListener.onClick(v, getAdapterPosition(), false);
         }
 
     }
