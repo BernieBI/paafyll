@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSecondaryLight">
 
-
     <Button
         android:id="@+id/listsButton"
         android:layout_width="0dp"

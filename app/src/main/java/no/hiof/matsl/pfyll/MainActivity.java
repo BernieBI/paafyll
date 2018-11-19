@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity  {
     private TabLayout tabLayout;
     private AppBarLayout appBarLayout;
     private ViewPager viewPager;
-    ArrayList<String> cats= new ArrayList<>();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -67,9 +66,7 @@ public class MainActivity extends AppCompatActivity  {
         else
             adapter.AddFragment(new FragmentLogin(), "");
 
-
-        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.primaryLightColor));
-        tabLayout.setTabTextColors(Color.parseColor("#727272"), Color.parseColor("#ffffff"));
+        
         //Adapter setup
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);

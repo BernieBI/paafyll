@@ -129,13 +129,11 @@ public class SingleProductActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         CacheHandler themeGetter = new CacheHandler(this, "theme", "theme-cache");
         setTheme(getResources().getIdentifier(themeGetter.getTheme(), "style", this.getPackageName()));
-
-
         super.onCreate(savedInstanceState);
 
         theme = SingleProductActivity.this.getTheme();
-        setContentView(R.layout.activity_single_product);
 
+        setContentView(R.layout.activity_single_product);
         dpi = getResources().getDisplayMetrics().density;
 
         //Populating text fields and other
@@ -178,6 +176,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
 
         //getting product and list data from firebase
+        getProductData();
         getProductData();
         reviewRef = database.getReference("userReviews/" + productID);
         getAllReviews();

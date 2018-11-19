@@ -8,8 +8,10 @@ import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -18,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +44,7 @@ import java.util.Collections;
 
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.ScanActivity;
+import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.adapter.ProductDataSourceFactory;
 import no.hiof.matsl.pfyll.adapter.ProductRecycleViewAdapter;
 
@@ -63,11 +67,15 @@ public class FragmentProducts extends Fragment{
     private NumberFilter filterPriceFrom, filterPriceTo, filterAlcoholFrom, filterAlcoholTo;
 
     private Button priceButton, categoryButton, countryButton, alcoholButton;
-    private ImageButton filterButton, scanButton, searchButton;
+    private ImageButton filterButton, scanButton;
     private FlexboxLayout selectedFilters;
     private SearchView searchBar;
     private TextView searchWord;
     private Drawable removeIcon;
+    private @ColorInt int primaryColor, primaryDarkColor, primaryLightColor, primaryTextColor;
+
+    TypedValue typedValue = new TypedValue();
+    Resources.Theme theme;
 
     private String FILTER = "Filtrer";
     private String RESETFILTER = "Fjern filter";
@@ -91,7 +99,16 @@ public class FragmentProducts extends Fragment{
 
         dpi = getResources().getDisplayMetrics().density;
         margin = (int)(400*dpi);
-
+        theme = getContext().getTheme();
+        
+        theme.resolveAttribute(R.attr.colorPrimaryLight, typedValue, true);
+        primaryLightColor = typedValue.data;
+        theme.resolveAttribute(R.attr.colorPrimaryText, typedValue, true);
+        primaryTextColor = typedValue.data;
+        theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        primaryDarkColor = typedValue.data;
+        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        primaryColor = typedValue.data;
         config = new PagedList.Config.Builder().setPageSize(6).build();
         factory = new ProductDataSourceFactory(database, filters);
         layoutButton = view.findViewById(R.id.layoutButton);
@@ -126,8 +143,8 @@ public class FragmentProducts extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-        scanButton.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
-        scanButton.setColorFilter(getResources().getColor(R.color.white));
+        scanButton.setBackgroundColor(primaryColor);
+        scanButton.setColorFilter(primaryTextColor);
     }
 
     private void buttons() {
@@ -135,10 +152,10 @@ public class FragmentProducts extends Fragment{
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scanButton.setBackgroundColor(getResources().getColor(R.color.white));
-                scanButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
+                scanButton.setBackgroundColor(primaryLightColor);
+                scanButton.setColorFilter(primaryColor);
                 hideFilter();
-                hideSearch();
+
                 Intent intent = new Intent(getContext(), ScanActivity.class);
                 startActivity(intent);
             }
@@ -153,11 +170,8 @@ public class FragmentProducts extends Fragment{
             public void onClick(View v) {
                 if (filterOptions.getVisibility() == View.VISIBLE) {
                     hideFilter();
-                    hideSearch();
                 }else {
                     showFilter();
-                    showSearch();
-                   // hideSearch();
                 }
 
             }
@@ -202,7 +216,6 @@ public class FragmentProducts extends Fragment{
         searchBar = view.findViewById(R.id.searchBar);
         //searchBar.setTranslationY(-margin);
         searchBar.setVisibility(View.GONE);
-        searchBar.setBackgroundColor(getResources().getColor(R.color.white));
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -246,51 +259,21 @@ public class FragmentProducts extends Fragment{
             }
         });
 
-        searchButton = view.findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (searchBar.getVisibility() == View.VISIBLE )
-                     hideSearch();
-                 else {
-                    showSearch();
-                   // hideFilter();
-                }
-            }
-        });
     }
-    private void hideSearch(){
+
+    private void hideFilter(){
+        filterButton.setBackgroundColor(primaryColor);
+        filterButton.setColorFilter(primaryTextColor);
+        filterOptions.setVisibility(View.GONE);
         searchBar.onActionViewCollapsed();
-        searchButton.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
-        searchButton.setColorFilter(getResources().getColor(R.color.white));
         searchBar.setVisibility(View.GONE);
     }
-    private void showSearch(){
-        searchBar.onActionViewExpanded();
-        searchButton.setBackgroundColor(getResources().getColor(R.color.white));
-        searchButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
-        searchBar.setVisibility(View.VISIBLE);
-    }
-    private void hideFilter(){
-        filterButton.setBackgroundColor(getResources().getColor(R.color.primaryLightColor));
-        filterButton.setColorFilter(getResources().getColor(R.color.white));
-        filterOptions.setVisibility(View.GONE);
-    }
     private void showFilter(){
-        filterButton.setBackgroundColor(getResources().getColor(R.color.white));
-        filterButton.setColorFilter(getResources().getColor(R.color.primaryLightColor));
+        filterButton.setBackgroundColor(primaryLightColor);
+        filterButton.setColorFilter(primaryDarkColor);
         filterOptions.setVisibility(View.VISIBLE);
-    }
-    private void submitSearch(){
-        view.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-        filters.clear();
-        selectedFilters.removeAllViews();
-        if (productName != null)
-            filters.add(productName);
-
-        factory = new ProductDataSourceFactory(database, filters);
-        products = new LivePagedListBuilder<>(factory, config).build();
-        initRecyclerView();
+        searchBar.onActionViewExpanded();
+        searchBar.setVisibility(View.VISIBLE);
     }
     public void submitFilter(){
         searchWord.setVisibility(View.GONE);
