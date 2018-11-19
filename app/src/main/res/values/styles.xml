@@ -74,6 +74,7 @@
         <item name="colorPrimaryText">@color/night_primaryTextColor</item>
         <item name="colorSecondaryText">@color/night_secondaryTextColor</item>
         <item name="colorButton">@color/night_secondaryColor</item>
+        <item name="colorAccent">@color/night_secondaryColor</item>
         <item name="colorButtonAlt">@color/night_secondaryLightColor</item>
     </style>
 
@@ -87,6 +88,7 @@
         <item name="colorPrimaryText">@color/absint_primaryTextColor</item>
         <item name="colorSecondaryText">@color/absint_secondaryTextColor</item>
         <item name="colorButton">@color/absint_secondaryColor</item>
+        <item name="colorAccent">@color/absint_secondaryColor</item>
         <item name="colorButtonAlt">@color/absint_secondaryLightColor</item>
     </style>
 
@@ -100,6 +102,7 @@
         <item name="colorPrimaryText">@color/redwine_primaryTextColor</item>
         <item name="colorSecondaryText">@color/redwine_secondaryTextColor</item>
         <item name="colorButton">@color/redwine_secondaryColor</item>
+        <item name="colorAccent">@color/redwine_secondaryColor</item>
         <item name="colorButtonAlt">@color/redwine_secondaryLightColor</item>
     </style>
     <style name="Gull" parent="Theme.AppCompat.Light.NoActionBar">
@@ -112,6 +115,7 @@
         <item name="colorPrimaryText">@color/gull_primaryTextColor</item>
         <item name="colorSecondaryText">@color/gull_secondaryTextColor</item>
         <item name="colorButton">@color/gull_secondaryColor</item>
+        <item name="colorAccent">@color/gull_secondaryColor</item>
         <item name="colorButtonAlt">@color/gull_secondaryLightColor</item>
     </style>
 </resources>
