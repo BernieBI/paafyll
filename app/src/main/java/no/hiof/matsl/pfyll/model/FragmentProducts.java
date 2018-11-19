@@ -200,12 +200,23 @@ public class FragmentProducts extends Fragment{
                 query = query.trim();
                 if (query.equals(""))
                     productName = null;
-                else {
-                    productName = new StringFilter(
-                            "Sokeord",
-                            Filter.ComparisonType.LIKE,
-                            query.toLowerCase()
-                    );
+                    searchWord.setVisibility(View.GONE);
+                }else {
+                    searchWord.setVisibility(View.VISIBLE);
+                    searchWord.setText(query);
+                    if (query.contains(" ")) {
+                        productName = new StringFilter(
+                                "Varenavn",
+                                Filter.ComparisonType.EQUALS,
+                                query
+                        );
+                    } else {
+                        productName = new StringFilter(
+                                "Sokeord",
+                                Filter.ComparisonType.LIKE,
+                                query.toLowerCase()
+                        );
+                    }
                 }
                 submitFilter();
                 return true;
