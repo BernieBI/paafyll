@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        CacheHandler themeGetter = new CacheHandler(this, "theme", "theme-cache");
-        setTheme(getResources().getIdentifier(themeGetter.getTheme(), "style", this.getPackageName()));
+        CacheHandler cacheHandler = new CacheHandler(this, "theme", "theme-cache");
+        setTheme(getResources().getIdentifier(cacheHandler.getTheme(), "style", this.getPackageName()));
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

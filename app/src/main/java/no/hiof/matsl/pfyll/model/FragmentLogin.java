@@ -14,6 +14,7 @@ import com.firebase.ui.auth.AuthUI;
 import java.util.Arrays;
 import java.util.List;
 
+import no.hiof.matsl.pfyll.CacheHandler;
 import no.hiof.matsl.pfyll.R;
 
 public class FragmentLogin extends Fragment {
@@ -27,7 +28,7 @@ public class FragmentLogin extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_login,container,false);
-
+        final CacheHandler cacheHandler = new CacheHandler(getContext(), "theme", "theme-cache");
         Button button = view.findViewById(R.id.loginButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,7 +43,7 @@ public class FragmentLogin extends Fragment {
                                 .createSignInIntentBuilder()
                                 .setAvailableProviders(providers)
                                 .setLogo(R.drawable.logo)
-                                .setTheme(R.style.AppTheme)
+                                .setTheme(getResources().getIdentifier(cacheHandler.getTheme(), "style", getActivity().getPackageName()))
                                 .build(),
                         RC_SIGN_IN);
 

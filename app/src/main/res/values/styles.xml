@@ -5,13 +5,13 @@
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/white</item>
         <item name="colorPrimaryLight">@color/white</item>
-        <item name="colorSecondary">@color/white</item>
+        <item name="colorSecondary">@color/darkOverlay</item>
         <item name="colorSecondaryDark">@color/white</item>
         <item name="colorSecondaryLight">@color/white</item>
         <item name="colorPrimaryText">@color/white</item>
         <item name="colorSecondaryText">@color/white</item>
         <item name="colorAccent">@color/white</item>
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@color/darkOverlay</item>
         <item name="android:buttonTint">@color/white</item>
         <item name="colorButtonNormal">@color/white</item>
         <item name="colorButton">@color/white</item>

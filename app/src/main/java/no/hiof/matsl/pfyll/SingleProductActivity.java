@@ -546,7 +546,7 @@ public class SingleProductActivity extends AppCompatActivity {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(4*dpi));
         comment.setLayoutParams(params);
-
+        comment.setPadding((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(8*dpi));
         GradientDrawable shape =  new GradientDrawable();
         shape.setCornerRadius( 8 );
         shape.setColor(getResources().getColor(R.color.brightOverlay));
@@ -589,7 +589,7 @@ public class SingleProductActivity extends AppCompatActivity {
         set.applyTo(comment);
     }
     public void createTextView(LinearLayout parent, String text, String headerText){
-        if (text.equals("") || text.equals(null) || text.contains("Øvrige"))
+        if (text.equals("") || text.contains("Øvrige"))
             return;
 
         LinearLayout listElement = new LinearLayout(this);

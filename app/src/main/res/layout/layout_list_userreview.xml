@@ -25,15 +25,13 @@
         <TextView
             android:id="@+id/textView3"
             android:layout_width="0dp"
-            android:layout_height="37dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:background="?attr/colorSecondaryDark"
-            tool:layout_constraintBottom_toBottomOf="@+id/reviewText"
+            tool:layout_constraintBottom_toBottomOf="parent"
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintStart_toEndOf="@+id/productImage"
-            tool:layout_constraintTop_toBottomOf="@+id/productName"
-            tool:layout_constraintVertical_bias="1.0" />
+            tool:layout_constraintTop_toTopOf="@+id/reviewText" />
 
         <TextView
             android:id="@+id/productName"
@@ -69,6 +67,7 @@
             tool:layout_constraintBottom_toTopOf="@+id/productRatingBar"
             tool:layout_constraintEnd_toEndOf="parent"
             tool:layout_constraintTop_toTopOf="parent"
+            tool:layout_constraintVertical_bias="0.0"
             tool:srcCompat="@drawable/remove2" />
 
         <ImageView

@@ -22,16 +22,18 @@
 
         <TextView
             android:id="@+id/list_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:textAlignment="textStart"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="?attr/colorPrimaryText"
             tool:layout_constraintBottom_toBottomOf="parent"
+            tool:layout_constraintEnd_toStartOf="@+id/list_count"
             tool:layout_constraintStart_toStartOf="parent"
             tool:layout_constraintTop_toTopOf="parent"
             tool:layout_constraintVertical_bias="0.523" />
