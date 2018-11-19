@@ -1,34 +1,46 @@
 package no.hiof.matsl.pfyll.model;
 
+import android.app.AlertDialog;
+
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.okhttp.Cache;
 
 import java.util.ArrayList;
 
 import no.hiof.matsl.pfyll.CacheHandler;
+import no.hiof.matsl.pfyll.MainActivity;
 import no.hiof.matsl.pfyll.MyReviewsActivity;
 import no.hiof.matsl.pfyll.R;
 
 import no.hiof.matsl.pfyll.RecentProductsActivity;
-import no.hiof.matsl.pfyll.ScanActivity;
+
 import no.hiof.matsl.pfyll.UserListActivity;
 
+
 public class FragmentMyAccount extends Fragment {
+    SharedPref sharedPref;
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
     //firebase
@@ -45,10 +57,13 @@ public class FragmentMyAccount extends Fragment {
 
     }
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_myaccount,container,false);
+        sharedPref = new SharedPref(getContext());
 
         Log.d(TAG, "onCreate: Started ");
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -112,7 +127,32 @@ public class FragmentMyAccount extends Fragment {
                 startActivity(reviewsIntent);
             }
         });
+
+        ImageButton settingsButton = view.findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String[] themes = getResources().getStringArray(R.array.themes);
+                AlertDialog.Builder themeChanger = new AlertDialog.Builder(getContext());
+                themeChanger.setTitle("Velg tema")
+                        .setItems(themes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                CacheHandler themesetting = new CacheHandler(getContext(), "theme", "theme-cache");
+                                themesetting.setTheme(themes[which]);
+
+                                restartApp();
+                            }
+                        });
+                themeChanger.show();
+            }
+        });
     }
 
+    public void restartApp(){
+        getActivity().finish();
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        startActivity(intent);
+    }
 
 }

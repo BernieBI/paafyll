@@ -14,12 +14,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import no.hiof.matsl.pfyll.model.FragmentProducts;
+import no.hiof.matsl.pfyll.model.SharedPref;
 
 public class RecentProductsActivity extends AppCompatActivity {
     String TAG = "recentProducts";
     ArrayList<String> products;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        CacheHandler themeGetter = new CacheHandler(this, "theme", "theme-cache");
+        setTheme(getResources().getIdentifier(themeGetter.getTheme(), "style", this.getPackageName()));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recent_products);
         Log.d(TAG, "onCreate: ");

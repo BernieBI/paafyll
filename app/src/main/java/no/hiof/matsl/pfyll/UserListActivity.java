@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import no.hiof.matsl.pfyll.adapter.UserListRecycleViewAdapter;
+import no.hiof.matsl.pfyll.model.SharedPref;
 import no.hiof.matsl.pfyll.model.UserList;
 
 public class UserListActivity extends AppCompatActivity {
@@ -42,6 +43,10 @@ public class UserListActivity extends AppCompatActivity {
     private DatabaseReference userListRef;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        CacheHandler themeGetter = new CacheHandler(this, "theme", "theme-cache");
+        setTheme(getResources().getIdentifier(themeGetter.getTheme(), "style", this.getPackageName()));
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
 

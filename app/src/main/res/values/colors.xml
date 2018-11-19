@@ -12,8 +12,38 @@
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#000000</color>
     <color name="white">#ffffff</color>
-    <color name="darkOverlay">#2c000000</color>
+    <color name="darkOverlay">#46000000</color>
     <color name="brightOverlay">#bdffffff</color>
     <color name="blank">#00000000</color>
     <color name="gold">#FFDF00</color>
+
+
+
+    <color name="livlig_primaryColor">#0277bd</color>
+    <color name="livlig_primaryLightColor">#58a5f0</color>
+    <color name="livlig_primaryDarkColor">#004c8c</color>
+    <color name="livlig_secondaryColor">#bf360c</color>
+    <color name="livlig_secondaryLightColor">#f9683a</color>
+    <color name="livlig_secondaryDarkColor">#870000</color>
+    <color name="livlig_primaryTextColor">#ffffff</color>
+    <color name="livlig_secondaryTextColor">#ffffff</color>
+
+    <color name="night_primaryColor">#263238</color>
+    <color name="night_primaryLightColor">#4f5b62</color>
+    <color name="night_primaryDarkColor">#000a12</color>
+    <color name="night_secondaryColor">#546e7a</color>
+    <color name="night_secondaryLightColor">#819ca9</color>
+    <color name="night_secondaryDarkColor">#29434e</color>
+    <color name="night_primaryTextColor">#ffffff</color>
+    <color name="night_secondaryTextColor">#ffffff</color>
+
+
+    <color name="absint_primaryColor">#00e676</color>
+    <color name="absint_primaryLightColor">#66ffa6</color>
+    <color name="absint_primaryDarkColor">#00b248</color>
+    <color name="absint_secondaryColor">#18ffff</color>
+    <color name="absint_secondaryLightColor">#76ffff</color>
+    <color name="absint_secondaryDarkColor">#00cbcc</color>
+    <color name="absint_primaryTextColor">#000000</color>
+    <color name="absint_secondaryTextColor">#000000</color>
 </resources>

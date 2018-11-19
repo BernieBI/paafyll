@@ -226,4 +226,12 @@
         <item>Østerrike</item>
         <item>Øvrige</item>
     </string-array>
+
+    <!--Spinner themes-->
+    <string-array name="themes">
+        <item>Standard</item>
+        <item>Natt</item>
+        <item>Livlig</item>
+        <item>Absint</item>
+    </string-array>
 </resources>
