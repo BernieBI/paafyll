@@ -200,14 +200,16 @@ public class FragmentProducts extends Fragment{
         priceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              numberFilterDialog("Pris");
+                if (priceButton.getAlpha() == 1)
+                    numberFilterDialog("Pris");
             }
         });
         alcoholButton = view.findViewById(R.id.filterAlcohol);
         alcoholButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                numberFilterDialog("Alkohol");
+                if (alcoholButton.getAlpha() == 1)
+                    numberFilterDialog("Alkohol");
             }
         });
         searchWord.setOnClickListener(new View.OnClickListener() {
@@ -393,6 +395,7 @@ public class FragmentProducts extends Fragment{
                             filterPriceFrom = fieldFrom;
                             filterPriceTo = fieldTo;
                             selectedFilters.removeView(view.findViewWithTag("Alkohol"));
+                            alcoholButton.setAlpha((float) 0.4);
                             filterAlcoholFrom = null;
                             filterAlcoholTo = null;
                             unit = "kr";
@@ -400,6 +403,7 @@ public class FragmentProducts extends Fragment{
                             filterAlcoholFrom = fieldFrom;
                             filterAlcoholTo = fieldTo;
                             selectedFilters.removeView(view.findViewWithTag("Pris"));
+                            priceButton.setAlpha((float) 0.4);
                             filterPriceFrom = null;
                             filterPriceTo = null;
                             unit = "%";
@@ -432,6 +436,8 @@ public class FragmentProducts extends Fragment{
                                     filterAlcoholFrom = null;
                                     filterAlcoholTo = null;
                                 }
+                                priceButton.setAlpha(1);
+                                alcoholButton.setAlpha(1);
                                 selectedFilters.removeView(view.findViewWithTag(fieldString));
                                 submitFilter();
                             }
