@@ -231,7 +231,9 @@
     <string-array name="themes">
         <item>Standard</item>
         <item>Natt</item>
-        <item>Livlig</item>
         <item>Absint</item>
+        <item>Rødvin</item>
+        <item>Rosé</item>
+        <item>Gull</item>
     </string-array>
 </resources>

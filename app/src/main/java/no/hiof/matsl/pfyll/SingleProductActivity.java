@@ -536,7 +536,6 @@ public class SingleProductActivity extends AppCompatActivity {
         });
     }
 
-    //pass header text as "" if not to use
     public void createComment(String text, String userName, Float rating){
 
         Timestamp time = new Timestamp(System.currentTimeMillis());
@@ -552,13 +551,12 @@ public class SingleProductActivity extends AppCompatActivity {
         shape.setCornerRadius( 8 );
         shape.setColor(getResources().getColor(R.color.brightOverlay));
 
-        comment.setPadding((int)(16*dpi), (int)(16*dpi), (int)(16*dpi), (int)(16*dpi));
         comment.setBackground(shape);
         comment.setElevation((int)(3*dpi));
         commentswrapper.addView(comment);
 
         TextView headerTextView = new TextView(this);
-        headerTextView.setText(userName +" ");
+        headerTextView.setText(userName);
         headerTextView.setTextSize(20);
         headerTextView.setId(2 + time.getNanos());
         headerTextView.setTypeface(null, Typeface.BOLD);
@@ -577,7 +575,7 @@ public class SingleProductActivity extends AppCompatActivity {
         TextView textView = new TextView(this);
         textView.setText(text);
         textView.setId(4 + time.getNanos());
-        if (text != "")
+        if (!text.equals(""))
             comment.addView(textView);
 
         ConstraintSet set = new ConstraintSet();

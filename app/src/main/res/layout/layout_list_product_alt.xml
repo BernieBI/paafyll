@@ -97,6 +97,7 @@
             android:id="@+id/product_taste"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="?attr/colorSecondaryDark"
             android:padding="8dp"
             android:textColor="?attr/colorPrimaryText"
             android:textSize="12sp"

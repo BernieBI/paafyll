@@ -89,7 +89,7 @@ public class FragmentMyAccount extends Fragment {
     }
 
     private void buttons() {
-        Button logOutButton = view.findViewById(R.id.logOutButton);
+        final Button logOutButton = view.findViewById(R.id.logOutButton);
         logOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,23 +127,31 @@ public class FragmentMyAccount extends Fragment {
                 startActivity(reviewsIntent);
             }
         });
-
         ImageButton settingsButton = view.findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final CacheHandler cacheHandler = new CacheHandler(getContext(), "theme", "theme-cache");
                 final String[] themes = getResources().getStringArray(R.array.themes);
+                int i = 0;
+                while ( i < themes.length){
+                    if (themes[i].equals(cacheHandler.getTheme())) break;
+                    i++;
+                }
+
                 AlertDialog.Builder themeChanger = new AlertDialog.Builder(getContext());
                 themeChanger.setTitle("Velg tema")
-                        .setItems(themes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                CacheHandler themesetting = new CacheHandler(getContext(), "theme", "theme-cache");
-                                themesetting.setTheme(themes[which]);
-
-                                restartApp();
-                            }
-                        });
+                       .setSingleChoiceItems(themes, i, new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialog, int which) {
+                               cacheHandler.setTheme(themes[which]);
+                               restartApp();
+                           }
+                       }).setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialog, int which) {
+                           }
+                       });
                 themeChanger.show();
             }
         });

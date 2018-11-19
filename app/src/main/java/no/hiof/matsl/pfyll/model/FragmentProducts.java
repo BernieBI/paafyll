@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import android.support.v7.widget.GridLayoutManager;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +46,6 @@ import java.util.Collections;
 
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.ScanActivity;
-import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.adapter.ProductDataSourceFactory;
 import no.hiof.matsl.pfyll.adapter.ProductRecycleViewAdapter;
 
@@ -72,7 +73,7 @@ public class FragmentProducts extends Fragment{
     private SearchView searchBar;
     private TextView searchWord;
     private Drawable removeIcon;
-    private @ColorInt int primaryColor, primaryDarkColor, primaryLightColor, primaryTextColor;
+    private @ColorInt int primaryColor, primaryDarkColor, primaryLightColor, primaryTextColor, secondaryColor;
 
     TypedValue typedValue = new TypedValue();
     Resources.Theme theme;
@@ -99,8 +100,9 @@ public class FragmentProducts extends Fragment{
 
         dpi = getResources().getDisplayMetrics().density;
         margin = (int)(400*dpi);
+
+        //Colors from active theme
         theme = getContext().getTheme();
-        
         theme.resolveAttribute(R.attr.colorPrimaryLight, typedValue, true);
         primaryLightColor = typedValue.data;
         theme.resolveAttribute(R.attr.colorPrimaryText, typedValue, true);
@@ -109,6 +111,9 @@ public class FragmentProducts extends Fragment{
         primaryDarkColor = typedValue.data;
         theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
         primaryColor = typedValue.data;
+        theme.resolveAttribute(R.attr.colorSecondary, typedValue, true);
+        secondaryColor = typedValue.data;
+
         config = new PagedList.Config.Builder().setPageSize(6).build();
         factory = new ProductDataSourceFactory(database, filters);
         layoutButton = view.findViewById(R.id.layoutButton);
@@ -223,9 +228,7 @@ public class FragmentProducts extends Fragment{
                 query = query.trim();
                 if (query.equals("")) {
                     productName = null;
-                    //searchWord.setVisibility(View.GONE);
                 }else {
-                    //searchWord.setVisibility(View.VISIBLE);
                     searchWord.setText(query);
                     productName = new StringFilter(
                             "Sokeord",
@@ -277,6 +280,7 @@ public class FragmentProducts extends Fragment{
     }
     public void submitFilter(){
         searchWord.setVisibility(View.GONE);
+        view.findViewById(R.id.noResults).setVisibility(View.GONE);
         view.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         filters.clear();
 
@@ -310,10 +314,21 @@ public class FragmentProducts extends Fragment{
                 .setItems(elements, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         selectedFilters.removeView(view.findViewWithTag(field));
-                        TextView activeFilter = new Button(getContext());
+                        TextView activeFilter = new TextView(getContext());
                         activeFilter.setTag(field);
                         activeFilter.setText(elements[which]);
-                        activeFilter.setTextSize(11);
+                        activeFilter.setTextSize(12);
+                        activeFilter.setTextColor(primaryTextColor);
+                        activeFilter.setGravity(Gravity.CENTER_VERTICAL);
+                        GradientDrawable shape =  new GradientDrawable();
+                        shape.setCornerRadius(8);
+                        shape.setColor(secondaryColor);
+                        shape.setAlpha(150);
+                        activeFilter.setBackground(shape);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params.setMargins((int)(8*dpi), (int)(4*dpi), 0, (int)(4*dpi));
+                        activeFilter.setLayoutParams(params);
+                        activeFilter.setPadding((int)(4*dpi), (int)(4*dpi), (int)(4*dpi), (int)(6*dpi));
                         activeFilter.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
 
                         activeFilter.setOnClickListener(new View.OnClickListener() {
@@ -368,24 +383,43 @@ public class FragmentProducts extends Fragment{
                                     fieldTo = new NumberFilter(to, fieldString, Filter.ComparisonType.LESS_THAN_OR_EQUALS);
                                 }
                             }else {
-                                Toast.makeText(getContext(),"Det går ikke!", Toast.LENGTH_SHORT);
+                                Toast.makeText(getContext(),"Det går ikke!", Toast.LENGTH_SHORT).show();
+                                numberFilterDialog(fieldString);
+                                return;
                             }
 
                         String unit = "";
                         if (fieldString == "Pris"){
                             filterPriceFrom = fieldFrom;
                             filterPriceTo = fieldTo;
+                            selectedFilters.removeView(view.findViewWithTag("Alkohol"));
+                            filterAlcoholFrom = null;
+                            filterAlcoholTo = null;
                             unit = "kr";
                         }else if( fieldString == "Alkohol") {
                             filterAlcoholFrom = fieldFrom;
                             filterAlcoholTo = fieldTo;
+                            selectedFilters.removeView(view.findViewWithTag("Pris"));
+                            filterPriceFrom = null;
+                            filterPriceTo = null;
                             unit = "%";
                         }
 
-                        TextView activeFilter = new Button(getContext());
+                        TextView activeFilter = new TextView(getContext());
                         activeFilter.setTag(fieldString);
                         activeFilter.setText(String.format("%1$s %3$s - %2$s", (int)from, to >= 999999999 ? ">" : (int)to + " " +unit, unit));
                         activeFilter.setTextSize(11);
+                        activeFilter.setTextColor(primaryTextColor);
+                        activeFilter.setGravity(Gravity.CENTER_VERTICAL);
+                        GradientDrawable shape =  new GradientDrawable();
+                        shape.setCornerRadius(8);
+                        shape.setColor(secondaryColor);
+                        shape.setAlpha(150);
+                        activeFilter.setBackground(shape);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params.setMargins((int)(8*dpi), (int)(4*dpi), 0, (int)(4*dpi));
+                        activeFilter.setLayoutParams(params);
+                        activeFilter.setPadding((int)(4*dpi), (int)(4*dpi), (int)(4*dpi), (int)(6*dpi));
                         activeFilter.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
                         activeFilter.setOnClickListener(new View.OnClickListener() {
                             @Override

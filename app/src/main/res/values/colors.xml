@@ -1,11 +1,12 @@
 <!--?xml version="1.0" encoding="UTF-8"?-->
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <color name="tabIndicatorColor">#000</color>
     <color name="tabTextColor">#000</color>
     <color name="colorAccent">#0a000000</color>
     <color name="primaryColor">#212121</color>
     <color name="primaryLightColor">#484848</color>
-    <color name="primaryDarkColor">#000000</color>
+    <color name="primaryDarkColor">#101010</color>
     <color name="secondaryColor">#bcaaa4</color>
     <color name="secondaryLightColor">#efdcd5</color>
     <color name="secondaryDarkColor">#8c7b75</color>
@@ -17,14 +18,7 @@
     <color name="blank">#00000000</color>
     <color name="gold">#FFDF00</color>
 
-    <color name="livlig_primaryColor">#0277bd</color>
-    <color name="livlig_primaryLightColor">#58a5f0</color>
-    <color name="livlig_primaryDarkColor">#004c8c</color>
-    <color name="livlig_secondaryColor">#bf360c</color>
-    <color name="livlig_secondaryLightColor">#f9683a</color>
-    <color name="livlig_secondaryDarkColor">#870000</color>
-    <color name="livlig_primaryTextColor">#ffffff</color>
-    <color name="livlig_secondaryTextColor">#ffffff</color>
+
 
     <color name="night_primaryColor">#263238</color>
     <color name="night_primaryLightColor">#4f5b62</color>
@@ -35,12 +29,39 @@
     <color name="night_primaryTextColor">#ffffff</color>
     <color name="night_secondaryTextColor">#ffffff</color>
 
-    <color name="absint_primaryColor">#00e676</color>
-    <color name="absint_primaryLightColor">#66ffa6</color>
-    <color name="absint_primaryDarkColor">#00b248</color>
-    <color name="absint_secondaryColor">#18ffff</color>
-    <color name="absint_secondaryLightColor">#76ffff</color>
-    <color name="absint_secondaryDarkColor">#00cbcc</color>
-    <color name="absint_primaryTextColor">#000000</color>
-    <color name="absint_secondaryTextColor">#000000</color>
+    <color name="absint_primaryColor">#1b5e20</color>
+    <color name="absint_primaryLightColor">#4c8c4a</color>
+    <color name="absint_primaryDarkColor">#003300</color>
+    <color name="absint_secondaryColor">#64dd17</color>
+    <color name="absint_secondaryLightColor">#9cff57</color>
+    <color name="absint_secondaryDarkColor">#1faa00</color>
+    <color name="absint_primaryTextColor">#ffffff</color>
+    <color name="absint_secondaryTextColor">#0d0d0d</color>
+
+    <color name="redwine_primaryColor">#510b0b</color>
+    <color name="redwine_primaryLightColor">#823832</color>
+    <color name="redwine_primaryDarkColor">#2f0000</color>
+    <color name="redwine_secondaryColor">#4e342e</color>
+    <color name="redwine_secondaryLightColor">#7b5e57</color>
+    <color name="redwine_secondaryDarkColor">#260e04</color>
+    <color name="redwine_primaryTextColor">#ffffff</color>
+    <color name="redwine_secondaryTextColor">#ffffff</color>
+
+    <color name="rose_primaryColor">#f48fb1</color>
+    <color name="rose_primaryLightColor">#ffc1e3</color>
+    <color name="rose_primaryDarkColor">#bf5f82</color>
+    <color name="rose_secondaryColor">#f8bbd0</color>
+    <color name="rose_secondaryLightColor">#ffeeff</color>
+    <color name="rose_secondaryDarkColor">#c48b9f</color>
+    <color name="rose_primaryTextColor">#0d0d0d</color>
+    <color name="rose_secondaryTextColor">#0d0d0d</color>
+
+    <color name="gull_primaryColor">#212121</color>
+    <color name="gull_primaryLightColor">#484848</color>
+    <color name="gull_primaryDarkColor">#000000</color>
+    <color name="gull_secondaryColor">#c2b067</color>
+    <color name="gull_secondaryLightColor">#f6e296</color>
+    <color name="gull_secondaryDarkColor">#90813a</color>
+    <color name="gull_primaryTextColor">#ffffff</color>
+    <color name="gull_secondaryTextColor">#000000</color>
 </resources>

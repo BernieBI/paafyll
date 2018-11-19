@@ -93,6 +93,8 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<FirestoreProduct
         if (current_product == null ) {
             return;
         }
+        current_product.setBildeUrl(current_product.getVarenummer());
+        Log.d(TAG, "url: " + current_product.getBildeUrl());
 
         if (!isListActivity) {
             holder.removeFromListBtn.setVisibility(View.GONE);
@@ -102,7 +104,6 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<FirestoreProduct
                 public void onClick(View v) {
                     if (preSetProducts.remove(current_product.getId()+"")){
 
-                        Log.d(TAG, "Removed from list, list: " + preSetProducts);
 
                         DatabaseReference userListRef = database.getReference("users/" + user.getUid() + "/userLists/" + userListID);
                         userListRef.child("products").setValue(preSetProducts);
