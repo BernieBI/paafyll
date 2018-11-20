@@ -234,4 +234,18 @@
         <item>Vin</item>
         <item>Gull</item>
     </string-array>
+
+    <string-array name="eatWith">
+        <item>Dessert</item>
+        <item>Fisk</item>
+        <item>Lyst kjøtt</item>
+        <item>Lam og sau</item>
+        <item>Ost</item>
+        <item>Skalldyr</item>
+        <item>Smavilt</item>
+        <item>Storfe</item>
+        <item>Storvilt</item>
+        <item>Svinekjøtt</item>
+        <item>Aperitiff</item>
+    </string-array>
 </resources>

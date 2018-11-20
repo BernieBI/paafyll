@@ -62,8 +62,8 @@
 
     <Button
         android:id="@+id/logOutButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
         android:backgroundTint="?attr/colorButton"
@@ -81,7 +81,7 @@
         android:id="@+id/settingsButton"
         style="@android:style/Widget.Material.ImageButton"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
@@ -89,10 +89,10 @@
         android:contentDescription="@string/settings"
         android:elevation="3dp"
         android:tint="?attr/colorSecondaryText"
-        app:layout_constraintBottom_toTopOf="@+id/logOutButton"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/accountButton"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/logOutButton"
         app:srcCompat="@drawable/theme" />
 
     <Button
@@ -145,11 +145,12 @@
 
     <ImageButton
         android:id="@+id/accountButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:backgroundTint="?attr/colorButton"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/options_dynamic" />

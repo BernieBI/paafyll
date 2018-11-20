@@ -160,7 +160,6 @@ public class FragmentProducts extends Fragment{
                 scanButton.setBackgroundColor(primaryLightColor);
                 scanButton.setColorFilter(primaryColor);
                 hideFilter();
-
                 Intent intent = new Intent(getContext(), ScanActivity.class);
                 startActivity(intent);
             }
@@ -212,16 +211,8 @@ public class FragmentProducts extends Fragment{
                     numberFilterDialog("Alkohol");
             }
         });
-        searchWord.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchWord.setVisibility(View.GONE);
-                productName = null;
-                submitFilter();
-            }
-        });
+
         searchBar = view.findViewById(R.id.searchBar);
-        //searchBar.setTranslationY(-margin);
         searchBar.setVisibility(View.GONE);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -277,7 +268,7 @@ public class FragmentProducts extends Fragment{
         filterButton.setBackgroundColor(primaryLightColor);
         filterButton.setColorFilter(primaryDarkColor);
         filterOptions.setVisibility(View.VISIBLE);
-        searchBar.onActionViewExpanded();
+        //searchBar.onActionViewExpanded();
         searchBar.setVisibility(View.VISIBLE);
     }
     public void submitFilter(){
