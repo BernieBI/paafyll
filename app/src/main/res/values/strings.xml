@@ -71,7 +71,7 @@
     <string name="confirm_delete_list">Er du sikker på at du vil slette denne listen?</string>
     <string name="require_name">Du må gi listen et navn</string>
     <string name="list_require_login">Du må være logget inn for å bruke lister</string>
-    <string name="have_no_lists">Du har ingen lister ennå :(</string>
+    <string name="have_no_lists">Du har ingen lister ennå</string>
     <string name="add_lists">Legg til lister ved å trykke på knappen nede i hjørnet</string>
     <string name="list_hint">Navn på liste</string>
     <!--Reviews-->

@@ -414,7 +414,7 @@ public class SingleProductActivity extends AppCompatActivity {
                             }
 
                             String username = "Anonym";
-                            if (user.getDisplayName().trim().equals(""))
+                            if (!user.getDisplayName().trim().equals(""))
                                 username = user.getDisplayName();
 
                             int index = productReviews.size() > 0 ? productReviews.get(productReviews.size()-1).getIndex()+1 : 0;
@@ -556,6 +556,8 @@ public class SingleProductActivity extends AppCompatActivity {
         commentswrapper.addView(comment);
 
         TextView headerTextView = new TextView(this);
+        LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        headerParams.setMargins((int)(0*dpi), (int)(0*dpi), (int)(0*dpi), (int)(0*dpi));
         headerTextView.setText(userName);
         headerTextView.setTextSize(20);
         headerTextView.setId(2 + time.getNanos());
@@ -574,6 +576,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
         TextView textView = new TextView(this);
         textView.setText(text);
+        textView.setPadding((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(8*dpi));
         textView.setId(4 + time.getNanos());
         if (!text.equals(""))
             comment.addView(textView);
@@ -689,7 +692,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
         //Configuring chart
         AnimatedPieViewConfig config = new AnimatedPieViewConfig();
-        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        theme.resolveAttribute(R.attr.colorPrimaryText, typedValue, true);
         color = typedValue.data;
         config.addData(new SimplePieInfo(value, color));
         theme.resolveAttribute(R.attr.colorPrimaryLight, typedValue, true);
