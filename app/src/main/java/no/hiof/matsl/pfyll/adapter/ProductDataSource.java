@@ -96,7 +96,7 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
         }
     }
 
-    private Query addFilters(Query query) {
+    private Query addFilters(Query query, int loadSize) {
         String rangedField = "";
         if (filters != null) {
             for (Filter filter : filters) {
@@ -108,57 +108,61 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
                     case GREATER_THAN:
                         if (!rangedField.equals("") && !rangedField.equals(filter.getFieldName()))
                             break;
-                        query = query.whereGreaterThan(filter.getFieldName(), filter.getValue());
-                        rangedField = filter.getFieldName();
+                        if (rangedField.equals("")) {
+                            rangedField = filter.getFieldName();
+                            query = query.orderBy(rangedField);
+                        }
+                        query = query.startAfter(filter.getValue());
                         break;
                     case GREATER_THAN_OR_EQUALS:
                         if (!rangedField.equals("") && !rangedField.equals(filter.getFieldName()))
                             break;
-                        query = query.whereGreaterThanOrEqualTo(filter.getFieldName(), filter.getValue());
-                        rangedField = filter.getFieldName();
+                        if (rangedField.equals("")) {
+                            rangedField = filter.getFieldName();
+                            query = query.orderBy(rangedField);
+                        }
+                        query = query.startAt(filter.getValue());
                         break;
                     case LESS_THAN:
                         if (!rangedField.equals("") && !rangedField.equals(filter.getFieldName()))
                             break;
-                        query = query.whereLessThan(filter.getFieldName(), filter.getValue());
-                        rangedField = filter.getFieldName();
+                        if (rangedField.equals("")) {
+                            rangedField = filter.getFieldName();
+                            query = query.orderBy(rangedField);
+                        }
+                        query = query.endBefore(filter.getValue());
                         break;
                     case LESS_THAN_OR_EQUALS:
                         if (!rangedField.equals("") && !rangedField.equals(filter.getFieldName()))
                             break;
-                        query = query.whereLessThanOrEqualTo(filter.getFieldName(), filter.getValue());
-                        rangedField = filter.getFieldName();
+                        if (rangedField.equals("")) {
+                            rangedField = filter.getFieldName();
+                            query = query.orderBy(rangedField);
+                        }
+                        query = query.endAt(filter.getValue());
                         break;
                     case LIKE:
                         if (!rangedField.equals("") && !rangedField.equals(filter.getFieldName()))
                             break;
-                        //query = query.orderBy(filter.getFieldName());
-                        //query = query.whereGreaterThanOrEqualTo(filter.getFieldName(), filter.getValue());
-                        //query = query.whereLessThan(filter.getFieldName(), filter.getValue() + "ZZZ");
                         query = query.whereArrayContains(filter.getFieldName(), filter.getValue());
-                        //query = query.orderBy(filter.getFieldName()).startAt(filter.getValue()).endAt(filter.getValue() + "\uf8ff");
                         rangedField = filter.getFieldName();
                         break;
                 }
             }
         }
-        return query;
+        return query.limit(loadSize);
     }
 
     // TODO: Refactor to remove duplicate code
     private void loadDataByValueFilter(@NonNull final LoadCallback<FirestoreProduct> callback, DocumentSnapshot key, int loadSize, boolean reverse) {
-        CollectionReference collection = database.collection(COLLECTION_PATH);
-
-        Query query;
+        Query query = database.collection(COLLECTION_PATH);
+        query = addFilters(query, loadSize);
         if (key != null) {
             if (reverse)
-                query = collection.endBefore(key);
+                query = query.endBefore(key);
             else
-                query = collection.startAfter(key);
-        } else
-            query = collection;
-        query = addFilters(query);
-        query = query.limit(loadSize);
+                query = query.startAfter(key);
+        }
 
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
 
@@ -178,19 +182,14 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
         });
     }
     private void loadDataByValueFilter(@NonNull final TaskCompletionSource<List<FirestoreProduct>> taskCompletionSource, DocumentSnapshot key, int loadSize, boolean reverse) {
-        CollectionReference collection = database.collection(COLLECTION_PATH);
-
-        Query query;
+        Query query = database.collection(COLLECTION_PATH);
+        query = addFilters(query, loadSize);
         if (key != null) {
             if (reverse)
-                query = collection.endBefore(key);
+                query = query.endBefore(key);
             else
-                query = collection.startAfter(key);
-        } else
-            query = collection;
-
-        query = addFilters(query);
-        query = query.limit(loadSize);
+                query = query.startAfter(key);
+        }
 
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
             @Override
