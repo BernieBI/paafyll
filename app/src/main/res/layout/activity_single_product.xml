@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSecondaryLight">
+    android:background="?attr/colorBackground">
 
 
     <ScrollView
@@ -424,7 +424,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp"
                 android:background="?attr/colorButton"
-                android:drawableTop="@drawable/logout"
+                android:drawableTop="@drawable/logout_dynamic"
                 android:elevation="3dp"
                 android:padding="8dp"
                 android:text="@string/product_webBtn"
@@ -443,7 +443,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:background="?attr/colorButton"
-                android:drawableTop="@drawable/review"
+                android:drawableTop="@drawable/review_dynamic"
                 android:elevation="3dp"
                 android:padding="8dp"
                 android:text="@string/product_reviewBtn"

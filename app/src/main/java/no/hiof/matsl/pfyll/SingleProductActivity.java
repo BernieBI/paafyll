@@ -413,8 +413,8 @@ public class SingleProductActivity extends AppCompatActivity {
                                 toast.show();
                             }
 
-                            String username = "ukjent";
-                            if (user.getDisplayName() != null)
+                            String username = "Anonym";
+                            if (user.getDisplayName().trim().equals(""))
                                 username = user.getDisplayName();
 
                             int index = productReviews.size() > 0 ? productReviews.get(productReviews.size()-1).getIndex()+1 : 0;

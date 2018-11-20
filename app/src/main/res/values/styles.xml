@@ -16,24 +16,10 @@
         <item name="colorButtonNormal">@color/white</item>
         <item name="colorButton">@color/white</item>
         <item name="colorButtonAlt">@color/white</item>
+        <item name="colorBackground">@color/white</item>
     </style>
 
-    <style name="Standard" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorPrimaryLight">@color/primaryLightColor</item>
-        <item name="colorSecondary">@color/secondaryColor</item>
-        <item name="colorSecondaryDark">@color/secondaryDarkColor</item>
-        <item name="colorSecondaryLight">@color/secondaryLightColor</item>
-        <item name="colorPrimaryText">@color/primaryTextColor</item>
-        <item name="colorSecondaryText">@color/secondaryTextColor</item>
-        <item name="colorAccent">@color/secondaryColor</item>
-        <item name="android:windowBackground">@color/secondaryLightColor</item>
-        <item name="android:buttonTint">@color/white</item>
-        <item name="colorButtonNormal">@color/brightOverlay</item>
-        <item name="colorButton">@color/secondaryColor</item>
-        <item name="colorButtonAlt">@color/secondaryLightColor</item>
-    </style>
+
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
@@ -63,7 +49,24 @@
         <item name="android:numStars">5</item>
         <item name="android:progressDrawable">@drawable/bottle_ratingbar_small</item>
     </style>
-    <!-- Night / Dark Mode theme. -->
+    <style name="Standard" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorPrimaryLight">@color/primaryLightColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryDark">@color/secondaryDarkColor</item>
+        <item name="colorSecondaryLight">@color/secondaryLightColor</item>
+        <item name="colorPrimaryText">@color/primaryTextColor</item>
+        <item name="colorSecondaryText">@color/secondaryTextColor</item>
+        <item name="colorAccent">@color/secondaryColor</item>
+        <item name="android:windowBackground">@color/secondaryLightColor</item>
+        <item name="android:buttonTint">@color/white</item>
+        <item name="colorButtonNormal">@color/brightOverlay</item>
+        <item name="colorButton">@color/secondaryColor</item>
+        <item name="colorButtonAlt">@color/secondaryLightColor</item>
+        <item name="colorBackground">@color/backgroundColor</item>
+
+    </style>
     <style name="Natt" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/night_primaryColor</item>
         <item name="colorPrimaryDark">@color/night_primaryDarkColor</item>
@@ -76,21 +79,10 @@
         <item name="colorButton">@color/night_secondaryColor</item>
         <item name="colorAccent">@color/night_secondaryColor</item>
         <item name="colorButtonAlt">@color/night_secondaryLightColor</item>
+        <item name="colorBackground">@color/night_backgroundColor</item>
     </style>
 
-    <style name="Absint" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/absint_primaryColor</item>
-        <item name="colorPrimaryDark">@color/absint_primaryDarkColor</item>
-        <item name="colorPrimaryLight">@color/absint_primaryLightColor</item>
-        <item name="colorSecondary">@color/absint_secondaryColor</item>
-        <item name="colorSecondaryDark">@color/absint_secondaryDarkColor</item>
-        <item name="colorSecondaryLight">@color/absint_secondaryLightColor</item>
-        <item name="colorPrimaryText">@color/absint_primaryTextColor</item>
-        <item name="colorSecondaryText">@color/absint_secondaryTextColor</item>
-        <item name="colorButton">@color/absint_secondaryColor</item>
-        <item name="colorAccent">@color/absint_secondaryColor</item>
-        <item name="colorButtonAlt">@color/absint_secondaryLightColor</item>
-    </style>
+
 
     <style name="Vin" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/redwine_primaryColor</item>
@@ -104,6 +96,8 @@
         <item name="colorButton">@color/redwine_secondaryColor</item>
         <item name="colorAccent">@color/redwine_secondaryColor</item>
         <item name="colorButtonAlt">@color/redwine_secondaryLightColor</item>
+        <item name="colorBackground">@color/redwine_backgroundColor</item>
+
     </style>
     <style name="Gull" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/gull_primaryColor</item>
@@ -117,5 +111,7 @@
         <item name="colorButton">@color/gull_secondaryColor</item>
         <item name="colorAccent">@color/gull_secondaryColor</item>
         <item name="colorButtonAlt">@color/gull_secondaryLightColor</item>
+        <item name="colorBackground">@color/gull_backgroundColor</item>
     </style>
+
 </resources>

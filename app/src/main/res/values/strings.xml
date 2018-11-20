@@ -53,7 +53,7 @@
     <string name="settings">Innstillinger</string>
     <string name="empty_message">Her var det tomt, gitt..</string>
     <string name="no_results">Vi fant ingen produkter</string>
-
+    <string name="create_name">Gi deg selv et navn for å skrive anmeldelser</string>
 
     <!-- imageButtons-->
     <string name="filter_button">Produktfilter</string>
@@ -231,7 +231,6 @@
     <string-array name="themes">
         <item>Standard</item>
         <item>Natt</item>
-        <item>Absint</item>
         <item>Vin</item>
         <item>Gull</item>
     </string-array>

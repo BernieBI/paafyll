@@ -6,28 +6,46 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.okhttp.Cache;
 
+import java.net.PasswordAuthentication;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 import no.hiof.matsl.pfyll.CacheHandler;
 import no.hiof.matsl.pfyll.MainActivity;
@@ -36,6 +54,7 @@ import no.hiof.matsl.pfyll.R;
 
 import no.hiof.matsl.pfyll.RecentProductsActivity;
 
+import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.UserListActivity;
 
 
@@ -46,15 +65,16 @@ public class FragmentMyAccount extends Fragment {
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseUser user;
+    private static int RC_SIGN_IN = 100;
     ArrayList<String> products = new ArrayList<>();
     Button recentButton;
+    TextView welcome;
 
 
     View view;
     String TAG = "MyActivityFragment";
 
     public FragmentMyAccount(){
-
     }
 
 
@@ -68,12 +88,83 @@ public class FragmentMyAccount extends Fragment {
         Log.d(TAG, "onCreate: Started ");
         user = FirebaseAuth.getInstance().getCurrentUser();
         recentButton = view.findViewById(R.id.recentButton);
-        TextView welcome = view.findViewById(R.id.welcomeField);
-        welcome.setText(String.format("%s, %s", getString(R.string.hello),user.getDisplayName()));
+        welcome = view.findViewById(R.id.welcomeField);
+        welcome.setText(String.format("%s, %s", getString(R.string.hello), user.getDisplayName().trim().equals("") ? "Anonym" : user.getDisplayName() ));
 
         buttons();
 
         return view;
+    }
+
+    private void editAccount() {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Oppdater profilen din");
+                final String[] choices = {"Endre navn"};
+                builder.setItems(choices, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        fieldEdit(choices[which]);
+                    }
+                }).setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+
+                    }
+                });
+
+                builder.show();
+
+    }
+
+
+    private void fieldEdit(final String field) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(field);
+        float dpi = getResources().getDisplayMetrics().density;
+        final LinearLayout layout = new LinearLayout(getContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding((int)(30*dpi), (int)(8*dpi), (int)(30*dpi), (int)(5*dpi));
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        String confirmMessage = "Lagre";
+
+        input.setText(user.getDisplayName());
+        layout.addView(input);
+
+        builder.setView(layout);
+        builder.setPositiveButton(confirmMessage, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                user = FirebaseAuth.getInstance().getCurrentUser();
+                if (input.getText().toString().trim().equals("")){
+                    Toast.makeText(getContext(), "Tomt tekstfelt er ikke greit", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(input.getText().toString().trim())
+                        .build();
+                user.updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getContext(), "Konto oppdatert", Toast.LENGTH_SHORT).show();
+                                    welcome.setText(String.format("%s, %s", getString(R.string.hello), user.getDisplayName().trim().equals("") ? "Anonym" : user.getDisplayName() ));
+                                }
+                            }
+                        });
+                    database.getReference("users/" + user.getUid()).child("Name").setValue(input.getText().toString().trim());
+            }
+        }).setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
     }
 
     @Override
@@ -89,6 +180,15 @@ public class FragmentMyAccount extends Fragment {
     }
 
     private void buttons() {
+
+        ImageButton adminButton = view.findViewById(R.id.accountButton);
+        adminButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editAccount();
+            }
+        });
+
         final Button logOutButton = view.findViewById(R.id.logOutButton);
         logOutButton.setOnClickListener(new View.OnClickListener() {
             @Override

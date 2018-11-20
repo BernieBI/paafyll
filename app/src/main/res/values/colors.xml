@@ -17,6 +17,7 @@
     <color name="brightOverlay">#bdffffff</color>
     <color name="blank">#00000000</color>
     <color name="gold">#FFDF00</color>
+    <color name="backgroundColor">#ffffff</color>
 
 
 
@@ -28,15 +29,8 @@
     <color name="night_secondaryDarkColor">#29434e</color>
     <color name="night_primaryTextColor">#ffffff</color>
     <color name="night_secondaryTextColor">#ffffff</color>
+    <color name="night_backgroundColor">#29434e</color>
 
-    <color name="absint_primaryColor">#1b5e20</color>
-    <color name="absint_primaryLightColor">#4c8c4a</color>
-    <color name="absint_primaryDarkColor">#003300</color>
-    <color name="absint_secondaryColor">#64dd17</color>
-    <color name="absint_secondaryLightColor">#9cff57</color>
-    <color name="absint_secondaryDarkColor">#1faa00</color>
-    <color name="absint_primaryTextColor">#ffffff</color>
-    <color name="absint_secondaryTextColor">#0d0d0d</color>
 
     <color name="redwine_primaryColor">#510b0b</color>
     <color name="redwine_primaryLightColor">#823832</color>
@@ -46,15 +40,9 @@
     <color name="redwine_secondaryDarkColor">#260e04</color>
     <color name="redwine_primaryTextColor">#ffffff</color>
     <color name="redwine_secondaryTextColor">#ffffff</color>
+    <color name="redwine_backgroundColor">#7b5e57</color>
 
-    <color name="rose_primaryColor">#f48fb1</color>
-    <color name="rose_primaryLightColor">#ffc1e3</color>
-    <color name="rose_primaryDarkColor">#bf5f82</color>
-    <color name="rose_secondaryColor">#f8bbd0</color>
-    <color name="rose_secondaryLightColor">#ffeeff</color>
-    <color name="rose_secondaryDarkColor">#c48b9f</color>
-    <color name="rose_primaryTextColor">#0d0d0d</color>
-    <color name="rose_secondaryTextColor">#0d0d0d</color>
+
 
     <color name="gull_primaryColor">#212121</color>
     <color name="gull_primaryLightColor">#484848</color>
@@ -64,4 +52,6 @@
     <color name="gull_secondaryDarkColor">#90813a</color>
     <color name="gull_primaryTextColor">#ffffff</color>
     <color name="gull_secondaryTextColor">#000000</color>
+    <color name="gull_backgroundColor">#ffffff</color>
+
 </resources>
