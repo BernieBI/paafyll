@@ -654,8 +654,9 @@ public class SingleProductActivity extends AppCompatActivity {
             hasDrinkWiths = true;
         else
             view.setVisibility(View.GONE);
-
-
+        theme.resolveAttribute(R.attr.colorPrimaryText, typedValue, true);
+        @ColorInt int color = typedValue.data;
+        view.setColorFilter(color);
         view.setImageResource(image);
         view.setContentDescription(imageAlt);
 

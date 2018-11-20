@@ -172,6 +172,7 @@
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
                             android:adjustViewBounds="false"
+                            android:backgroundTint="?attr/colorSecondary"
                             android:contentDescription="@string/product_drinkWith"
                             android:cropToPadding="false"
                             android:padding="0dp"
