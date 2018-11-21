@@ -31,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -49,6 +51,7 @@ import java.util.Objects;
 
 import no.hiof.matsl.pfyll.CacheHandler;
 import no.hiof.matsl.pfyll.MainActivity;
+import no.hiof.matsl.pfyll.MapActivity;
 import no.hiof.matsl.pfyll.MyReviewsActivity;
 import no.hiof.matsl.pfyll.R;
 
@@ -70,7 +73,7 @@ public class FragmentMyAccount extends Fragment {
     Button recentButton;
     TextView welcome;
 
-
+    private static final int ERROR_DIALOG_REQUEST = 9001;
     View view;
     String TAG = "MyActivityFragment";
 
@@ -93,6 +96,19 @@ public class FragmentMyAccount extends Fragment {
 
         buttons();
 
+        Button btnMap = (Button) view.findViewById(R.id.mapbtn);
+        btnMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(isServicesOK()){
+                Intent intent = new Intent(getContext(), MapActivity.class);
+                startActivity(intent);
+                 }
+            }
+        });
+
+
         return view;
     }
 
@@ -110,11 +126,10 @@ public class FragmentMyAccount extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-
                     }
                 });
 
-                builder.show();
+        builder.show();
 
     }
 
@@ -179,7 +194,33 @@ public class FragmentMyAccount extends Fragment {
 
     }
 
+    private void init(){
+
+    }
+
+    public boolean isServicesOK(){
+        Log.d(TAG, "isServicesOK: checking google services version");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
+
+        if(available == ConnectionResult.SUCCESS){
+            //everything is fine and the user can make map requests
+            Log.d(TAG, "isServicesOK: Google Play Services is working");
+            return true;
+        }
+        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            //an error occured but we can resolve it
+            Log.d(TAG, "isServicesOK: an error occured but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        }else{
+            //Toast.makeText(getContext(), "You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+
     private void buttons() {
+
 
         ImageButton adminButton = view.findViewById(R.id.accountButton);
         adminButton.setOnClickListener(new View.OnClickListener() {

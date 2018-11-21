@@ -5,7 +5,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo"
@@ -14,6 +14,7 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".Splashscreen" android:theme="@style/SplashScreenTheme">
@@ -24,13 +25,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SingleProductActivity" />
-        <activity android:name=".SingleUserListActivity" />
-        <activity android:name=".ScanActivity" />
-        <activity android:name=".MyReviewsActivity" />
-        <activity android:name=".UserListActivity" />
-        <activity android:name=".RecentProductsActivity" />
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".SingleProductActivity" android:screenOrientation="portrait" />
+        <activity android:name=".SingleUserListActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ScanActivity" android:screenOrientation="portrait" />
+        <activity android:name=".MyReviewsActivity" android:screenOrientation="portrait" />
+        <activity android:name=".UserListActivity" android:screenOrientation="portrait" />
+        <activity android:name=".RecentProductsActivity" android:screenOrientation="portrait" />
+        <activity android:name=".MainActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".MapActivity" android:screenOrientation="portrait"/>
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAlMif2tpZi3kRh31awv1N3mzqT_3WHgHY"/>
     </application>
 
 </manifest>
