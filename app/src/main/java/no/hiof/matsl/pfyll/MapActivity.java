@@ -69,15 +69,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        CacheHandler cacheHandler = new CacheHandler(this, "theme", "theme-cache");
+        setTheme(getResources().getIdentifier(cacheHandler.getTheme(), "style", this.getPackageName()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         mSearchText = findViewById(R.id.input_search);
-        CacheHandler cacheHandler = new CacheHandler(this, "theme", "theme-cache");
-        setTheme(getResources().getIdentifier(cacheHandler.getTheme(), "style", this.getPackageName()));
 
-        getLocationPermission();
+
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getLocationPermission();
+    }
 
     private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: getting the devices location");
