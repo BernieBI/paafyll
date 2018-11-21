@@ -7,7 +7,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -21,40 +20,63 @@ import java.util.concurrent.ExecutionException;
 import no.hiof.matsl.pfyll.model.Filter;
 import no.hiof.matsl.pfyll.model.FirestoreProduct;
 import no.hiof.matsl.pfyll.model.IdFilter;
-import no.hiof.matsl.pfyll.model.Product;
 
+/*
+ * Provides Product data from the Firestore database to a PagedList. Allows for data to be aquired
+ * in small chunks rather than all at once.
+ * Also supports various types of data filtering, limited by what is possible using Firestore.
+ */
 public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, FirestoreProduct> {
+
+    // Name of the collection where the Products are listed.
     private static final String COLLECTION_PATH = "Produkter";
 
     private FirebaseFirestore database;
     private List<Filter> filters;
     private IdFilter idFilter;
 
+    /* Constructs a datasource where the data is filtered by value. */
     public ProductDataSource(FirebaseFirestore database, List<Filter> filters) {
         this.database = database;
         this.filters = filters;
     }
 
+    /* Constructs a datasource where only specified product ids are aquired. */
     public ProductDataSource(FirebaseFirestore database, IdFilter idFilter) {
         this.database = database;
         this.idFilter = idFilter;
     }
 
+    /*
+     * Loads the first chunk of data to initialize the PagedList.
+     * This method aquires data syncronously.
+     */
     @Override
     public void loadInitial(@NonNull LoadInitialParams<DocumentSnapshot> params, @NonNull LoadInitialCallback<FirestoreProduct> callback) {
         loadData(null, params.requestedLoadSize, callback, false, false);
     }
 
+    /*
+     * Loads a new chunk of data when the PagedList has reached its end.
+     * This method aquires data asyncronously.
+     */
     @Override
     public void loadAfter(@NonNull LoadParams<DocumentSnapshot> params, @NonNull LoadCallback<FirestoreProduct> callback) {
         if (idFilter == null)
             loadData(params.key, params.requestedLoadSize, callback, true, false);
     }
 
+    /*
+     * Loads a new chunk of data when the PagedList has reached its beginning.
+     * This is not useful for our appliaction. Rather, it produced a bug where the top Product
+     * of the list would be infinitely duplicated if the user scrolled up from the top of the list.
+     * This method should therefore remain unimplemented.
+     */
     @Override
     public void loadBefore(@NonNull LoadParams<DocumentSnapshot> params, @NonNull LoadCallback<FirestoreProduct> callback) {
-        //loadData(params.key, params.requestedLoadSize, callback, true, true);
+        // Empty
     }
+
 
     @NonNull
     @Override
