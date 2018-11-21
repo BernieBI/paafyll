@@ -155,5 +155,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/options_dynamic" />
 
+    <Button
+        android:id="@+id/mapbtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:padding="8dp"
+        android:elevation="5dp"
+        android:drawableTop="@drawable/map_dynamic"
+        android:backgroundTint="?attr/colorButton"
+        android:text="@string/nearest_shop"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="?attr/colorSecondaryText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listsButton" />
+
 
 </android.support.constraint.ConstraintLayout>

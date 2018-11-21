@@ -54,12 +54,11 @@
     <string name="empty_message">Her var det tomt, gitt..</string>
     <string name="no_results">Vi fant ingen produkter</string>
     <string name="create_name">Gi deg selv et navn for å skrive anmeldelser</string>
-
+    <string name="nearest_shop">Finn din nærmeste butikk</string>
     <!-- imageButtons-->
     <string name="filter_button">Produktfilter</string>
     <string name="search_button">Produktsøk</string>
     <string name="scan_button">Produktscan</string>
-
 
     <!-- UserLists -->
     <string name="selectList">Legg til i liste</string>
@@ -74,6 +73,7 @@
     <string name="have_no_lists">Du har ingen lister ennå</string>
     <string name="add_lists">Legg til lister ved å trykke på knappen nede i hjørnet</string>
     <string name="list_hint">Navn på liste</string>
+
     <!--Reviews-->
     <string name="product_reviewBtn">Anmeld</string>
     <string name="remove_review">Slett anmeldelse</string>
