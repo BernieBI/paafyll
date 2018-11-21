@@ -177,13 +177,10 @@ public class SingleProductActivity extends AppCompatActivity {
 
         //getting product and list data from firebase
         getProductData();
-        getProductData();
         reviewRef = database.getReference("userReviews/" + productID);
         getAllReviews();
         if (user != null){
             userListRef = database.getReference("users/" + user.getUid() + "/userLists");
-
-
             userReviewRef = database.getReference("users/" + user.getUid() + "/reviews");
             getUserLists();
             getUserReviews();
@@ -199,7 +196,7 @@ public class SingleProductActivity extends AppCompatActivity {
             });
         }
 
-        //Adding product to recently viewed producs
+        //Adding product to recently viewed products
         CacheHandler cacheHandler = new CacheHandler(this, "Recent Products", "LocalCache");
         ArrayList<String> recentProducts;
         if (cacheHandler.getRecentProducts() == null)
@@ -313,14 +310,19 @@ public class SingleProductActivity extends AppCompatActivity {
                 commentswrapper.removeAllViews();
                 productReviews.clear();
                 for (DataSnapshot reviewSnapShot: dataSnapshot.getChildren()) {
-                    if (reviewSnapShot.exists())
-                        productReviews.add( reviewSnapShot.getValue(Review.class));
+                    if (reviewSnapShot.exists()) {
+                        Review review = reviewSnapShot.getValue(Review.class);
+                        review.setId(reviewSnapShot.getKey());
+                        productReviews.add(review);
+                    }
+
                 }
                 if (productReviews.size() > 0){
                     float total = 0;
                     for (Review review : productReviews){
                         total += review.getReviewValue();
-                        createComment( review.getReviewText(), review.getUser(),review.getReviewValue());
+                        review.getId();
+                        createComment( review );
                     }
                     DecimalFormat df = new DecimalFormat("#.#");
                     String rating = df.format(total / productReviews.size());
@@ -419,7 +421,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
                             int index = productReviews.size() > 0 ? productReviews.get(productReviews.size()-1).getIndex()+1 : 0;
 
-                            Review review = new Review(reviewText, reviewValue, username, index);
+                            Review review = new Review(reviewText, reviewValue, index);
                             reviewedProducts.add(productID + "");
                             reviewRef.child(user.getUid()).setValue(review);
                             userReviewRef.setValue(reviewedProducts);
@@ -536,60 +538,75 @@ public class SingleProductActivity extends AppCompatActivity {
         });
     }
 
-    public void createComment(String text, String userName, Float rating){
+    public void createComment(final Review review){
+        final String text = review.getReviewText();
+        final float rating = review.getReviewValue();
 
-        Timestamp time = new Timestamp(System.currentTimeMillis());
+        DatabaseReference commentUser = database.getReference("users/" + review.getId() + "/Name");
+        commentUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-        ConstraintLayout comment = new ConstraintLayout(this);
-        comment.setId(1 + time.getNanos());
+                Timestamp time = new Timestamp(System.currentTimeMillis());
+                ConstraintLayout comment = new ConstraintLayout(SingleProductActivity.this);
+                comment.setId(1 + time.getNanos());
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(4*dpi));
-        comment.setLayoutParams(params);
-        comment.setPadding((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(8*dpi));
-        GradientDrawable shape =  new GradientDrawable();
-        shape.setCornerRadius( 8 );
-        shape.setColor(getResources().getColor(R.color.brightOverlay));
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(4*dpi));
+                comment.setLayoutParams(params);
+                comment.setPadding((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(8*dpi));
+                GradientDrawable shape =  new GradientDrawable();
+                shape.setCornerRadius( 8 );
+                shape.setColor(getResources().getColor(R.color.brightOverlay));
 
-        comment.setBackground(shape);
-        comment.setElevation((int)(3*dpi));
-        commentswrapper.addView(comment);
+                comment.setBackground(shape);
+                comment.setElevation((int)(3*dpi));
+                commentswrapper.addView(comment);
 
-        TextView headerTextView = new TextView(this);
-        LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        headerParams.setMargins((int)(0*dpi), (int)(0*dpi), (int)(0*dpi), (int)(0*dpi));
-        headerTextView.setText(userName);
-        headerTextView.setTextSize(20);
-        headerTextView.setId(2 + time.getNanos());
-        headerTextView.setTypeface(null, Typeface.BOLD);
-        comment.addView(headerTextView);
+                TextView headerTextView = new TextView(SingleProductActivity.this);
+                LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                headerParams.setMargins((int)(0*dpi), (int)(0*dpi), (int)(0*dpi), (int)(0*dpi));
+                headerTextView.setText(dataSnapshot.getValue().toString());
+                headerTextView.setTextSize(20);
+                headerTextView.setId(2 + time.getNanos());
+                headerTextView.setTypeface(null, Typeface.BOLD);
+                comment.addView(headerTextView);
 
-        RatingBar newRatingBar = new RatingBar(new ContextThemeWrapper(SingleProductActivity.this, R.style.ratingBarThemeSmall), null, 0);
-        newRatingBar.setRating(rating);
-        newRatingBar.setNumStars(5);
-        newRatingBar.setId( 3 + time.getNanos());
-        newRatingBar.setIsIndicator(true);
-        newRatingBar.setStepSize(1);
-        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams ((int)(80*dpi), (int)(30*dpi)); //Width, Height
-        newRatingBar.setLayoutParams(params2);
-        comment.addView(newRatingBar);
+                RatingBar newRatingBar = new RatingBar(new ContextThemeWrapper(SingleProductActivity.this, R.style.ratingBarThemeSmall), null, 0);
+                newRatingBar.setRating(rating);
+                newRatingBar.setNumStars(5);
+                newRatingBar.setId( 3 + time.getNanos());
+                newRatingBar.setIsIndicator(true);
+                newRatingBar.setStepSize(1);
+                LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams ((int)(80*dpi), (int)(30*dpi)); //Width, Height
+                newRatingBar.setLayoutParams(params2);
+                comment.addView(newRatingBar);
 
-        TextView textView = new TextView(this);
-        textView.setText(text);
-        textView.setPadding((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(8*dpi));
-        textView.setId(4 + time.getNanos());
-        if (!text.equals(""))
-            comment.addView(textView);
+                TextView textView = new TextView(SingleProductActivity.this);
+                textView.setText(text);
+                textView.setPadding((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(8*dpi));
+                textView.setId(4 + time.getNanos());
+                if (!text.equals(""))
+                    comment.addView(textView);
 
-        ConstraintSet set = new ConstraintSet();
-        set.clone(comment);
-        set.connect(headerTextView.getId(), ConstraintSet.TOP, comment.getId(), ConstraintSet.TOP,  20);
-        set.connect(headerTextView.getId(), ConstraintSet.LEFT, comment.getId(), ConstraintSet.LEFT,  20);
-        set.connect(newRatingBar.getId(), ConstraintSet.TOP, comment.getId(), ConstraintSet.TOP,  20);
-        set.connect(newRatingBar.getId(), ConstraintSet.RIGHT, comment.getId(), ConstraintSet.RIGHT,  20);
-        if (text != "")
-            set.connect(textView.getId(), ConstraintSet.TOP, headerTextView.getId(), ConstraintSet.BOTTOM,  20);
-        set.applyTo(comment);
+                ConstraintSet set = new ConstraintSet();
+                set.clone(comment);
+                set.connect(headerTextView.getId(), ConstraintSet.TOP, comment.getId(), ConstraintSet.TOP,  20);
+                set.connect(headerTextView.getId(), ConstraintSet.LEFT, comment.getId(), ConstraintSet.LEFT,  20);
+                set.connect(newRatingBar.getId(), ConstraintSet.TOP, comment.getId(), ConstraintSet.TOP,  20);
+                set.connect(newRatingBar.getId(), ConstraintSet.RIGHT, comment.getId(), ConstraintSet.RIGHT,  20);
+                if (text != "")
+                    set.connect(textView.getId(), ConstraintSet.TOP, headerTextView.getId(), ConstraintSet.BOTTOM,  20);
+                set.applyTo(comment);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                return;
+            }
+        });
+
     }
     public void createTextView(LinearLayout parent, String text, String headerText){
         if (text.equals("") || text.contains("Øvrige"))

@@ -113,6 +113,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         }
                     }
                 });
+            }else{
+                onBackPressed();
             }
         }catch (SecurityException e){
             Log.e(TAG, "getDeviceLocation: SecurityException:" + e.getMessage());
@@ -137,7 +139,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void getLocationPermission(){
-        Log.d(TAG, "getLocationPermission: getting location permissions");
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
 

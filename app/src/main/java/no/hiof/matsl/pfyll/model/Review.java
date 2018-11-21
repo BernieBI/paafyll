@@ -4,7 +4,6 @@ public class Review {
 
     private String reviewText;
     private float reviewValue;
-    private String user;
     private String Id;
     private String productId;
     private String userReviewId;
@@ -12,10 +11,9 @@ public class Review {
 
     public Review(){}
 
-    public Review(String reviewText, float reviewValue, String user, int index) {
+    public Review(String reviewText, float reviewValue, int index) {
         this.reviewText = reviewText;
         this.reviewValue = reviewValue;
-        this.user = user;
         this.index = index;
     }
 
@@ -42,15 +40,6 @@ public class Review {
     public void setProductId(String productId) {
         this.productId = productId;
     }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
 
     public String getId() {
         return Id;

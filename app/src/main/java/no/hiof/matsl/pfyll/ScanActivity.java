@@ -34,6 +34,8 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        CacheHandler cacheHandler = new CacheHandler(this, "theme", "theme-cache");
+        setTheme(getResources().getIdentifier(cacheHandler.getTheme(), "style", this.getPackageName()));
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Created");
         setContentView(R.layout.activity_scan);

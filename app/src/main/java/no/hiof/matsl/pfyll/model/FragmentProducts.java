@@ -21,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -59,27 +60,29 @@ public class FragmentProducts extends Fragment{
     private GridLayoutManager gridLayoutManager;
     private ProductDataSourceFactory  factory;
     private PagedList.Config config;
-    private Boolean isRecent = false;
     private Bundle bundle;
 
     private ConstraintLayout filterOptions;
     private ArrayList<Filter> filters = new ArrayList<>();
     private StringFilter selectedCategory, selectedCountry, productName;
     private NumberFilter filterPriceFrom, filterPriceTo, filterAlcoholFrom, filterAlcoholTo;
+    
+    private String categoryString;
+    private String countryString;
+    private String priceString;
+    private String alcoholString;
 
     private Button priceButton, categoryButton, countryButton, alcoholButton;
     private ImageButton filterButton, scanButton;
     private FlexboxLayout selectedFilters;
     private SearchView searchBar;
-    private TextView searchWord;
     private Drawable removeIcon;
     private @ColorInt int primaryColor, primaryDarkColor, primaryLightColor, primaryTextColor, secondaryColor;
 
     TypedValue typedValue = new TypedValue();
     Resources.Theme theme;
 
-    private String FILTER = "Filtrer";
-    private String RESETFILTER = "Fjern filter";
+
     float dpi;
 
     private int margin;
@@ -100,6 +103,11 @@ public class FragmentProducts extends Fragment{
 
         dpi = getResources().getDisplayMetrics().density;
         margin = (int)(400*dpi);
+        categoryString =  getResources().getString(R.string.product_type);
+        countryString =  getResources().getString(R.string.product_country);
+        priceString =  getResources().getString(R.string.product_price);
+        alcoholString =  getResources().getString(R.string.product_alkohol);
+
 
         //Colors from active theme
         theme = getContext().getTheme();
@@ -119,7 +127,6 @@ public class FragmentProducts extends Fragment{
         layoutButton = view.findViewById(R.id.layoutButton);
         layoutButton.setOnClickListener(layoutSwitchListener);
         removeIcon = getResources().getDrawable(R.drawable.remove);
-        searchWord = view.findViewById(R.id.searchWord);
         bundle = getArguments();
         if (bundle != null){
             //Retrieving list of product IDs.
@@ -152,6 +159,11 @@ public class FragmentProducts extends Fragment{
         scanButton.setColorFilter(primaryTextColor);
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        searchBar.onActionViewCollapsed();
+    }
     private void buttons() {
         scanButton= view.findViewById(R.id.startScan);
         scanButton.setOnClickListener(new View.OnClickListener() {
@@ -185,14 +197,20 @@ public class FragmentProducts extends Fragment{
         categoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stringFilterDialog( getResources().getStringArray(R.array.productCategories), "Varetype", Filter.ComparisonType.EQUALS);
+                if (categoryButton.getAlpha() == 1)
+                    stringFilterDialog( getResources().getStringArray(R.array.productCategories), categoryString, Filter.ComparisonType.EQUALS);
+                else
+                    Toast.makeText(getContext(), view.getResources().getString(R.string.one_filter_limit), Toast.LENGTH_SHORT).show();
             }
         });
         countryButton = view.findViewById(R.id.filterCountry);
         countryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stringFilterDialog( getResources().getStringArray(R.array.productCountries), "Land", Filter.ComparisonType.EQUALS );
+                if (countryButton.getAlpha() == 1)
+                    stringFilterDialog( getResources().getStringArray(R.array.productCountries), countryString, Filter.ComparisonType.EQUALS );
+                else
+                    Toast.makeText(getContext(), view.getResources().getString(R.string.one_filter_limit), Toast.LENGTH_SHORT).show();
             }
         });
         priceButton = view.findViewById(R.id.filterPrice);
@@ -200,7 +218,14 @@ public class FragmentProducts extends Fragment{
             @Override
             public void onClick(View v) {
                 if (priceButton.getAlpha() == 1)
-                    numberFilterDialog("Pris");
+                    numberFilterDialog(alcoholString);
+
+                else if(view.findViewWithTag("search") != null)
+                    Toast.makeText(getContext(), getResources().getString(R.string.not_combine_search), Toast.LENGTH_SHORT).show();
+
+                else if(view.findViewWithTag(alcoholString) != null)
+                    Toast.makeText(getContext(),getResources().getString(R.string.fields_can_not_combine), Toast.LENGTH_SHORT).show();
+
             }
         });
         alcoholButton = view.findViewById(R.id.filterAlcohol);
@@ -208,42 +233,53 @@ public class FragmentProducts extends Fragment{
             @Override
             public void onClick(View v) {
                 if (alcoholButton.getAlpha() == 1)
-                    numberFilterDialog("Alkohol");
+                    numberFilterDialog(priceString);
+
+                else if (view.findViewWithTag("search") != null)
+                    Toast.makeText(getContext(), getResources().getString(R.string.not_combine_search), Toast.LENGTH_SHORT).show();
+
+                else if(view.findViewWithTag(priceString) != null)
+                    Toast.makeText(getContext(), getResources().getString(R.string.fields_can_not_combine), Toast.LENGTH_SHORT).show();
+
             }
         });
 
         searchBar = view.findViewById(R.id.searchBar);
+        searchBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchBar.setIconified(false);
+            }
+        });
         searchBar.setVisibility(View.GONE);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                alcoholButton.setAlpha((float) 0.3);
+                priceButton.setAlpha((float) 0.3);
+
                 selectedFilters.removeView(view.findViewWithTag("search"));
                 query = query.trim();
                 if (query.equals("")) {
                     productName = null;
                 }else {
-                    searchWord.setText(query);
                     productName = new StringFilter(
                             "Sokeord",
                             Filter.ComparisonType.LIKE,
                             query.toLowerCase()
                     );
 
-                    TextView activeFilter = new Button(getContext());
-                    activeFilter.setTag("search");
-                    activeFilter.setText("\"" +query +"\"");
-                    activeFilter.setTextSize(11);
-                    activeFilter.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
-
+                    TextView activeFilter = createActiveFilterView("search", "\"" +query +"\"");
                     activeFilter.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             productName = null;
                             selectedFilters.removeView(view.findViewWithTag("search"));
+                            priceButton.setAlpha(1);
+                            alcoholButton.setAlpha(1);
                             submitFilter();
                         }
                     });
-                    selectedFilters.addView(activeFilter);
                 }
                 submitFilter();
                 return true;
@@ -268,11 +304,9 @@ public class FragmentProducts extends Fragment{
         filterButton.setBackgroundColor(primaryLightColor);
         filterButton.setColorFilter(primaryDarkColor);
         filterOptions.setVisibility(View.VISIBLE);
-        //searchBar.onActionViewExpanded();
         searchBar.setVisibility(View.VISIBLE);
     }
     public void submitFilter(){
-        searchWord.setVisibility(View.GONE);
         view.findViewById(R.id.noResults).setVisibility(View.GONE);
         view.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         filters.clear();
@@ -307,43 +341,32 @@ public class FragmentProducts extends Fragment{
                 .setItems(elements, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         selectedFilters.removeView(view.findViewWithTag(field));
-                        TextView activeFilter = new TextView(getContext());
-                        activeFilter.setTag(field);
-                        activeFilter.setText(elements[which]);
-                        activeFilter.setTextSize(12);
-                        activeFilter.setTextColor(primaryTextColor);
-                        activeFilter.setGravity(Gravity.CENTER_VERTICAL);
-                        GradientDrawable shape =  new GradientDrawable();
-                        shape.setCornerRadius(8);
-                        shape.setColor(secondaryColor);
-                        shape.setAlpha(150);
-                        activeFilter.setBackground(shape);
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params.setMargins((int)(8*dpi), (int)(4*dpi), 0, (int)(4*dpi));
-                        activeFilter.setLayoutParams(params);
-                        activeFilter.setPadding((int)(4*dpi), (int)(4*dpi), (int)(4*dpi), (int)(6*dpi));
-                        activeFilter.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
 
+                        TextView activeFilter = createActiveFilterView(field, elements[which]);
                         activeFilter.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (field.equals("Varetype")) {
+                                if (field.equals(categoryString)) {
                                     selectedCategory = null;
-                                } else if(field.equals("Land")){
+                                    categoryButton.setAlpha(1);
+                                } else if(field.equals(countryString)){
                                     selectedCountry = null;
+                                    countryButton.setAlpha(1);
                                 }
                                 selectedFilters.removeView(view.findViewWithTag(field));
                                 submitFilter();
                             }
                         });
-
-                        selectedFilters.addView(activeFilter);
-
+                        Log.d(TAG, "filter: " + field);
                         StringFilter filter = new StringFilter(field, comparisonType, elements[which]);
-                        if (field.equals("Varetype"))
+                        if (field.equals(categoryString)) {
                             selectedCategory = filter;
-                        else if(field.equals("Land"))
+                            categoryButton.setAlpha((float) 0.3);
+                        }
+                        else if(field.equals(countryString)) {
                             selectedCountry = filter;
+                            countryButton.setAlpha((float) 0.3);
+                        }
 
                         submitFilter();
                     }
@@ -354,15 +377,15 @@ public class FragmentProducts extends Fragment{
         alertFilter.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, (int)(500*dpi));
     }
 
-    private void numberFilterDialog(final String fieldString) {
+    private void numberFilterDialog(final String field) {
 
         final AlertDialog.Builder filterBuilder = new AlertDialog.Builder(getContext());
-        filterBuilder.setTitle(fieldString)
+        filterBuilder.setTitle(field)
                 .setView(getLayoutInflater().inflate(R.layout.number_filter, null))
-                .setPositiveButton("Bruk", new DialogInterface.OnClickListener() {
+                .setPositiveButton(view.getResources().getString(R.string.use), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        selectedFilters.removeView(view.findViewWithTag(fieldString));
+                        selectedFilters.removeView(view.findViewWithTag(field));
                         EditText numFrom = ((AlertDialog)dialog).findViewById(R.id.from);
                         EditText numTo = ((AlertDialog)dialog).findViewById(R.id.to);
                         float from = Integer.parseInt(numFrom.getText().toString().equals("") ? "0" : numFrom.getText().toString() );
@@ -371,84 +394,64 @@ public class FragmentProducts extends Fragment{
                         NumberFilter fieldFrom = null;
                         NumberFilter fieldTo = null;
                             if (from < to) {
-                                fieldFrom = new NumberFilter(from, fieldString, Filter.ComparisonType.GREATER_THAN_OR_EQUALS);
+                                fieldFrom = new NumberFilter(from, field, Filter.ComparisonType.GREATER_THAN_OR_EQUALS);
                                 if (to < 999999999){
-                                    fieldTo = new NumberFilter(to, fieldString, Filter.ComparisonType.LESS_THAN_OR_EQUALS);
+                                    fieldTo = new NumberFilter(to, field, Filter.ComparisonType.LESS_THAN_OR_EQUALS);
                                 }
                             }else {
-                                Toast.makeText(getContext(),"Det går ikke!", Toast.LENGTH_SHORT).show();
-                                numberFilterDialog(fieldString);
+                                Toast.makeText(getContext(),view.getResources().getString(R.string.wont_work), Toast.LENGTH_SHORT).show();
+                                numberFilterDialog(field);
                                 return;
                             }
 
                         String unit = "";
-                        if (fieldString == "Pris"){
+                        if (field == priceString){
                             filterPriceFrom = fieldFrom;
                             filterPriceTo = fieldTo;
-                            selectedFilters.removeView(view.findViewWithTag("Alkohol"));
-                            alcoholButton.setAlpha((float) 0.4);
+                            selectedFilters.removeView(view.findViewWithTag(alcoholString));
+                            alcoholButton.setAlpha((float) 0.3);
                             filterAlcoholFrom = null;
                             filterAlcoholTo = null;
-                            unit = "kr";
-                        }else if( fieldString == "Alkohol") {
+                            unit = getResources().getString(R.string.currency);
+                        }else if( field == alcoholString) {
                             filterAlcoholFrom = fieldFrom;
                             filterAlcoholTo = fieldTo;
-                            selectedFilters.removeView(view.findViewWithTag("Pris"));
-                            priceButton.setAlpha((float) 0.4);
+                            selectedFilters.removeView(view.findViewWithTag(priceString));
+                            priceButton.setAlpha((float) 0.3);
                             filterPriceFrom = null;
                             filterPriceTo = null;
                             unit = "%";
                         }
-
-                        TextView activeFilter = new TextView(getContext());
-                        activeFilter.setTag(fieldString);
-                        activeFilter.setText(String.format("%1$s %3$s - %2$s", (int)from, to >= 999999999 ? ">" : (int)to + " " +unit, unit));
-                        activeFilter.setTextSize(11);
-                        activeFilter.setTextColor(primaryTextColor);
-                        activeFilter.setGravity(Gravity.CENTER_VERTICAL);
-                        GradientDrawable shape =  new GradientDrawable();
-                        shape.setCornerRadius(8);
-                        shape.setColor(secondaryColor);
-                        shape.setAlpha(150);
-                        activeFilter.setBackground(shape);
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params.setMargins((int)(8*dpi), (int)(4*dpi), 0, (int)(4*dpi));
-                        activeFilter.setLayoutParams(params);
-                        activeFilter.setPadding((int)(4*dpi), (int)(4*dpi), (int)(4*dpi), (int)(6*dpi));
-                        activeFilter.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
+                        String text = String.format("%1$s %3$s - %2$s", (int)from, to >= 999999999 ? ">" : (int)to + " " +unit, unit);
+                        TextView activeFilter = createActiveFilterView(field,text);
                         activeFilter.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (fieldString.equals("Pris")) {
+                                if (field.equals(priceString)) {
                                     filterPriceFrom = null;
                                     filterPriceTo = null;
 
-                                } else if(fieldString.equals("Alkohol")){
+                                } else if(field.equals(alcoholString)){
                                     filterAlcoholFrom = null;
                                     filterAlcoholTo = null;
                                 }
                                 priceButton.setAlpha(1);
                                 alcoholButton.setAlpha(1);
-                                selectedFilters.removeView(view.findViewWithTag(fieldString));
+                                searchBar.setVisibility(View.VISIBLE);
+                                selectedFilters.removeView(view.findViewWithTag(field));
                                 submitFilter();
                             }
                         });
-                        selectedFilters.addView(activeFilter);
+                        searchBar.setVisibility(View.GONE);
                         submitFilter();
                     }
                 })
-                .setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.abort), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                     }
                 });
 
         filterBuilder.show();
-
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
 
     }
 
@@ -469,7 +472,28 @@ public class FragmentProducts extends Fragment{
             }
         });
     }
+    private TextView createActiveFilterView (String tag, String text){
 
+        TextView activeFilter = new TextView(getContext());
+        activeFilter.setTag(tag);
+        activeFilter.setText(text);
+        activeFilter.setTextSize(12);
+        activeFilter.setTextColor(primaryTextColor);
+        activeFilter.setGravity(Gravity.CENTER_VERTICAL);
+        GradientDrawable shape =  new GradientDrawable();
+        shape.setCornerRadius(8);
+        shape.setColor(secondaryColor);
+        shape.setAlpha(150);
+        activeFilter.setBackground(shape);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins((int)(8*dpi), (int)(4*dpi), 0, (int)(4*dpi));
+        activeFilter.setLayoutParams(params);
+        activeFilter.setPadding((int)(4*dpi), (int)(4*dpi), (int)(4*dpi), (int)(6*dpi));
+        activeFilter.setCompoundDrawablesWithIntrinsicBounds(removeIcon, null, null, null);
+        selectedFilters.addView(activeFilter);
+
+        return activeFilter;
+    }
     private View.OnClickListener layoutSwitchListener = new View.OnClickListener() {
 
         @Override
