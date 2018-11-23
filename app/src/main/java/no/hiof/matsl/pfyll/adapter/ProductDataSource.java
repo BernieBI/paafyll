@@ -22,7 +22,7 @@ import no.hiof.matsl.pfyll.model.FirestoreProduct;
 import no.hiof.matsl.pfyll.model.IdFilter;
 
 /*
- * Provides Product data from the Firestore database to a PagedList. Allows for data to be aquired
+ * Provides Product data from the Firestore database to a PagedList. Allows for data to be acquired
  * in small chunks rather than all at once.
  * Also supports various types of data filtering, limited by what is possible using Firestore.
  */
@@ -35,13 +35,13 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
     private List<Filter> filters;
     private IdFilter idFilter;
 
-    /* Constructs a datasource where the data is filtered by value. */
+    /* Constructs a Datasource where the data is filtered by value. */
     public ProductDataSource(FirebaseFirestore database, List<Filter> filters) {
         this.database = database;
         this.filters = filters;
     }
 
-    /* Constructs a datasource where only specified product ids are aquired. */
+    /* Constructs a Datasource where only specified product ids are acquired. */
     public ProductDataSource(FirebaseFirestore database, IdFilter idFilter) {
         this.database = database;
         this.idFilter = idFilter;
@@ -49,7 +49,7 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
 
     /*
      * Loads the first chunk of data to initialize the PagedList.
-     * This method aquires data syncronously.
+     * This method acquires data synchronously.
      */
     @Override
     public void loadInitial(@NonNull LoadInitialParams<DocumentSnapshot> params, @NonNull LoadInitialCallback<FirestoreProduct> callback) {
@@ -58,7 +58,7 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
 
     /*
      * Loads a new chunk of data when the PagedList has reached its end.
-     * This method aquires data asyncronously.
+     * This method acquires data asynchronously.
      */
     @Override
     public void loadAfter(@NonNull LoadParams<DocumentSnapshot> params, @NonNull LoadCallback<FirestoreProduct> callback) {
@@ -68,7 +68,7 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
 
     /*
      * Loads a new chunk of data when the PagedList has reached its beginning.
-     * This is not useful for our appliaction. Rather, it produced a bug where the top Product
+     * This is not useful for our application. Rather, it produced a bug where the top Product
      * of the list would be infinitely duplicated if the user scrolled up from the top of the list.
      * This method should therefore remain unimplemented.
      */
@@ -77,34 +77,54 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
         // Empty
     }
 
-
+    /*
+     * Gets the associated DocumentSnapshot from a Product. The snapshot is used by Firestore as a
+     * "cursor" to continue where it left off from the previous request. This is essential to
+     * allow for pagination of the data.
+     */
     @NonNull
     @Override
     public DocumentSnapshot getKey(@NonNull FirestoreProduct item) {
         return item.getDocumentSnapshot();
     }
 
+    /*
+     * The method responsible for getting data from Firestore.
+     * Depending on the current filters it will either loadDataByIdFilter or loadDataByValueFilter.
+     * Is capable of both synchronous and asynchronous loading.
+     */
     private void loadData(DocumentSnapshot key, int loadSize, @NonNull final LoadCallback<FirestoreProduct> callback, final boolean async, final boolean reverse) {
+
+        // The TaskCompletionSource is used to wait for data-loading to complete during synchronous
+        // loading.
         final TaskCompletionSource<List<FirestoreProduct>> taskCompletionSource = new TaskCompletionSource<>();
 
+        // IdFilters and ValueFilters cannot be used together. IdFilters takes precedence. Therefore,
+        // if an idFilter is present, the valueFilter is ignored.
         if (idFilter != null) {
+            // If the call is asynchronous, pass the callback directly to the data-loading method.
+            // Otherwise, pass the taskCompletionSource which calls the callback once all the data
+            // is loaded.
             if (async)
                 loadDataByIdFilter(callback, new ArrayList<FirestoreProduct>(), 0);
             else
                 loadDataByIdFilter(taskCompletionSource, new ArrayList<FirestoreProduct>(), 0);
         } else {
+            // Same as above.
             if (async)
                 loadDataByValueFilter(callback, key, loadSize, reverse);
             else
                 loadDataByValueFilter(taskCompletionSource, key, loadSize, reverse);
         }
 
+        // If we are loading data asynchronously, there is no need to lock the thread and we can
+        // return at once.
         if (async) {
             return;
         }
 
+        // If data is loaded synchronously, we lock the thread with 'await'
         Task<List<FirestoreProduct>> task = taskCompletionSource.getTask();
-
         try {
             Tasks.await(task);
         } catch (InterruptedException | ExecutionException e) {
@@ -118,11 +138,18 @@ public class ProductDataSource extends ItemKeyedDataSource<DocumentSnapshot, Fir
         }
     }
 
+    /*
+     * Applies all filters to the query. Some filters might be ignored if they are incompatible with
+     * other filters.
+     */
     private Query addFilters(Query query, int loadSize) {
+        // There can only be a single range based filter for any given Firestore query.
+        // The field on which we apply the ranged filtering is stored in this variable. If there is
+        // no such filtering, the field will be an empty string.
         String rangedField = "";
+
         if (filters != null) {
             for (Filter filter : filters) {
-                //query = query.orderBy(filter.getFieldName());
                 switch (filter.getComparisonType()) {
                     case EQUALS:
                         query = query.whereEqualTo(filter.getFieldName(), filter.getValue());
