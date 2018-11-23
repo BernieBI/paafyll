@@ -138,14 +138,14 @@ public class FragmentMyAccount extends Fragment {
     private void editAccount() {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Oppdater profilen din");
-                final String[] choices = {"Endre navn"};
+                builder.setTitle(getResources().getString(R.string.update_profile));
+                final String[] choices = {getResources().getString(R.string.change_name)};
                 builder.setItems(choices, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         fieldEdit(choices[which]);
                     }
-                }).setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                }).setNegativeButton(getResources().getString(R.string.abort), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -166,18 +166,17 @@ public class FragmentMyAccount extends Fragment {
         layout.setPadding((int)(30*dpi), (int)(8*dpi), (int)(30*dpi), (int)(5*dpi));
         final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        String confirmMessage = "Lagre";
 
         input.setText(user.getDisplayName());
         layout.addView(input);
 
         builder.setView(layout);
-        builder.setPositiveButton(confirmMessage, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getResources().getString(R.string.save), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 user = FirebaseAuth.getInstance().getCurrentUser();
                 if (input.getText().toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Tomt tekstfelt er ikke greit", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getResources().getString(R.string.require_username), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -188,14 +187,14 @@ public class FragmentMyAccount extends Fragment {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(getContext(), "Konto oppdatert", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), getResources().getString(R.string.account_updated), Toast.LENGTH_SHORT).show();
                                     welcome.setText(String.format("%s, %s", getString(R.string.hello), user.getDisplayName().trim().equals("") ? "Anonym" : user.getDisplayName() ));
                                 }
                             }
                         });
                     database.getReference("users/" + user.getUid()).child("Name").setValue(input.getText().toString().trim());
             }
-        }).setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+        }).setNegativeButton(getResources().getString(R.string.abort), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();

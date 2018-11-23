@@ -6,9 +6,8 @@ public class Review {
     private float reviewValue;
     private String Id;
     private String productId;
-    private String userReviewId;
+    private String userIndex; // used to retrieve user reviews in the right order
     private int index;
-
     public Review(){}
 
     public Review(String reviewText, float reviewValue, int index) {
@@ -25,12 +24,12 @@ public class Review {
         this.index = index;
     }
 
-    public String getUserReviewId() {
-        return userReviewId;
+    public String getUserIndex() {
+        return userIndex;
     }
 
-    public void setUserReviewId(String userReviewId) {
-        this.userReviewId = userReviewId;
+    public void setUserIndex(String userIndex) {
+        this.userIndex = userIndex;
     }
 
     public String getProductId() {

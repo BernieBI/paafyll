@@ -62,13 +62,7 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
             }
         }
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "paused");
-    }
-
+    
     @Override
     public void handleResult(Result result) {
 

@@ -57,17 +57,23 @@
     <string name="nearest_shop">Finn din nærmeste butikk</string>
     <string name="no_internet">Ingen internettilkobling</string>
     <string name="try_again">Prøv igjen</string>
+    <string name="require_username">Du må ha et navn</string>
+    <string name="save">Lagre</string>
+    <string name="account_updated">Konto oppdatert</string>
+    <string name="change_name">Endre navn</string>
     <!-- imageButtons-->
     <string name="filter_button">Produktfilter</string>
     <string name="search_button">Produktsøk</string>
     <string name="scan_button">Produktscan</string>
     <string name="abort">Avbryt</string>
+    <string name="update_profile">Oppdater profilen din</string>
     <!-- UserLists -->
     <string name="selectList">Legg til i liste</string>
     <string name="already_exists">Produktet er allerede i</string>
     <string name="add_success">Produktet ble lagt i</string>
     <string name="removed_from_list">ble fjernet fra listen</string>
     <string name="remove_from_list">Fjern fra listen</string>
+    <string name="create_new_list">Lag ny liste</string>
     <string name="remove_list">Slett liste</string>
     <string name="confirm_delete_list">Er du sikker på at du vil slette denne listen?</string>
     <string name="require_name">Du må gi listen et navn</string>

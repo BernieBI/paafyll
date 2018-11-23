@@ -21,7 +21,6 @@ import java.util.Collections;
 
 import no.hiof.matsl.pfyll.adapter.ReviewRecycleViewAdapter;
 import no.hiof.matsl.pfyll.model.Review;
-import no.hiof.matsl.pfyll.model.SharedPref;
 
 public class MyReviewsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -79,11 +78,10 @@ public class MyReviewsActivity extends AppCompatActivity {
                 if (!dataSnapshot.exists())
                     return;
                 Review current_review = dataSnapshot.getValue(Review.class);
-                Log.d(TAG, "Review: " + current_review.getReviewText());
                 current_review.setId(dataSnapshot.getKey());
                 userReviews.add(current_review);
                 current_review.setProductId(reviewedProducts.get(userReviews.size()-1));
-                current_review.setUserReviewId(userReviewIds.get(userReviews.size()-1));
+                current_review.setUserIndex(userReviewIds.get(userReviews.size()-1));
                 reviewAdapter.notifyDataSetChanged();
             }
             @Override

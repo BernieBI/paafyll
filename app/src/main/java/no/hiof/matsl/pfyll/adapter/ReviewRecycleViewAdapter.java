@@ -31,11 +31,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.SingleProductActivity;
@@ -107,7 +104,7 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
                                             public void onClick(DialogInterface dialog, int which) {
 
                                                 DatabaseReference allReviewsRef = firebase.getReference("userReviews/" + product.getId() +"/"+ user.getUid() );
-                                                DatabaseReference userReviewRef = firebase.getReference("users/" + user.getUid() + "/reviews/" + current_review.getUserReviewId());
+                                                DatabaseReference userReviewRef = firebase.getReference("users/" + user.getUid() + "/reviews/" + current_review.getUserIndex());
                                                 Log.d(TAG, "user level"+userReviewRef + " all: " + allReviewsRef );
                                                 allReviewsRef.removeValue();
                                                 userReviewRef.removeValue();

@@ -62,13 +62,12 @@ public class UserListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(UserListActivity.this);
 
-                builder.setTitle("Lag ny liste");
+                builder.setTitle(getResources().getString(R.string.create_new_list));
                 builder.setView(getLayoutInflater().inflate(R.layout.addlistfields,null))
-                        .setPositiveButton("Lag ny liste", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(getResources().getString(R.string.create_new_list), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 EditText editText = ((AlertDialog)dialog).findViewById(R.id.newListName);
-                                Log.d(TAG, "List name " + editText.getText());
 
                                 if (editText.getText().length() == 0){
                                     Toast toast = Toast.makeText(UserListActivity.this, getString(R.string.require_name), Toast.LENGTH_LONG);
@@ -79,12 +78,11 @@ public class UserListActivity extends AppCompatActivity {
                                 newList.setNavn(editText.getText().toString());
                                 userListRef.push().setValue(newList);
 
-                                Log.d(TAG, "List created ");
                                 Toast toast = Toast.makeText(UserListActivity.this, String.format("Listen %s ble opprettet!", newList.getNavn()), Toast.LENGTH_LONG);
                                 toast.show();
                             }
                         })
-                        .setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(getResources().getString(R.string.abort), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
@@ -101,7 +99,7 @@ public class UserListActivity extends AppCompatActivity {
         initRecyclerView();
     }
     private void initRecyclerView(){
-        Log.d(TAG, "initRecyclerView: init Recyclerview");
+
         userListRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
