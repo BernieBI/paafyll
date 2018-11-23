@@ -26,10 +26,8 @@ public class RecentProductsActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recent_products);
-        Log.d(TAG, "onCreate: ");
 
         CacheHandler cacheHandler = new CacheHandler(this, "Recent Products", "LocalCache");
-        Log.d(TAG, "history_dynamic products: " + cacheHandler.getRecentProducts());
         products = cacheHandler.getRecentProducts();
 
         StartFragment();

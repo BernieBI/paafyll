@@ -44,10 +44,6 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
                 MY_PERMISSIONS_REQUEST_CAMERA);
     }
 
-    public void scan(View view){
-
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -55,7 +51,7 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
 
         if (requestCode == MY_PERMISSIONS_REQUEST_CAMERA) {
 
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {  // kilde: https://github.com/dm77/barcodescanner
                 zXingScannerView = new ZXingScannerView(getApplicationContext());
                 setContentView(zXingScannerView);
                 zXingScannerView.setResultHandler(this);

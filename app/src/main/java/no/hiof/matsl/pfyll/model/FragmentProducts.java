@@ -103,7 +103,7 @@ public class FragmentProducts extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_products, container, false);
-        
+
         scanButton= view.findViewById(R.id.startScan);
         filterOptions =  view.findViewById(R.id.filterOptions);
         categoryButton = view.findViewById(R.id.filterCategory);
