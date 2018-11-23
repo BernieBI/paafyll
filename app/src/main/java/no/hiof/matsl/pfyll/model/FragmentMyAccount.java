@@ -3,12 +3,15 @@ package no.hiof.matsl.pfyll.model;
 import android.app.AlertDialog;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -88,28 +91,48 @@ public class FragmentMyAccount extends Fragment {
         view = inflater.inflate(R.layout.fragment_myaccount,container,false);
         sharedPref = new SharedPref(getContext());
 
-        Log.d(TAG, "onCreate: Started ");
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        recentButton = view.findViewById(R.id.recentButton);
-        welcome = view.findViewById(R.id.welcomeField);
-        welcome.setText(String.format("%s, %s", getString(R.string.hello), user.getDisplayName().trim().equals("") ? "Anonym" : user.getDisplayName() ));
 
-        buttons();
+        if (isNetworkAvailable()) {
+            recentButton = view.findViewById(R.id.recentButton);
+            welcome = view.findViewById(R.id.welcomeField);
+            user = FirebaseAuth.getInstance().getCurrentUser();
+            welcome.setText(String.format("%s, %s", getString(R.string.hello), user.getDisplayName().trim().equals("") ? "Anonym" : user.getDisplayName()));
+            Button btnMap = (Button) view.findViewById(R.id.mapbtn);
+            btnMap.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
-        Button btnMap = (Button) view.findViewById(R.id.mapbtn);
-        btnMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+                    if (isServicesOK()) {
+                        Intent intent = new Intent(getContext(), MapActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
 
-                if(isServicesOK()){
-                Intent intent = new Intent(getContext(), MapActivity.class);
-                startActivity(intent);
-                 }
-            }
-        });
-
+        }
 
         return view;
+    }
+
+    private boolean isNetworkAvailable() { // Hentet fra https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void reTryConnection(){
+        view.findViewById(R.id.noConnection).setVisibility(View.VISIBLE);
+        Button button = view.findViewById(R.id.retryConnection);
+        button.setVisibility(View.VISIBLE);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = getActivity().getIntent();
+                getActivity().finish();
+                startActivity(intent);
+            }
+        });
     }
 
     private void editAccount() {
@@ -187,49 +210,83 @@ public class FragmentMyAccount extends Fragment {
         super.onResume();
         CacheHandler cacheHandler = new CacheHandler(getContext(), "Recent Products", "LocalCache");
         products = cacheHandler.getRecentProducts();
-        if (products != null)
-            recentButton.setAlpha((float)1);
-        else
-            recentButton.setAlpha((float)0.5);
-
+        if (isNetworkAvailable()) {
+            if (products != null)
+                recentButton.setAlpha((float) 1);
+            else
+                recentButton.setAlpha((float) 0.5);
+        }else{
+            reTryConnection();
+            view.findViewById(R.id.reviewsButton).setAlpha((float)0.3);
+            view.findViewById(R.id.listsButton).setAlpha((float)0.3);
+            view.findViewById(R.id.accountButton).setAlpha((float)0.3);
+            view.findViewById(R.id.recentButton).setAlpha((float)0.3);
+            view.findViewById(R.id.mapbtn).setAlpha((float)0.3);
+        }
+        buttons();
     }
 
-    private void init(){
-
-    }
 
     public boolean isServicesOK(){
-        Log.d(TAG, "isServicesOK: checking google services version");
 
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
 
         if(available == ConnectionResult.SUCCESS){
             //everything is fine and the user can make map requests
-            Log.d(TAG, "isServicesOK: Google Play Services is working");
             return true;
         }
         else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
             //an error occured but we can resolve it
-            Log.d(TAG, "isServicesOK: an error occured but we can fix it");
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), available, ERROR_DIALOG_REQUEST);
             dialog.show();
         }else{
-            //Toast.makeText(getContext(), "You can't make map requests", Toast.LENGTH_SHORT).show();
         }
         return false;
     }
 
     private void buttons() {
 
+        if (isNetworkAvailable()) {
+            ImageButton adminButton = view.findViewById(R.id.accountButton);
+            adminButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    editAccount();
+                }
+            });
 
-        ImageButton adminButton = view.findViewById(R.id.accountButton);
-        adminButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editAccount();
-            }
-        });
 
+            Button listsButton = view.findViewById(R.id.listsButton);
+            listsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent userListIntent = new Intent(getContext(), UserListActivity.class);
+                    startActivity(userListIntent);
+                }
+            });
+
+
+            recentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (products != null) {
+                        Intent recentProductIntent = new Intent(getContext(), RecentProductsActivity.class);
+                        startActivity(recentProductIntent);
+                    }
+
+                }
+            });
+
+            Button reviewsButton = view.findViewById(R.id.reviewsButton);
+            reviewsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent reviewsIntent = new Intent(getContext(), MyReviewsActivity.class);
+                    startActivity(reviewsIntent);
+                }
+            });
+        }
         final Button logOutButton = view.findViewById(R.id.logOutButton);
         logOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,35 +294,6 @@ public class FragmentMyAccount extends Fragment {
                 auth.signOut();
                 getActivity().finish();
                 getActivity().startActivity(getActivity().getIntent());
-            }
-        });
-        Button listsButton = view.findViewById(R.id.listsButton);
-        listsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent userListIntent = new Intent(getContext(), UserListActivity.class);
-                startActivity(userListIntent);
-            }
-        });
-
-
-        recentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (products != null){
-                    Intent recentProductIntent = new Intent(getContext(), RecentProductsActivity.class);
-                    startActivity(recentProductIntent);
-                }
-
-            }
-        });
-        Button reviewsButton = view.findViewById(R.id.reviewsButton);
-        reviewsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent reviewsIntent = new Intent(getContext(), MyReviewsActivity.class);
-                startActivity(reviewsIntent);
             }
         });
         ImageButton settingsButton = view.findViewById(R.id.settingsButton);

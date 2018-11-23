@@ -55,6 +55,8 @@
     <string name="no_results">Vi fant ingen produkter</string>
     <string name="create_name">Gi deg selv et navn for å skrive anmeldelser</string>
     <string name="nearest_shop">Finn din nærmeste butikk</string>
+    <string name="no_internet">Ingen internettilkobling</string>
+    <string name="try_again">Prøv igjen</string>
     <!-- imageButtons-->
     <string name="filter_button">Produktfilter</string>
     <string name="search_button">Produktsøk</string>

@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.media.Rating;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.ColorInt;
@@ -40,6 +42,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -75,6 +79,8 @@ import no.hiof.matsl.pfyll.model.Review;
 import no.hiof.matsl.pfyll.model.SharedPref;
 import no.hiof.matsl.pfyll.model.UserList;
 import no.hiof.matsl.pfyll.model.UserReview;
+
+import static android.view.View.GONE;
 
 public class SingleProductActivity extends AppCompatActivity {
     String TAG = "SingleProductActivity";
@@ -178,22 +184,27 @@ public class SingleProductActivity extends AppCompatActivity {
         //getting product and list data from firebase
         getProductData();
         reviewRef = database.getReference("userReviews/" + productID);
-        getAllReviews();
-        if (user != null){
-            userListRef = database.getReference("users/" + user.getUid() + "/userLists");
-            userReviewRef = database.getReference("users/" + user.getUid() + "/reviews");
-            getUserLists();
-            getUserReviews();
-            submitReview();
+        if (isNetworkAvailable()){
+            getAllReviews();
+            if (user != null){
+                userListRef = database.getReference("users/" + user.getUid() + "/userLists");
+                userReviewRef = database.getReference("users/" + user.getUid() + "/reviews");
+                getUserLists();
+                getUserReviews();
+                submitReview();
 
+            }else{
+                reviewButton.setVisibility(GONE);
+                addToListBtn.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.list_require_login), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                });
+            }
         }else{
-            reviewButton.setVisibility(View.GONE);
-            addToListBtn.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.list_require_login), Toast.LENGTH_LONG);
-                    toast.show();
-                }
-            });
+            reviewButton.setVisibility(GONE);
+            addToListBtn.hide();
         }
 
         //Adding product to recently viewed products
@@ -225,6 +236,13 @@ public class SingleProductActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("productID", productID);
+    }
+
+    private boolean isNetworkAvailable() { // Hentet fra https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) SingleProductActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private void getUserLists() {
@@ -334,7 +352,7 @@ public class SingleProductActivity extends AppCompatActivity {
                     findViewById(R.id.reviewsHeader).setVisibility(View.VISIBLE);
 
                 }else{
-                    commentswrapper.setVisibility(View.GONE);
+                    commentswrapper.setVisibility(GONE);
                     findViewById(R.id.reviewsHeader).setVisibility(View.INVISIBLE);
                     reviewCount.setText(getString(R.string.no_reviews));
                 }
@@ -451,7 +469,7 @@ public class SingleProductActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        findViewById(R.id.loadOverlay).setVisibility(View.GONE);
+                        findViewById(R.id.loadOverlay).setVisibility(GONE);
 
                         product = new Product().documentToProduct(document);
 
@@ -462,26 +480,30 @@ public class SingleProductActivity extends AppCompatActivity {
                             return;
                         }
                         product.setBildeUrl(product.getVarenummer());
+                        if (isNetworkAvailable()) {
+                            RequestOptions requestOptions = new RequestOptions();
+                            requestOptions.diskCacheStrategy(DiskCacheStrategy.DATA);
+                            requestOptions.fallback(getResources().getDrawable(R.drawable.bottle));
+                            requestOptions.error(getResources().getDrawable(R.drawable.bottle));
+                            Glide.with(SingleProductActivity.this)
+                                    .asBitmap()
+                                    .load(product.getBildeUrl())
+                                    .apply(requestOptions)
+                                    .into(productImage);
+                        }else
+                            productImage.setImageDrawable(getResources().getDrawable(R.drawable.bottle));
 
-                        Glide.with(SingleProductActivity.this)
-                                .asBitmap()
-                                .load(product.getBildeUrl())
-                                .into(productImage);
                         productImage.setContentDescription(product.getVarenavn());
 
                         productName.setText(product.getVarenavn());
-                        //productName.setBackgroundColor(white);
 
                         productPrice.setText(String.format( "%s %s", getString(R.string.currency), product.getPris() ));
-                        //productPrice.setBackgroundColor(white);
 
                         productTaste.setText(product.getSmak());
-                        //productTaste.setBackgroundColor(white);
 
                         productVolume.setText(String.format("%s l", product.getVolum()));
 
                         productLiterPrice.setText(String.format("%s kr/l", product.getLiterpris() ));
-                        //productLiterPrice.setBackgroundColor(white);
 
                         //Adding info related to product contents
                         createTextView(productDetails1, String.format("%s%%", product.getAlkohol()), getString(R.string.product_alkohol));
@@ -546,6 +568,8 @@ public class SingleProductActivity extends AppCompatActivity {
         commentUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot == null)
+                    return;
 
                 Timestamp time = new Timestamp(System.currentTimeMillis());
                 ConstraintLayout comment = new ConstraintLayout(SingleProductActivity.this);
@@ -673,7 +697,7 @@ public class SingleProductActivity extends AppCompatActivity {
         if (image != 0)
             hasDrinkWiths = true;
         else
-            view.setVisibility(View.GONE);
+            view.setVisibility(GONE);
         theme.resolveAttribute(R.attr.colorPrimaryText, typedValue, true);
         @ColorInt int color = typedValue.data;
         view.setColorFilter(color);
@@ -686,11 +710,11 @@ public class SingleProductActivity extends AppCompatActivity {
         if(((LinearLayout)pieView.getParent()).findViewWithTag(headerText) != null)
             return;
         if (value == 0) {
-            ((LinearLayout)pieView.getParent()).setVisibility(View.GONE);
+            ((LinearLayout)pieView.getParent()).setVisibility(GONE);
             return;
         }
 
-        if (((LinearLayout)pieView.getParent().getParent()).getVisibility() == View.GONE)
+        if (((LinearLayout)pieView.getParent().getParent()).getVisibility() == GONE)
             ((LinearLayout)pieView.getParent().getParent()).setVisibility(View.VISIBLE);
 
         int remaining = 10 - value;

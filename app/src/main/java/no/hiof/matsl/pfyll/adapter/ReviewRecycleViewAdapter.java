@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,6 +20,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -79,10 +83,15 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
 
                         final Product product = new Product().documentToProduct(document);
 
+                        RequestOptions requestOptions = new RequestOptions();
+                        requestOptions.diskCacheStrategy(DiskCacheStrategy.DATA);
+                        requestOptions.fallback(context.getResources().getDrawable(R.drawable.bottle));
                         Glide.with(context)
                                 .asBitmap()
                                 .load(product.getBildeUrl())
+                                .apply(requestOptions)
                                 .into(holder.productImage);
+
                         holder.progressBar.setVisibility(View.GONE);
                         holder.productName.setText(product.getVarenavn());
                         holder.reviewText.setText(current_review.getReviewText());
@@ -172,4 +181,11 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
 
     }
 
+
+    private boolean isNetworkAvailable() { // Hentet fra https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 }

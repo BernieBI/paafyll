@@ -1,6 +1,9 @@
 package no.hiof.matsl.pfyll.model;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,28 +43,49 @@ public class FragmentLogin extends Fragment {
         final CacheHandler cacheHandler = new CacheHandler(getContext(), "theme", "theme-cache");
         Button button = view.findViewById(R.id.loginButton);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Choose authentication providers
-                List<AuthUI.IdpConfig> providers = Arrays.asList(
-                        new AuthUI.IdpConfig.EmailBuilder().build()
-                );
-                // Create and launch sign-in intent
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setAvailableProviders(providers)
-                                .setLogo(R.drawable.logo)
-                                .setTheme(getResources().getIdentifier(cacheHandler.getTheme(), "style", Objects.requireNonNull(getActivity()).getPackageName()))
-                                .build(),
-                        RC_SIGN_IN);
-            }
-        });
+        if (isNetworkAvailable()) {
 
-
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Choose authentication providers
+                    List<AuthUI.IdpConfig> providers = Arrays.asList(
+                            new AuthUI.IdpConfig.EmailBuilder().build()
+                    );
+                    // Create and launch sign-in intent
+                    startActivityForResult(
+                            AuthUI.getInstance()
+                                    .createSignInIntentBuilder()
+                                    .setAvailableProviders(providers)
+                                    .setLogo(R.drawable.logo)
+                                    .setTheme(getResources().getIdentifier(cacheHandler.getTheme(), "style", Objects.requireNonNull(getActivity()).getPackageName()))
+                                    .build(),
+                            RC_SIGN_IN);
+                }
+            });
+        }else{
+            reTryConnection();
+        }
         return view;
     }
 
-
+    private boolean isNetworkAvailable() { // Hentet fra https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void reTryConnection(){
+        view.findViewById(R.id.noConnection).setVisibility(View.VISIBLE);
+        Button button = view.findViewById(R.id.retryConnection);
+        button.setVisibility(View.VISIBLE);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = getActivity().getIntent();
+                getActivity().finish();
+                startActivity(intent);
+            }
+        });
+    }
 }

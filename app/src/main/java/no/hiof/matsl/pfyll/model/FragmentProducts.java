@@ -6,11 +6,14 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -100,6 +103,16 @@ public class FragmentProducts extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_products, container, false);
+        
+        scanButton= view.findViewById(R.id.startScan);
+        filterOptions =  view.findViewById(R.id.filterOptions);
+        categoryButton = view.findViewById(R.id.filterCategory);
+        filterButton = view.findViewById(R.id.filterButton);
+        countryButton = view.findViewById(R.id.filterCountry);
+        priceButton = view.findViewById(R.id.filterPrice);
+        alcoholButton = view.findViewById(R.id.filterAlcohol);
+        searchBar = view.findViewById(R.id.searchBar);
+        filterOptions.setVisibility(View.GONE);
 
         dpi = getResources().getDisplayMetrics().density;
         margin = (int)(400*dpi);
@@ -146,26 +159,53 @@ public class FragmentProducts extends Fragment{
         selectedFilters.setFlexDirection(FlexDirection.ROW);
         selectedFilters.setFlexWrap(FlexWrap.WRAP);
 
-        buttons();
 
         return view;
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        scanButton.setBackgroundColor(primaryColor);
-        scanButton.setColorFilter(primaryTextColor);
+        if (isNetworkAvailable()) {
+            scanButton.setBackgroundColor(primaryColor);
+            scanButton.setColorFilter(primaryTextColor);
+        }else{
+            reTryConnection();
+        }
+        buttons();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        searchBar.onActionViewCollapsed();
     }
+
+    private boolean isNetworkAvailable() { // Hentet fra https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private void reTryConnection(){
+        view.findViewById(R.id.noConnection).setVisibility(View.VISIBLE);
+        Button button = view.findViewById(R.id.retryConnection);
+        button.setVisibility(View.VISIBLE);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = getActivity().getIntent();
+                getActivity().finish();
+                startActivity(intent);
+            }
+        });
+    }
+
     private void buttons() {
-        scanButton= view.findViewById(R.id.startScan);
+
+        if (!isNetworkAvailable()) {
+            reTryConnection();
+            return;
+        }
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,10 +217,6 @@ public class FragmentProducts extends Fragment{
             }
         });
 
-        filterOptions =  view.findViewById(R.id.filterOptions);
-        filterOptions.setVisibility(View.GONE);
-
-        filterButton = view.findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,7 +229,6 @@ public class FragmentProducts extends Fragment{
             }
         });
 
-        categoryButton = view.findViewById(R.id.filterCategory);
         categoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,7 +238,6 @@ public class FragmentProducts extends Fragment{
                     Toast.makeText(getContext(), view.getResources().getString(R.string.one_filter_limit), Toast.LENGTH_SHORT).show();
             }
         });
-        countryButton = view.findViewById(R.id.filterCountry);
         countryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,7 +247,6 @@ public class FragmentProducts extends Fragment{
                     Toast.makeText(getContext(), view.getResources().getString(R.string.one_filter_limit), Toast.LENGTH_SHORT).show();
             }
         });
-        priceButton = view.findViewById(R.id.filterPrice);
         priceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -228,7 +261,6 @@ public class FragmentProducts extends Fragment{
 
             }
         });
-        alcoholButton = view.findViewById(R.id.filterAlcohol);
         alcoholButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -244,7 +276,6 @@ public class FragmentProducts extends Fragment{
             }
         });
 
-        searchBar = view.findViewById(R.id.searchBar);
         searchBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
