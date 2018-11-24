@@ -1,15 +1,10 @@
 package no.hiof.matsl.pfyll.model;
 
 import android.app.AlertDialog;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -17,61 +12,39 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.FirebaseDatabase;
-import com.squareup.okhttp.Cache;
-
-import java.net.PasswordAuthentication;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-import no.hiof.matsl.pfyll.CacheHandler;
+import no.hiof.matsl.pfyll.SharedPrefHandler;
 import no.hiof.matsl.pfyll.MainActivity;
 import no.hiof.matsl.pfyll.MapActivity;
 import no.hiof.matsl.pfyll.MyReviewsActivity;
 import no.hiof.matsl.pfyll.R;
-
 import no.hiof.matsl.pfyll.RecentProductsActivity;
-
-import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.UserListActivity;
 
 
 public class FragmentMyAccount extends Fragment {
-    SharedPref sharedPref;
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseUser user;
-    private static int RC_SIGN_IN = 100;
     ArrayList<String> products = new ArrayList<>();
     Button recentButton;
     TextView welcome;
@@ -83,16 +56,13 @@ public class FragmentMyAccount extends Fragment {
     public FragmentMyAccount(){
     }
 
-
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_myaccount,container,false);
-        sharedPref = new SharedPref(getContext());
 
+        if (isNetworkAvailable()) { // Only enabling buttons if network is available
 
-        if (isNetworkAvailable()) {
             recentButton = view.findViewById(R.id.recentButton);
             welcome = view.findViewById(R.id.welcomeField);
             user = FirebaseAuth.getInstance().getCurrentUser();
@@ -114,7 +84,7 @@ public class FragmentMyAccount extends Fragment {
         return view;
     }
 
-    private boolean isNetworkAvailable() { // Hentet fra https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
+    private boolean isNetworkAvailable() { // Found at: https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -207,10 +177,13 @@ public class FragmentMyAccount extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        CacheHandler cacheHandler = new CacheHandler(getContext(), "Recent Products", "LocalCache");
-        products = cacheHandler.getRecentProducts();
+
+
         if (isNetworkAvailable()) {
-            if (products != null)
+
+            SharedPrefHandler sharedPrefHandler = new SharedPrefHandler(getContext(), "Recent Products", "LocalCache");
+            products = sharedPrefHandler.getRecentProducts();
+            if (products != null) //Only enables recents-button if the user has viewed at least one product
                 recentButton.setAlpha((float) 1);
             else
                 recentButton.setAlpha((float) 0.5);
@@ -245,7 +218,8 @@ public class FragmentMyAccount extends Fragment {
 
     private void buttons() {
 
-        if (isNetworkAvailable()) {
+
+        if (isNetworkAvailable()) { //Only enabling network dependent buttons is network is available
             ImageButton adminButton = view.findViewById(R.id.accountButton);
             adminButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -263,7 +237,6 @@ public class FragmentMyAccount extends Fragment {
                     startActivity(userListIntent);
                 }
             });
-
 
             recentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -286,6 +259,7 @@ public class FragmentMyAccount extends Fragment {
                 }
             });
         }
+        //Logout-button and theme-button are enabled even if there is no internet connection
         final Button logOutButton = view.findViewById(R.id.logOutButton);
         logOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -295,27 +269,31 @@ public class FragmentMyAccount extends Fragment {
                 getActivity().startActivity(getActivity().getIntent());
             }
         });
+
         ImageButton settingsButton = view.findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final CacheHandler cacheHandler = new CacheHandler(getContext(), "theme", "theme-cache");
+
+                final SharedPrefHandler sharedPrefHandler = new SharedPrefHandler(getContext(), "theme", "theme-cache");
                 final String[] themes = getResources().getStringArray(R.array.themes);
                 int i = 0;
-                while ( i < themes.length){
-                    if (themes[i].equals(cacheHandler.getTheme())) break;
+                while ( i < themes.length){ //Determining which theme is already set.
+                    if (themes[i].equals(sharedPrefHandler.getTheme())) break;
                     i++;
                 }
 
                 AlertDialog.Builder themeChanger = new AlertDialog.Builder(getContext());
-                themeChanger.setTitle("Velg tema")
+                themeChanger.setTitle(getResources().getString(R.string.choose_theme))
                        .setSingleChoiceItems(themes, i, new DialogInterface.OnClickListener() {
                            @Override
                            public void onClick(DialogInterface dialog, int which) {
-                               cacheHandler.setTheme(themes[which]);
+
+                               //Setting new theme and restarting app.
+                               sharedPrefHandler.setTheme(themes[which]);
                                restartApp();
                            }
-                       }).setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                       }).setNegativeButton(getResources().getString(R.string.abort), new DialogInterface.OnClickListener() {
                            @Override
                            public void onClick(DialogInterface dialog, int which) {
                            }

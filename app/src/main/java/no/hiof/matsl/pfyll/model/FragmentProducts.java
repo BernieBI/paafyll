@@ -22,7 +22,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
@@ -30,7 +29,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -38,16 +36,12 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.Collections;
-
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.ScanActivity;
 import no.hiof.matsl.pfyll.adapter.ProductDataSourceFactory;
@@ -104,6 +98,7 @@ public class FragmentProducts extends Fragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_products, container, false);
 
+        //Initiation views
         scanButton= view.findViewById(R.id.startScan);
         filterOptions =  view.findViewById(R.id.filterOptions);
         categoryButton = view.findViewById(R.id.filterCategory);
@@ -113,6 +108,7 @@ public class FragmentProducts extends Fragment{
         alcoholButton = view.findViewById(R.id.filterAlcohol);
         searchBar = view.findViewById(R.id.searchBar);
         filterOptions.setVisibility(View.GONE);
+
 
         dpi = getResources().getDisplayMetrics().density;
         margin = (int)(400*dpi);
@@ -135,18 +131,20 @@ public class FragmentProducts extends Fragment{
         theme.resolveAttribute(R.attr.colorSecondary, typedValue, true);
         secondaryColor = typedValue.data;
 
+        //Productretriev setup
         config = new PagedList.Config.Builder().setPageSize(6).build();
         factory = new ProductDataSourceFactory(database, filters);
         layoutButton = view.findViewById(R.id.layoutButton);
         layoutButton.setOnClickListener(layoutSwitchListener);
         removeIcon = getResources().getDrawable(R.drawable.remove);
+
         bundle = getArguments();
-        if (bundle != null){
-            //Retrieving list of product IDs.
+        if (bundle != null){ // hiding/showing views if preSetProducts is set.
             view.findViewById(R.id.filterField).setVisibility(View.GONE);
 
             if (bundle.getStringArrayList("preSetProducts") != null){
                 layoutButton.hide();
+                //Retrieving list of product IDs.
                 preSetProducts = bundle.getStringArrayList("preSetProducts");
                 Collections.reverse(preSetProducts);
                 factory = new ProductDataSourceFactory(database, new IdFilter(preSetProducts));
@@ -155,6 +153,7 @@ public class FragmentProducts extends Fragment{
         products = new LivePagedListBuilder<>(factory, config).build();
         initRecyclerView();
 
+        //Initiation selectedFilters flexbox.
         selectedFilters = view.findViewById(R.id.selectedFilters);
         selectedFilters.setFlexDirection(FlexDirection.ROW);
         selectedFilters.setFlexWrap(FlexWrap.WRAP);
@@ -166,27 +165,21 @@ public class FragmentProducts extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-        if (isNetworkAvailable()) {
-            scanButton.setBackgroundColor(primaryColor);
-            scanButton.setColorFilter(primaryTextColor);
-        }else{
-            reTryConnection();
-        }
+
+        //Making sure scanButton is not highlighted
+        scanButton.setBackgroundColor(primaryColor);
+        scanButton.setColorFilter(primaryTextColor);
+
         buttons();
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    private boolean isNetworkAvailable() { // Hentet fra https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
+    private boolean isNetworkAvailable() { // found at: https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-    private void reTryConnection(){
+    private void reTryConnection(){ // Showing views notifying users of no internet connection
         view.findViewById(R.id.noConnection).setVisibility(View.VISIBLE);
         Button button = view.findViewById(R.id.retryConnection);
         button.setVisibility(View.VISIBLE);
@@ -206,6 +199,8 @@ public class FragmentProducts extends Fragment{
             reTryConnection();
             return;
         }
+
+        //Starting ScanActivity on click
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,6 +212,7 @@ public class FragmentProducts extends Fragment{
             }
         });
 
+        //Showing filter view on click
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,10 +221,9 @@ public class FragmentProducts extends Fragment{
                 }else {
                     showFilter();
                 }
-
             }
         });
-
+        //Creating alertDialog on click. Only allowing one filter at a time
         categoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -238,6 +233,7 @@ public class FragmentProducts extends Fragment{
                     Toast.makeText(getContext(), view.getResources().getString(R.string.one_filter_limit), Toast.LENGTH_SHORT).show();
             }
         });
+        //Creating alertDialog on click. Only allowing one filter at a time
         countryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -247,6 +243,7 @@ public class FragmentProducts extends Fragment{
                     Toast.makeText(getContext(), view.getResources().getString(R.string.one_filter_limit), Toast.LENGTH_SHORT).show();
             }
         });
+        //Creating alertDialog on click. Only allowing one filter at a time. can not be combined with search or alcoholfilter
         priceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -261,6 +258,7 @@ public class FragmentProducts extends Fragment{
 
             }
         });
+        //Creating alertDialog on click. Only allowing one filter at a time. can not be combined with search or priceFilter
         alcoholButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -283,27 +281,27 @@ public class FragmentProducts extends Fragment{
             }
         });
         searchBar.setVisibility(View.GONE);
-        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() { // Searchlistener
             @Override
             public boolean onQueryTextSubmit(String query) {
-                alcoholButton.setAlpha((float) 0.3);
+                alcoholButton.setAlpha((float) 0.3); //Disabling alcoholfilter and pricefilter
                 priceButton.setAlpha((float) 0.3);
 
-                selectedFilters.removeView(view.findViewWithTag("search"));
+                selectedFilters.removeView(view.findViewWithTag("search")); //Removing existing search queries
+
                 query = query.trim();
+
                 if (query.equals("")) {
                     productName = null;
-                }else {
-                    productName = new StringFilter(
-                            "Sokeord",
-                            Filter.ComparisonType.LIKE,
-                            query.toLowerCase()
-                    );
+                }else { //not accepting empty queries
 
-                    TextView activeFilter = createActiveFilterView("search", "\"" +query +"\"");
+                    productName = new StringFilter("Sokeord", Filter.ComparisonType.LIKE, query.toLowerCase()); //Creating new StringFilter
+
+                    TextView activeFilter = createActiveFilterView("search", "\"" +query +"\""); // Creating view to indicate that the search is accepted.
                     activeFilter.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(View v) { //Making it easy for the user to remove a search. By clicking the view.
                             productName = null;
                             selectedFilters.removeView(view.findViewWithTag("search"));
                             priceButton.setAlpha(1);
@@ -339,8 +337,10 @@ public class FragmentProducts extends Fragment{
     }
     public void submitFilter(){
         view.findViewById(R.id.noResults).setVisibility(View.GONE);
-        view.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-        filters.clear();
+        view.findViewById(R.id.progressBar).setVisibility(View.VISIBLE); // Showing progressbar while loading
+        filters.clear(); //Resetting filters
+
+        //only adding filters that arent null
 
         if (selectedCategory != null)
             filters.add(selectedCategory);
@@ -361,22 +361,25 @@ public class FragmentProducts extends Fragment{
         if (productName != null)
             filters.add(productName);
 
+        //Passing filters to factory.
         factory = new ProductDataSourceFactory(database, filters);
         products = new LivePagedListBuilder<>(factory, config).build();
-        initRecyclerView();
+        initRecyclerView(); //Notifying recyclerview
     }
-        private void stringFilterDialog( final String[] elements, final String field, final Filter.ComparisonType comparisonType) {
+        private void stringFilterDialog( final String[] elements, final String field, final Filter.ComparisonType comparisonType) { //Creating alertDialog and selectedFilter view
 
         AlertDialog.Builder filterBuilder = new AlertDialog.Builder(getContext());
         filterBuilder.setTitle(field)
                 .setItems(elements, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        selectedFilters.removeView(view.findViewWithTag(field));
+                        selectedFilters.removeView(view.findViewWithTag(field)); // removing selecedFilters with same tag
 
-                        TextView activeFilter = createActiveFilterView(field, elements[which]);
+                        TextView activeFilter = createActiveFilterView(field, elements[which]); //Creating activeFilterview with selected value
                         activeFilter.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onClick(View v) {
+                            public void onClick(View v) { //Setting onclicklistener for the new selectedFilter, making it easy to remove for the user.
+
+                                //Ensures filter is set to correct field
                                 if (field.equals(categoryString)) {
                                     selectedCategory = null;
                                     categoryButton.setAlpha(1);
@@ -388,9 +391,10 @@ public class FragmentProducts extends Fragment{
                                 submitFilter();
                             }
                         });
-                        Log.d(TAG, "filter: " + field);
-                        StringFilter filter = new StringFilter(field, comparisonType, elements[which]);
-                        if (field.equals(categoryString)) {
+
+                        StringFilter filter = new StringFilter(field, comparisonType, elements[which]); //Creating new stringfilter
+
+                        if (field.equals(categoryString)) { //Disabling the current field button. Only one filter per button is possible. This is due to the limitations of Firestore.
                             selectedCategory = filter;
                             categoryButton.setAlpha((float) 0.3);
                         }
@@ -408,35 +412,41 @@ public class FragmentProducts extends Fragment{
         alertFilter.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, (int)(500*dpi));
     }
 
-    private void numberFilterDialog(final String field) {
+    private void numberFilterDialog(final String field) { //Almost the same as StringFilterDialog, but for number filters
 
         final AlertDialog.Builder filterBuilder = new AlertDialog.Builder(getContext());
         filterBuilder.setTitle(field)
-                .setView(getLayoutInflater().inflate(R.layout.number_filter, null))
+                .setView(getLayoutInflater().inflate(R.layout.number_filter, null)) //Using existing layout for dialog
                 .setPositiveButton(view.getResources().getString(R.string.use), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        selectedFilters.removeView(view.findViewWithTag(field));
+
+                        selectedFilters.removeView(view.findViewWithTag(field)); //Removing selectedFilters with same tag
+
+                        //Getting for dialog edittext values
                         EditText numFrom = ((AlertDialog)dialog).findViewById(R.id.from);
                         EditText numTo = ((AlertDialog)dialog).findViewById(R.id.to);
-                        float from = Integer.parseInt(numFrom.getText().toString().equals("") ? "0" : numFrom.getText().toString() );
-                        float to = Integer.parseInt(numTo.getText().toString().equals("") ? "999999999" : numTo.getText().toString() );
+
+                        float from = Integer.parseInt(numFrom.getText().toString().equals("") ? "0" : numFrom.getText().toString() ); //defaults to 0 if empty
+                        float to = Integer.parseInt(numTo.getText().toString().equals("") ? "999999999" : numTo.getText().toString() ); //defaults to 999999999 if empty
 
                         NumberFilter fieldFrom = null;
                         NumberFilter fieldTo = null;
-                            if (from < to) {
+
+                            if (from < to) { //Verifying that from is lower than to
                                 fieldFrom = new NumberFilter(from, field, Filter.ComparisonType.GREATER_THAN_OR_EQUALS);
                                 if (to < 999999999){
                                     fieldTo = new NumberFilter(to, field, Filter.ComparisonType.LESS_THAN_OR_EQUALS);
                                 }
-                            }else {
+                            }else { //Notifying user if from is larger than to
                                 Toast.makeText(getContext(),view.getResources().getString(R.string.wont_work), Toast.LENGTH_SHORT).show();
                                 numberFilterDialog(field);
                                 return;
                             }
 
                         String unit = "";
-                        if (field == priceString){
+
+                        if (field == priceString){ //Setting correct filter, and disabling numberfilter of other type
                             filterPriceFrom = fieldFrom;
                             filterPriceTo = fieldTo;
                             selectedFilters.removeView(view.findViewWithTag(alcoholString));
@@ -444,6 +454,7 @@ public class FragmentProducts extends Fragment{
                             filterAlcoholFrom = null;
                             filterAlcoholTo = null;
                             unit = getResources().getString(R.string.currency);
+
                         }else if( field == alcoholString) {
                             filterAlcoholFrom = fieldFrom;
                             filterAlcoholTo = fieldTo;
@@ -453,9 +464,9 @@ public class FragmentProducts extends Fragment{
                             filterPriceTo = null;
                             unit = "%";
                         }
-                        String text = String.format("%1$s %3$s - %2$s", (int)from, to >= 999999999 ? ">" : (int)to + " " +unit, unit);
+                        String text = String.format("%1$s %3$s - %2$s", (int)from, to >= 999999999 ? ">" : (int)to + " " +unit, unit); //Creating text for selectedFilter view
                         TextView activeFilter = createActiveFilterView(field,text);
-                        activeFilter.setOnClickListener(new View.OnClickListener() {
+                        activeFilter.setOnClickListener(new View.OnClickListener() { //Adding onclicklistener for easy removal of filter
                             @Override
                             public void onClick(View v) {
                                 if (field.equals(priceString)) {
@@ -473,7 +484,7 @@ public class FragmentProducts extends Fragment{
                                 submitFilter();
                             }
                         });
-                        searchBar.setVisibility(View.GONE);
+                        searchBar.setVisibility(View.GONE); //Disabling searchbar if numberfilter is set.
                         submitFilter();
                     }
                 })
@@ -496,14 +507,15 @@ public class FragmentProducts extends Fragment{
                 productAdapter.submitList(products);
                 view.findViewById(R.id.progressBar).setVisibility(View.GONE);
 
-                if (products.size() == 0 )
+                if (products.size() == 0 ) // Showing/hiding no products message
                     view.findViewById(R.id.noResults).setVisibility(View.VISIBLE);
                 else
                     view.findViewById(R.id.noResults).setVisibility(View.GONE);
             }
         });
     }
-    private TextView createActiveFilterView (String tag, String text){
+
+    private TextView createActiveFilterView (String tag, String text){ //Creating text view added to selectedFilters
 
         TextView activeFilter = new TextView(getContext());
         activeFilter.setTag(tag);
@@ -525,7 +537,7 @@ public class FragmentProducts extends Fragment{
 
         return activeFilter;
     }
-    private View.OnClickListener layoutSwitchListener = new View.OnClickListener() {
+    private View.OnClickListener layoutSwitchListener = new View.OnClickListener() { //Listener for switching recyclerciew layout
 
         @Override
         public void onClick(final View v) {
@@ -543,8 +555,6 @@ public class FragmentProducts extends Fragment{
         }
     };
     public void passProductsToView (){
-
-
 
         productAdapter = new ProductRecycleViewAdapter(getActivity(), getArguments());
         if (layoutColumns == 2)

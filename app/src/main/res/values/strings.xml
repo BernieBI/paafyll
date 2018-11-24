@@ -61,6 +61,10 @@
     <string name="save">Lagre</string>
     <string name="account_updated">Konto oppdatert</string>
     <string name="change_name">Endre navn</string>
+    <string name="no_match">Fant ikke produktet</string>
+    <string name="searching_products">Søker etter produkt</string>
+    <string name="wrong_barcode">Feil type strekkode</string>
+    <string name="choose_theme">Velg tema</string>
     <!-- imageButtons-->
     <string name="filter_button">Produktfilter</string>
     <string name="search_button">Produktsøk</string>
@@ -75,6 +79,8 @@
     <string name="remove_from_list">Fjern fra listen</string>
     <string name="create_new_list">Lag ny liste</string>
     <string name="remove_list">Slett liste</string>
+    <string name="changeList">Endre listenavn</string>
+    <string name="list_change_success">Navnet ble endret!</string>
     <string name="confirm_delete_list">Er du sikker på at du vil slette denne listen?</string>
     <string name="require_name">Du må gi listen et navn</string>
     <string name="list_require_login">Du må være logget inn for å bruke lister</string>
@@ -95,10 +101,14 @@
     <string name="already_reviewed">Du har allerede anmeldt dette produktet</string>
     <string name="review_success">Din anmeldelse er registrert!</string>
     <string name="show_reviews">Vis kommentarer</string>
+    <string name="tell_others_what_you_think">Fortell andre hva du syns!</string>
+    <string name="write_comment">Skriv en kommentar</string>
     <string name="no_reviews">Ingen anmeldelser</string>
+    <string name="review">anmeldelse</string>
     <string name="require_comment">Du må skrive en kommentar</string>
     <string name="empty_reviews">Skriv en anmeldelse til et produkt så dukker det opp her</string>
 
+    <!-- Has been fetched from Firestore. Did not have the time to implement automatic fetch -->
     <string-array name="productCategories">
         <item>Akevitt</item>
         <item>Alkoholfri leskedrikk</item>
@@ -246,7 +256,7 @@
         <item>Standard</item>
         <item>Natt</item>
         <item>Vin</item>
-        <item>Gull</item>
+        <item>Champagne</item>
     </string-array>
 
     <string-array name="eatWith">

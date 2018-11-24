@@ -49,6 +49,7 @@
         <item name="android:numStars">5</item>
         <item name="android:progressDrawable">@drawable/bottle_ratingbar_small</item>
     </style>
+
     <style name="Standard" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
@@ -65,8 +66,8 @@
         <item name="colorButton">@color/secondaryColor</item>
         <item name="colorButtonAlt">@color/secondaryLightColor</item>
         <item name="colorBackground">@color/backgroundColor</item>
-
     </style>
+
     <style name="Natt" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/night_primaryColor</item>
         <item name="colorPrimaryDark">@color/night_primaryDarkColor</item>
@@ -82,8 +83,6 @@
         <item name="colorBackground">@color/night_backgroundColor</item>
     </style>
 
-
-
     <style name="Vin" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/redwine_primaryColor</item>
         <item name="colorPrimaryDark">@color/redwine_primaryDarkColor</item>
@@ -97,9 +96,9 @@
         <item name="colorAccent">@color/redwine_secondaryColor</item>
         <item name="colorButtonAlt">@color/redwine_secondaryLightColor</item>
         <item name="colorBackground">@color/redwine_backgroundColor</item>
-
     </style>
-    <style name="Gull" parent="Theme.AppCompat.Light.NoActionBar">
+
+    <style name="Champagne" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/gull_primaryColor</item>
         <item name="colorPrimaryDark">@color/gull_primaryDarkColor</item>
         <item name="colorPrimaryLight">@color/gull_primaryLightColor</item>

@@ -1,16 +1,11 @@
 package no.hiof.matsl.pfyll;
 
 import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -26,10 +21,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import no.hiof.matsl.pfyll.model.FragmentProducts;
-import no.hiof.matsl.pfyll.model.SharedPref;
 import no.hiof.matsl.pfyll.model.UserList;
 
 public class SingleUserListActivity extends AppCompatActivity {
@@ -45,7 +38,7 @@ public class SingleUserListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        CacheHandler themeGetter = new CacheHandler(this, "theme", "theme-cache");
+        SharedPrefHandler themeGetter = new SharedPrefHandler(this, "theme", "theme-cache");
         setTheme(getResources().getIdentifier(themeGetter.getTheme(), "style", this.getPackageName()));
 
         super.onCreate(savedInstanceState);
@@ -62,9 +55,9 @@ public class SingleUserListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SingleUserListActivity.this);
 
-                builder.setTitle("Endre listenavn");
+                builder.setTitle(getResources().getString(R.string.changeList));
                 builder.setView(getLayoutInflater().inflate(R.layout.addlistfields,null))
-                        .setPositiveButton("Lagre", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(getResources().getString(R.string.save), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 EditText editText = ((AlertDialog)dialog).findViewById(R.id.newListName);
@@ -77,11 +70,10 @@ public class SingleUserListActivity extends AppCompatActivity {
                                 userList.setNavn(editText.getText().toString());
                                 listsRef.setValue(userList);
 
-                                Toast toast = Toast.makeText(SingleUserListActivity.this, "Navnet ble endret!", Toast.LENGTH_LONG);
-                                toast.show();
+                                Toast.makeText(SingleUserListActivity.this, getResources().getString(R.string.list_change_success), Toast.LENGTH_LONG).show();
                             }
                         })
-                        .setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(getResources().getString(R.string.abort), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
@@ -100,7 +92,7 @@ public class SingleUserListActivity extends AppCompatActivity {
         listID = intent.getStringExtra("UserListId");
     }
 
-    private void GetData() {
+    private void GetData() { // Getting current list object from Firebase
 
         ValueEventListener listListener = new ValueEventListener() {
             @Override
@@ -130,7 +122,7 @@ public class SingleUserListActivity extends AppCompatActivity {
 
     }
 
-    private void startFragment(){
+    private void startFragment(){ //Starting instance of FragmentProducts with list of product ID's. Also sending list ID to allow removing products
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

@@ -4,12 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.media.Rating;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -26,21 +23,15 @@ import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -58,27 +49,14 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.razerdp.widget.animatedpieview.AnimatedPieView;
 import com.razerdp.widget.animatedpieview.AnimatedPieViewConfig;
 import com.razerdp.widget.animatedpieview.data.SimplePieInfo;
 
-import java.lang.reflect.Type;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import no.hiof.matsl.pfyll.model.Product;
 import no.hiof.matsl.pfyll.model.Review;
-import no.hiof.matsl.pfyll.model.SharedPref;
 import no.hiof.matsl.pfyll.model.UserList;
-import no.hiof.matsl.pfyll.model.UserReview;
 
 import static android.view.View.GONE;
 
@@ -89,15 +67,13 @@ public class SingleProductActivity extends AppCompatActivity {
 
     private int productID;
     private Product product;
+
     //firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference productRef = db.collection("Produkter");
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-    /* */
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference productsRef;
-    /* */
 
     TypedValue typedValue = new TypedValue();
     Resources.Theme theme;
@@ -110,7 +86,7 @@ public class SingleProductActivity extends AppCompatActivity {
 
     //views
     private LinearLayout productDetails1, productDetails2, productDetails3;
-    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, drinkWithhead, reviewCount, productRating;
+    private TextView productName, productTaste, productPrice, productLiterPrice, productVolume, reviewCount;
     private ImageView productImage, drinkWith1, drinkWith2, drinkWith3;
     private Button reviewButton;
     private RatingBar ratingBar;
@@ -124,16 +100,12 @@ public class SingleProductActivity extends AppCompatActivity {
     AnimatedPieView pieChartTannin;
     AnimatedPieView pieChartBitterness;
 
-    private int white;
-
     private ArrayList<UserList> userLists = new ArrayList<>();
     private ArrayList<String> options = new ArrayList<>();
 
-    private boolean hasDrinkWiths = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        CacheHandler themeGetter = new CacheHandler(this, "theme", "theme-cache");
+        SharedPrefHandler themeGetter = new SharedPrefHandler(this, "theme", "theme-cache");// Retrieving user-selected theme from sharedpreferences
         setTheme(getResources().getIdentifier(themeGetter.getTheme(), "style", this.getPackageName()));
         super.onCreate(savedInstanceState);
 
@@ -142,8 +114,7 @@ public class SingleProductActivity extends AppCompatActivity {
         setContentView(R.layout.activity_single_product);
         dpi = getResources().getDisplayMetrics().density;
 
-        //Populating text fields and other
-        //white = getResources().getColor(R.color.white);
+        //Initiation Views
         reviewButton = findViewById(R.id.reviewButton);
         productName = findViewById(R.id.productName);
         productTaste = findViewById(R.id.productTaste);
@@ -156,14 +127,12 @@ public class SingleProductActivity extends AppCompatActivity {
         addToListBtn = findViewById(R.id.addToListButton);
         ratingBar = findViewById(R.id.productRatingBar);
         ratingBar.setRating(0);
-        productRating = findViewById(R.id.productRating);
         commentswrapper = findViewById(R.id.reviewComments);
         reviewCount = findViewById(R.id.reviewCount);
         productImage = findViewById(R.id.productImage);
         drinkWith1 = findViewById(R.id.drinkWith1);
         drinkWith2 = findViewById(R.id.drinkWith2);
         drinkWith3 = findViewById(R.id.drinkWith3);
-
         pieChartSweetness = findViewById(R.id.pieChartSweetness);
         pieChartFreshness = findViewById(R.id.pieChartFreshness);
         pieChartFullness = findViewById(R.id.pieChartFullness);
@@ -174,26 +143,30 @@ public class SingleProductActivity extends AppCompatActivity {
         productID = intent.getIntExtra("ProductID", -1);
         productsRef = database.getReference("Products/" + productID);
 
-        if (productID == -1) {
-            Toast toast = Toast.makeText(SingleProductActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
+        if (productID == -1) { //If no product ID is set, -1 is default. Display message and return to previous activity
+            Toast toast = Toast.makeText(SingleProductActivity.this, getResources().getString(R.string.no_match), Toast.LENGTH_LONG);
             toast.show();
             onBackPressed();
         }
 
 
-        //getting product and list data from firebase
+        //getting product and list data from firebase. Not checking for internet connection as some data might be cached
         getProductData();
+
         reviewRef = database.getReference("userReviews/" + productID);
+
         if (isNetworkAvailable()){
-            getAllReviews();
-            if (user != null){
-                userListRef = database.getReference("users/" + user.getUid() + "/userLists");
-                userReviewRef = database.getReference("users/" + user.getUid() + "/reviews");
+
+            getAllReviews(); // only getting reviews if has internet connection.
+
+            if (user != null){ // only retrieving user data if the current user is logged in.
+                userListRef = database.getReference("users/" + user.getUid() + "/userLists"); // Current users lists
+                userReviewRef = database.getReference("users/" + user.getUid() + "/reviews"); // Current users reviewed products
                 getUserLists();
                 getUserReviews();
                 submitReview();
 
-            }else{
+            }else{ //Hiding reviewbutton and displayin toast to not-logged in user
                 reviewButton.setVisibility(GONE);
                 addToListBtn.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
@@ -202,27 +175,27 @@ public class SingleProductActivity extends AppCompatActivity {
                     }
                 });
             }
-        }else{
+        }else{ //hidinng reviewbutton and list button if no internet connection
             reviewButton.setVisibility(GONE);
             addToListBtn.hide();
         }
 
         //Adding product to recently viewed products
-        CacheHandler cacheHandler = new CacheHandler(this, "Recent Products", "LocalCache");
+        SharedPrefHandler sharedPrefHandler = new SharedPrefHandler(this, "Recent Products", "LocalCache");
         ArrayList<String> recentProducts;
-        if (cacheHandler.getRecentProducts() == null)
+        if (sharedPrefHandler.getRecentProducts() == null)
             recentProducts = new ArrayList<>();
         else
-            recentProducts = cacheHandler.getRecentProducts();
+            recentProducts = sharedPrefHandler.getRecentProducts();
 
-        if (recentProducts.size() >= 20)
+        if (recentProducts.size() >= 20) // removing oldest product if count is more or equal to 20
             recentProducts.remove(0);
 
-        if (recentProducts.contains(productID+""))
+        if (recentProducts.contains(productID+"")) //if product is already in recents list, its moved to the top.
             recentProducts.remove(productID+"");
 
         recentProducts.add(productID+"");
-        cacheHandler.setRecentProducts(recentProducts);
+        sharedPrefHandler.setRecentProducts(recentProducts); // storing new list of recent products
 
     }
 
@@ -245,52 +218,45 @@ public class SingleProductActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    private void getUserLists() {
+    private void getUserLists() { // Retrieving all of current users  product lists.
 
-        ChildEventListener userListListener = new ChildEventListener() {
+        userListRef.addChildEventListener( new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
                 UserList list = dataSnapshot.getValue(UserList.class);
                 list.setId(dataSnapshot.getKey());
                 userLists.add(list);
-                options.add(list.getNavn());
+                options.add(list.getNavn()); // added to options array user for Alertdialog.
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
-
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "postComments:onCancelled", databaseError.toException());
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
-        };
-        userListRef.addChildEventListener(userListListener);
-
+        });
 
         addToListBtn.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
 
-                if (options.size() == 0){
+                if (options.size() == 0){ //Notifying if user has no lists
                     Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.have_no_lists), Toast.LENGTH_SHORT);
                     toast.show();
                 }else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
                     builder.setTitle(R.string.selectList);
-                    builder.setItems(options.toArray(new CharSequence[options.size()]), new DialogInterface.OnClickListener() {
+                    builder.setItems(options.toArray(new CharSequence[options.size()]), new DialogInterface.OnClickListener() { // populating alertDialog with list name
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -298,19 +264,17 @@ public class SingleProductActivity extends AppCompatActivity {
 
                             if (userLists.get(which).getProducts() != null) {
 
-                                if (!userLists.get(which).addProduct(productID + "")) {
-                                    Toast toast = Toast.makeText(SingleProductActivity.this, String.format("%s %s!", getString(R.string.already_exists), userLists.get(which).getNavn()), Toast.LENGTH_SHORT);
-                                    toast.show();
+                                if (!userLists.get(which).addProduct(productID + "")) { //Notifying if selected list already contains current product.
+                                    Toast.makeText(SingleProductActivity.this, String.format("%s %s!", getString(R.string.already_exists), userLists.get(which).getNavn()), Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                            } else {
+                            } else { // If list is empty, add current product without check
                                 products.add(productID + "");
                                 userLists.get(which).setProducts(products);
                             }
 
-                            userListRef.child(userLists.get(which).getId()).child("products").setValue(userLists.get(which).getProducts());
-                            Toast toast = Toast.makeText(SingleProductActivity.this, String.format("%s %s!", getString(R.string.add_success), userLists.get(which).getNavn()), Toast.LENGTH_SHORT);
-                            toast.show();
+                            userListRef.child(userLists.get(which).getId()).child("products").setValue(userLists.get(which).getProducts()); // Update list in firebase
+                            Toast.makeText(SingleProductActivity.this, String.format("%s %s!", getString(R.string.add_success), userLists.get(which).getNavn()), Toast.LENGTH_SHORT).show();
                         }
                     });
                     builder.show();
@@ -318,16 +282,15 @@ public class SingleProductActivity extends AppCompatActivity {
             }
         });
 
-
     }
-    private void getAllReviews() {
+    private void getAllReviews() { // Getting all reviews to current product
 
-        reviewRef.orderByChild("index").addValueEventListener(new ValueEventListener() {
+        reviewRef.orderByChild("index").addValueEventListener(new ValueEventListener() { //Ordering by custom field "Index" to ensure oldest to newest sorting
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                commentswrapper.removeAllViews();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                commentswrapper.removeAllViews(); //Removing all reviews on change to avoid duplicates
                 productReviews.clear();
-                for (DataSnapshot reviewSnapShot: dataSnapshot.getChildren()) {
+                for (DataSnapshot reviewSnapShot: dataSnapshot.getChildren()) { // adding all reviews to list
                     if (reviewSnapShot.exists()) {
                         Review review = reviewSnapShot.getValue(Review.class);
                         review.setId(reviewSnapShot.getKey());
@@ -336,22 +299,20 @@ public class SingleProductActivity extends AppCompatActivity {
 
                 }
                 if (productReviews.size() > 0){
+
                     float total = 0;
-                    for (Review review : productReviews){
+                    for (Review review : productReviews){ //counting total score of review
                         total += review.getReviewValue();
                         review.getId();
                         createComment( review );
                     }
-                    DecimalFormat df = new DecimalFormat("#.#");
-                    String rating = df.format(total / productReviews.size());
-                    ratingBar.setRating((float)total / productReviews.size());
+                    ratingBar.setRating(total / productReviews.size());
+                    reviewCount.setText(String.format("%s %s" +( productReviews.size()>1 ? "r" : "") , productReviews.size(), getResources().getString(R.string.review)));
 
-                    reviewCount.setText(String.format("%s anmeldelse" +( productReviews.size()>1 ? "r" : "") , productReviews.size()));
-                    productRating.setText("(" + rating + ")");
                     commentswrapper.setVisibility(View.VISIBLE);
                     findViewById(R.id.reviewsHeader).setVisibility(View.VISIBLE);
 
-                }else{
+                }else{ //Hiding reviewSection if no reviews exist
                     commentswrapper.setVisibility(GONE);
                     findViewById(R.id.reviewsHeader).setVisibility(View.INVISIBLE);
                     reviewCount.setText(getString(R.string.no_reviews));
@@ -359,109 +320,105 @@ public class SingleProductActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
 
 
     }
-    public void getUserReviews(){
+    public void getUserReviews(){ // Retrieving product ids of current users reviews
         userReviewRef.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
                 reviewedProducts.add(dataSnapshot.getValue() + "");
             }
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled( @NonNull DatabaseError databaseError) {
             }
         });
     }
-    public void submitReview(){
+    public void submitReview(){ // Submitting new review on current product from current user
 
         reviewButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
-                if (reviewedProducts.contains(productID+"")) {
-                    Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.already_reviewed), Toast.LENGTH_LONG);
-                    toast.show();
-
-                }else {
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
-                    builder.setTitle("Fortell hva du synes!");
-                    LinearLayout layout = new LinearLayout(SingleProductActivity.this);
-                    layout.setOrientation(LinearLayout.VERTICAL);
-                    final RatingBar newRatingBar = new RatingBar(new ContextThemeWrapper(SingleProductActivity.this, R.style.ratingBarTheme), null, 0);
-                    newRatingBar.setRating(1);
-                    newRatingBar.setNumStars(5);
-                    newRatingBar.setStepSize(1);
-
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams ((int)(160*dpi), ViewGroup.LayoutParams.WRAP_CONTENT); //Width, Height
-                    newRatingBar.setLayoutParams(params);
-
-                    final EditText input = new EditText(SingleProductActivity.this);
-                    input.setInputType(InputType.TYPE_CLASS_TEXT);
-                    input.setHint("Skriv en kommentar");
-                    layout.setPadding((int)(30*dpi), (int)(8*dpi), (int)(30*dpi), (int)(5*dpi));
-                    layout.addView(newRatingBar);
-                    layout.addView(input);
-                    builder.setView(layout);
-                    builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            reviewText = input.getText().toString();
-                            reviewValue = newRatingBar.getRating();
-                            Log.d(TAG, "onClick rating: " + reviewValue);
-                            if (reviewText == "" ){
-                                Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.require_comment), Toast.LENGTH_LONG);
-                                toast.show();
-                            }
-
-                            String username = "Anonym";
-                            if (!user.getDisplayName().trim().equals(""))
-                                username = user.getDisplayName();
-
-                            int index = productReviews.size() > 0 ? productReviews.get(productReviews.size()-1).getIndex()+1 : 0;
-
-                            Review review = new Review(reviewText, reviewValue, index);
-                            reviewedProducts.add(productID + "");
-                            reviewRef.child(user.getUid()).setValue(review);
-                            userReviewRef.setValue(reviewedProducts);
-                            Toast toast = Toast.makeText(SingleProductActivity.this, getString(R.string.review_success), Toast.LENGTH_LONG);
-                            toast.show();
-
-
-                        }
-                    });
-                    builder.setNegativeButton("Avbryt", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
+                if (reviewedProducts.contains(productID+"")) { // notifying and exiting function if product is already reviewed
+                    Toast.makeText(SingleProductActivity.this, getString(R.string.already_reviewed), Toast.LENGTH_LONG).show();
+                    return;
                 }
+
+                // Building AlertDialog with custom ratingbar and EditText
+                AlertDialog.Builder builder = new AlertDialog.Builder(SingleProductActivity.this);
+                builder.setTitle(getResources().getString(R.string.tell_others_what_you_think));
+                LinearLayout layout = new LinearLayout(SingleProductActivity.this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+
+                final RatingBar newRatingBar = new RatingBar(new ContextThemeWrapper(SingleProductActivity.this, R.style.ratingBarTheme), null, 0);
+                newRatingBar.setRating(1);
+                newRatingBar.setNumStars(5);
+                newRatingBar.setStepSize(1);
+
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams ((int)(160*dpi), ViewGroup.LayoutParams.WRAP_CONTENT); //Width, Height
+                newRatingBar.setLayoutParams(params);
+
+                final EditText input = new EditText(SingleProductActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                input.setHint(getResources().getString(R.string.write_comment));
+                layout.setPadding((int)(30*dpi), (int)(8*dpi), (int)(30*dpi), (int)(5*dpi));
+                layout.addView(newRatingBar);
+                layout.addView(input);
+                builder.setView(layout);
+
+                builder.setPositiveButton(getResources().getString(R.string.save), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        reviewText = input.getText().toString().trim();
+                        reviewValue = newRatingBar.getRating();
+
+                        if (reviewText.equals("")){ // Veryfying comment input.
+                            Toast.makeText(SingleProductActivity.this, getString(R.string.require_comment), Toast.LENGTH_LONG).show();
+                        }
+                        // Creating index of new review. To display reviews in correct order even if some is deleted
+                        int index = productReviews.size() > 0 ? productReviews.get(productReviews.size()-1).getIndex()+1 : 0;
+
+                        Review review = new Review(reviewText, reviewValue, index);
+
+                        reviewedProducts.add(productID + "");
+                        reviewRef.child(user.getUid()).setValue(review); // adding review object to userReviews node in firebase
+                        userReviewRef.setValue(reviewedProducts); // adding product id to users list
+
+                        Toast.makeText(SingleProductActivity.this, getString(R.string.review_success), Toast.LENGTH_LONG).show();
+
+                    }
+                });
+                builder.setNegativeButton(getResources().getString(R.string.abort), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
             }
         });
     }
 
-    private void getProductData(){
+    private void getProductData(){ //Retrieving all current product data from Firestore
         final DocumentReference productDoc = productRef.document(productID+"");
         productDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -473,18 +430,21 @@ public class SingleProductActivity extends AppCompatActivity {
 
                         product = new Product().documentToProduct(document);
 
-                        if (product == null){
-                            Toast toast = Toast.makeText(SingleProductActivity.this, "Fant ikke produktet", Toast.LENGTH_LONG);
+                        if (product == null){ // returning to Previous if product does not exist
+                            Toast toast = Toast.makeText(SingleProductActivity.this, getResources().getString(R.string.no_match), Toast.LENGTH_LONG);
                             toast.show();
                             onBackPressed();
                             return;
                         }
-                        product.setBildeUrl(product.getVarenummer());
+                        product.setBildeUrl(product.getVarenummer()); // creating image url
+
+                        //Getting image if has internet connection. If not setting placeholder
                         if (isNetworkAvailable()) {
-                            RequestOptions requestOptions = new RequestOptions();
-                            requestOptions.diskCacheStrategy(DiskCacheStrategy.DATA);
-                            requestOptions.fallback(getResources().getDrawable(R.drawable.bottle));
-                            requestOptions.error(getResources().getDrawable(R.drawable.bottle));
+                            RequestOptions requestOptions = new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.DATA)
+                            .fallback(getResources().getDrawable(R.drawable.bottle))
+                            .error(getResources().getDrawable(R.drawable.bottle));
+
                             Glide.with(SingleProductActivity.this)
                                     .asBitmap()
                                     .load(product.getBildeUrl())
@@ -493,16 +453,12 @@ public class SingleProductActivity extends AppCompatActivity {
                         }else
                             productImage.setImageDrawable(getResources().getDrawable(R.drawable.bottle));
 
+                        //Setting productHeader textViews
                         productImage.setContentDescription(product.getVarenavn());
-
                         productName.setText(product.getVarenavn());
-
                         productPrice.setText(String.format( "%s %s", getString(R.string.currency), product.getPris() ));
-
                         productTaste.setText(product.getSmak());
-
                         productVolume.setText(String.format("%s l", product.getVolum()));
-
                         productLiterPrice.setText(String.format("%s kr/l", product.getLiterpris() ));
 
                         //Adding info related to product contents
@@ -528,7 +484,7 @@ public class SingleProductActivity extends AppCompatActivity {
                         setDrinkWiths(drinkWith2, product.getPassertil02());
                         setDrinkWiths(drinkWith3, product.getPassertil03());
 
-
+                        //Creating animated pie charts
                         createPieCharts(getString(R.string.product_Sweetness), Integer.parseInt(product.getSodme()), pieChartSweetness);
                         createPieCharts(getString(R.string.product_freshness), Integer.parseInt(product.getFriskhet()), pieChartFreshness);
                         createPieCharts(getString(R.string.product_fullness), Integer.parseInt(product.getFylde()), pieChartFullness);
@@ -537,21 +493,17 @@ public class SingleProductActivity extends AppCompatActivity {
 
                         //Button for opening product in browser
                         Button productsButton = findViewById(R.id.webButton);
-
                         productsButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Log.d(TAG, "onClick: ProductsActivity started");
+
                                 Intent browserIntent = new Intent(Intent.ACTION_VIEW,
                                         Uri.parse(product.getVareurl()));
                                 startActivity(browserIntent);
-
                             }
                         });
 
 
-                    } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
@@ -560,7 +512,8 @@ public class SingleProductActivity extends AppCompatActivity {
         });
     }
 
-    public void createComment(final Review review){
+    public void createComment(final Review review){ //Creating and populating comment from user reviews related to current product
+
         final String text = review.getReviewText();
         final float rating = review.getReviewValue();
 
@@ -568,12 +521,12 @@ public class SingleProductActivity extends AppCompatActivity {
         commentUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot == null)
+                if (dataSnapshot.getValue() == null)
                     return;
 
-                Timestamp time = new Timestamp(System.currentTimeMillis());
+                //comment parent
                 ConstraintLayout comment = new ConstraintLayout(SingleProductActivity.this);
-                comment.setId(1 + time.getNanos());
+                comment.setId(View.generateViewId());
 
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 params.setMargins((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(4*dpi));
@@ -587,32 +540,36 @@ public class SingleProductActivity extends AppCompatActivity {
                 comment.setElevation((int)(3*dpi));
                 commentswrapper.addView(comment);
 
+                //Username of review
                 TextView headerTextView = new TextView(SingleProductActivity.this);
                 LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 headerParams.setMargins((int)(0*dpi), (int)(0*dpi), (int)(0*dpi), (int)(0*dpi));
                 headerTextView.setText(dataSnapshot.getValue().toString());
                 headerTextView.setTextSize(20);
-                headerTextView.setId(2 + time.getNanos());
+                headerTextView.setId(View.generateViewId());
                 headerTextView.setTypeface(null, Typeface.BOLD);
                 comment.addView(headerTextView);
 
+                //Ratingbar of review
                 RatingBar newRatingBar = new RatingBar(new ContextThemeWrapper(SingleProductActivity.this, R.style.ratingBarThemeSmall), null, 0);
                 newRatingBar.setRating(rating);
                 newRatingBar.setNumStars(5);
-                newRatingBar.setId( 3 + time.getNanos());
+                newRatingBar.setId(View.generateViewId());
                 newRatingBar.setIsIndicator(true);
                 newRatingBar.setStepSize(1);
                 LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams ((int)(80*dpi), (int)(30*dpi)); //Width, Height
                 newRatingBar.setLayoutParams(params2);
                 comment.addView(newRatingBar);
 
+                //Comment text of review
                 TextView textView = new TextView(SingleProductActivity.this);
                 textView.setText(text);
                 textView.setPadding((int)(8*dpi), (int)(4*dpi), (int)(8*dpi), (int)(8*dpi));
-                textView.setId(4 + time.getNanos());
+                textView.setId(View.generateViewId());
                 if (!text.equals(""))
                     comment.addView(textView);
 
+                //Setting constraints
                 ConstraintSet set = new ConstraintSet();
                 set.clone(comment);
                 set.connect(headerTextView.getId(), ConstraintSet.TOP, comment.getId(), ConstraintSet.TOP,  20);
@@ -627,7 +584,6 @@ public class SingleProductActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                return;
             }
         });
 
@@ -694,27 +650,24 @@ public class SingleProductActivity extends AppCompatActivity {
         if (value.contains("Aperitiff"))
             image = R.drawable.aperitiff;
 
-        if (image != 0)
-            hasDrinkWiths = true;
-        else
+        if (image == 0)
             view.setVisibility(GONE);
-        theme.resolveAttribute(R.attr.colorPrimaryText, typedValue, true);
+
+        theme.resolveAttribute(R.attr.colorPrimaryText, typedValue, true); //Setting image color to match the current theme
         @ColorInt int color = typedValue.data;
         view.setColorFilter(color);
         view.setImageResource(image);
         view.setContentDescription(imageAlt);
 
     }
-    public void createPieCharts(String headerText, int value,AnimatedPieView pieView){
+    public void createPieCharts(String headerText, int value,AnimatedPieView pieView){ // Library source: https://github.com/razerdp/AnimatedPieView
 
-        if(((LinearLayout)pieView.getParent()).findViewWithTag(headerText) != null)
-            return;
         if (value == 0) {
-            ((LinearLayout)pieView.getParent()).setVisibility(GONE);
+            ((LinearLayout)pieView.getParent()).setVisibility(GONE); // hiding view if has no value
             return;
         }
 
-        if (((LinearLayout)pieView.getParent().getParent()).getVisibility() == GONE)
+        if (((LinearLayout)pieView.getParent().getParent()).getVisibility() == GONE) //displaying entire piechartsection if this is the first pieChart
             ((LinearLayout)pieView.getParent().getParent()).setVisibility(View.VISIBLE);
 
         int remaining = 10 - value;
@@ -723,7 +676,6 @@ public class SingleProductActivity extends AppCompatActivity {
         @ColorInt int color = typedValue.data;
 
         //Adding chart and text to section
-
         TextView headerTextView = new TextView(this);
         headerTextView.setText(headerText);
         headerTextView.setTag(headerText);

@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -31,9 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
-
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.model.Product;
@@ -80,9 +75,10 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
 
                         final Product product = new Product().documentToProduct(document);
 
-                        RequestOptions requestOptions = new RequestOptions();
-                        requestOptions.diskCacheStrategy(DiskCacheStrategy.DATA);
-                        requestOptions.fallback(context.getResources().getDrawable(R.drawable.bottle));
+                        RequestOptions requestOptions = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.DATA)
+                        .fallback(context.getResources().getDrawable(R.drawable.bottle));
+
                         Glide.with(context)
                                 .asBitmap()
                                 .load(product.getBildeUrl())
@@ -131,8 +127,6 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
                         });
 
 
-                    } else {
-                        return;
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
@@ -179,10 +173,4 @@ public class ReviewRecycleViewAdapter extends RecyclerView.Adapter<ReviewRecycle
     }
 
 
-    private boolean isNetworkAvailable() { // Hentet fra https://stackoverflow.com/questions/4238921/detect-whether-there-is-an-internet-connection-available-on-android
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 }

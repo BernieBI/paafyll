@@ -253,17 +253,6 @@
                         app:layout_constraintEnd_toEndOf="@+id/productRatingBar"
                         app:layout_constraintStart_toStartOf="@+id/productRatingBar" />
 
-                    <TextView
-                        android:id="@+id/productRating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:textColor="?attr/colorPrimaryText"
-                        android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="@+id/productRatingBar"
-                        app:layout_constraintEnd_toStartOf="@+id/productRatingBar"
-                        app:layout_constraintTop_toTopOf="@+id/productRatingBar" />
-
 
                 </android.support.constraint.ConstraintLayout>
 

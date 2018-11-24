@@ -26,9 +26,9 @@ public class MyReviewsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ReviewRecycleViewAdapter reviewAdapter;
     private GridLayoutManager gridLayoutManager;
-    private ArrayList<Review> userReviews = new ArrayList<>();
-    private ArrayList<String> reviewedProducts = new ArrayList<>();
-    private ArrayList<String> userReviewIds = new ArrayList<>();
+    private ArrayList<Review> userReviews = new ArrayList<>(); // List of actual reviews. Beeing sent to adapter and recyclerview
+    private ArrayList<String> reviewedProducts = new ArrayList<>(); // List of product IDs of the users reviewed products
+    private ArrayList<String> userProductReviewIndex = new ArrayList<>(); // List of indexes of the users product IDs. Is paired with reviewedProducts for ordering.
 
     //firebase
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -41,7 +41,7 @@ public class MyReviewsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        CacheHandler themeGetter = new CacheHandler(this, "theme", "theme-cache");
+        SharedPrefHandler themeGetter = new SharedPrefHandler(this, "theme", "theme-cache"); // Retrieving user-selected theme from sharedpreferences
         setTheme(getResources().getIdentifier(themeGetter.getTheme(), "style", this.getPackageName()));
 
         super.onCreate(savedInstanceState);
@@ -51,17 +51,15 @@ public class MyReviewsActivity extends AppCompatActivity {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        userReviewRef = database.getReference("users/" + user.getUid() + "/reviews");
-        reviewRef = database.getReference("userReviews");
+        userReviewRef = database.getReference("users/" + user.getUid() + "/reviews"); //Path to current users review list
+        reviewRef = database.getReference("userReviews"); //Path to all reviews from all users
 
 
         reviewAdapter = new ReviewRecycleViewAdapter(MyReviewsActivity.this, userReviews);
         gridLayoutManager = new GridLayoutManager(MyReviewsActivity.this, 1);
 
-        createReviewListener();
-        //Henter alle produktid'er fra brukeren
-        getReviewedProducts();
-        passReviews();
+        getUsersReviewedProducts(); // Retrieving list of product IDs from users reviewed products
+        createReviewListener(); //Creating ValueEventListener for each of the IDs retrieved
 
     }
 
@@ -71,54 +69,37 @@ public class MyReviewsActivity extends AppCompatActivity {
         Log.d(TAG, "onResume");
         reviewAdapter.notifyDataSetChanged();
     }
-    private void createReviewListener() {
-        reviewListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists())
-                    return;
-                Review current_review = dataSnapshot.getValue(Review.class);
-                current_review.setId(dataSnapshot.getKey());
-                userReviews.add(current_review);
-                current_review.setProductId(reviewedProducts.get(userReviews.size()-1));
-                current_review.setUserIndex(userReviewIds.get(userReviews.size()-1));
-                reviewAdapter.notifyDataSetChanged();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        };
-    }
 
-
-    private void getReviewedProducts() {
+    private void getUsersReviewedProducts() {
         userReviewRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //emptying lists of reviews to avoid duplicates
                 userReviews.clear();
                 reviewedProducts.clear();
-                userReviewIds.clear();
+                userProductReviewIndex.clear();
 
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    reviewedProducts.add(child.getValue() + "");
-                    userReviewIds.add(child.getKey()+"");
+                    reviewedProducts.add(child.getValue() + ""); // Storing the product ID
+                    userProductReviewIndex.add(child.getKey()+""); // Storing index of the product ID
                 }
-                Collections.reverse(reviewedProducts);
-                Collections.reverse(userReviewIds);
-                for (String review : reviewedProducts){
+                Collections.reverse(reviewedProducts); //Reversing both arrays to display from newest to oldest.
+                Collections.reverse(userProductReviewIndex);
+
+                for (String review : reviewedProducts){ //Creating a ListenerForSingleValueEvent for each of the product IDs. Adding the current user-id and creating an absolute path to the desired review
                     reviewRef.child(review).child(user.getUid()).addListenerForSingleValueEvent(reviewListener);
-                    Log.d(TAG, "id: " + review);
                 }
 
-                if (reviewedProducts.size() == 0){
+                if (reviewedProducts.size() == 0){ //If the user has no reviews, display message and clear the recyclerview in case the reviews was just deleted
                     recyclerView.removeAllViewsInLayout();
                     findViewById(R.id.emptyMessage).setVisibility(View.VISIBLE);
                     findViewById(R.id.emptyReviewMessage).setVisibility(View.VISIBLE);
-                }else {
+
+                }else { //Hide messages if user has lists
                     findViewById(R.id.emptyMessage).setVisibility(View.GONE);
                     findViewById(R.id.emptyReviewMessage).setVisibility(View.GONE);
                 }
-                passReviews();
+                passReviews();  //Notifying adapter the data has changed
 
             }
             @Override
@@ -128,9 +109,29 @@ public class MyReviewsActivity extends AppCompatActivity {
         });
 
     }
+
+    private void createReviewListener() { // Getting the actual review data
+        reviewListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists())
+                    return;
+
+                Review current_review = dataSnapshot.getValue(Review.class);
+                current_review.setId(dataSnapshot.getKey());
+                userReviews.add(current_review); // Adding the review to the list
+                current_review.setProductId(reviewedProducts.get(userReviews.size()-1)); // using the previous set lists to set the right product ID for the list.
+                current_review.setUserIndex(userProductReviewIndex.get(userReviews.size()-1)); // using the previous set indexes to ensure the reviews is displayed in the right order. This fixed a bug causing wrong order when the user created new reviews after app startup.
+                reviewAdapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+    }
+
     public void passReviews(){
         findViewById(R.id.progressBar).setVisibility(View.GONE);
-
         recyclerView.setAdapter(reviewAdapter);
         recyclerView.setLayoutManager(gridLayoutManager);
         reviewAdapter.notifyDataSetChanged();

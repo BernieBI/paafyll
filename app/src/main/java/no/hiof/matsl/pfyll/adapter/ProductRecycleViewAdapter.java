@@ -24,12 +24,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import no.hiof.matsl.pfyll.R;
 import no.hiof.matsl.pfyll.SingleProductActivity;
 import no.hiof.matsl.pfyll.model.FirestoreProduct;
-import no.hiof.matsl.pfyll.model.IdFilter;
 import no.hiof.matsl.pfyll.model.Product;
 
 
@@ -43,8 +41,6 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<FirestoreProduct
     private ArrayList<String> preSetProducts;
 
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-    //firebase
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     private static final DiffUtil.ItemCallback<FirestoreProduct> DIFF_CALLBACK = new DiffUtil.ItemCallback<FirestoreProduct>() {
@@ -115,10 +111,12 @@ public class ProductRecycleViewAdapter extends PagedListAdapter<FirestoreProduct
                 }
             });
         }
+
         Glide.with(context)
                 .asBitmap()
                 .load(current_product.getBildeUrl())
                 .into(holder.productImage);
+
         holder.productType.setText(current_product.getVaretype());
         holder.productName.setText(current_product.getVarenavn());
         holder.productCountry.setText(current_product.getLand());

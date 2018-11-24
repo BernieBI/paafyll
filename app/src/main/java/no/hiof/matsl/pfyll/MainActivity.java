@@ -2,15 +2,12 @@ package no.hiof.matsl.pfyll;
 
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -20,15 +17,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import no.hiof.matsl.pfyll.model.FragmentLogin;
 import no.hiof.matsl.pfyll.model.FragmentMyAccount;
 import no.hiof.matsl.pfyll.model.FragmentProducts;
-import no.hiof.matsl.pfyll.model.SharedPref;
 import no.hiof.matsl.pfyll.model.ViewPagerAdapter;
-
-
 
 public class MainActivity extends AppCompatActivity  {
     String TAG = "MainActivity";
     private TabLayout tabLayout;
-    private AppBarLayout appBarLayout;
     private ViewPager viewPager;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -37,8 +30,8 @@ public class MainActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        CacheHandler cacheHandler = new CacheHandler(this, "theme", "theme-cache");
-        setTheme(getResources().getIdentifier(cacheHandler.getTheme(), "style", this.getPackageName()));
+        SharedPrefHandler sharedPrefHandler = new SharedPrefHandler(this, "theme", "theme-cache"); // Retrieving user-selected theme from sharedpreferences
+        setTheme(getResources().getIdentifier(sharedPrefHandler.getTheme(), "style", this.getPackageName())); //finding theme by the stored name.
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -52,10 +45,9 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-    public void CreateLayout(){
+    public void CreateLayout(){ // Dynamically populating tablayout depending on whether user is logged in or not.
         user = FirebaseAuth.getInstance().getCurrentUser();
         tabLayout = findViewById(R.id.tabLayout);
-        appBarLayout = findViewById(R.id.appBarid);
         viewPager = findViewById(R.id.viewPagerid);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         //Adding fragments
@@ -75,9 +67,8 @@ public class MainActivity extends AppCompatActivity  {
 
     }
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) { //Verifying successfull login, restarts activity.
         super.onActivityResult(requestCode, resultCode, data);
-            IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == RESULT_OK) {
                 user = FirebaseAuth.getInstance().getCurrentUser();
