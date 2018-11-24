@@ -53,7 +53,7 @@ public class UserListRecycleViewAdapter extends RecyclerView.Adapter<UserListRec
         final UserList current_list = lists.get(position);
         if (current_list == null)
             return;
-        holder.listName.setText(current_list.getNavn());
+        holder.listName.setText(current_list.getName());
 
         holder.listCount.setText( (current_list.getProducts() == null ? "0" : current_list.getProducts().size() + "" )  );
 

@@ -226,7 +226,7 @@ public class SingleProductActivity extends AppCompatActivity {
                 UserList list = dataSnapshot.getValue(UserList.class);
                 list.setId(dataSnapshot.getKey());
                 userLists.add(list);
-                options.add(list.getNavn()); // added to options array user for Alertdialog.
+                options.add(list.getName()); // added to options array user for Alertdialog.
             }
 
             @Override
@@ -265,7 +265,7 @@ public class SingleProductActivity extends AppCompatActivity {
                             if (userLists.get(which).getProducts() != null) {
 
                                 if (!userLists.get(which).addProduct(productID + "")) { //Notifying if selected list already contains current product.
-                                    Toast.makeText(SingleProductActivity.this, String.format("%s %s!", getString(R.string.already_exists), userLists.get(which).getNavn()), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(SingleProductActivity.this, String.format("%s %s!", getString(R.string.already_exists), userLists.get(which).getName()), Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                             } else { // If list is empty, add current product without check
@@ -274,7 +274,7 @@ public class SingleProductActivity extends AppCompatActivity {
                             }
 
                             userListRef.child(userLists.get(which).getId()).child("products").setValue(userLists.get(which).getProducts()); // Update list in firebase
-                            Toast.makeText(SingleProductActivity.this, String.format("%s %s!", getString(R.string.add_success), userLists.get(which).getNavn()), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SingleProductActivity.this, String.format("%s %s!", getString(R.string.add_success), userLists.get(which).getName()), Toast.LENGTH_SHORT).show();
                         }
                     });
                     builder.show();

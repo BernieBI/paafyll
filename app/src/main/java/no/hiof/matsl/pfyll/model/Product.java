@@ -3,9 +3,6 @@ package no.hiof.matsl.pfyll.model;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 public class Product {
-    public int getId() {
-        return id;
-    }
 
     private int id;
     transient private String bildeUrl;
@@ -148,6 +145,10 @@ public class Product {
             other.volum,
             other.hovedGTIN
         );
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getHovedGTIN() {

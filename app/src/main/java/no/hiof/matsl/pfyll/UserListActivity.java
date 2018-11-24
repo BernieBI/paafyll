@@ -72,10 +72,10 @@ public class UserListActivity extends AppCompatActivity {
                                     return;
                                 }
                                 UserList newList = new UserList();
-                                newList.setNavn(editText.getText().toString());
+                                newList.setName(editText.getText().toString());
                                 userListRef.push().setValue(newList);
 
-                                Toast toast = Toast.makeText(UserListActivity.this, String.format("Listen %s ble opprettet!", newList.getNavn()), Toast.LENGTH_LONG);
+                                Toast toast = Toast.makeText(UserListActivity.this, String.format("Listen %s ble opprettet!", newList.getName()), Toast.LENGTH_LONG);
                                 toast.show();
                             }
                         })

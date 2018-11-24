@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity  {
     private ViewPager viewPager;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     final private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private DatabaseReference users = database.getReference("users");
 
     @Override

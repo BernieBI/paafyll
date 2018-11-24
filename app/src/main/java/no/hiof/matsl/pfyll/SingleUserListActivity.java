@@ -67,7 +67,7 @@ public class SingleUserListActivity extends AppCompatActivity {
                                     toast.show();
                                     return;
                                 }
-                                userList.setNavn(editText.getText().toString());
+                                userList.setName(editText.getText().toString());
                                 listsRef.setValue(userList);
 
                                 Toast.makeText(SingleUserListActivity.this, getResources().getString(R.string.list_change_success), Toast.LENGTH_LONG).show();
@@ -103,7 +103,7 @@ public class SingleUserListActivity extends AppCompatActivity {
                     return;
 
                 listName = findViewById(R.id.listName);
-                listName.setText(userList.getNavn());
+                listName.setText(userList.getName());
 
                 if (userList.getProducts() == null) {
                     findViewById(R.id.emptyText).setVisibility(View.VISIBLE);

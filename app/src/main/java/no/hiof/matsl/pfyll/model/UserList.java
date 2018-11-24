@@ -4,22 +4,22 @@ import java.util.ArrayList;
 
 public class UserList {
 
-    private String navn;
+    private String name;
     private ArrayList<String> products;
     private String id;
     public UserList(){ }
 
-    public UserList(String navn, ArrayList<String> products ) {
-        this.navn = navn;
+    public UserList(String name, ArrayList<String> products ) {
+        this.name = name;
         this.products = products;
     }
 
-    public String getNavn() {
-        return navn;
+    public String getName() {
+        return name;
     }
 
-    public void setNavn(String navn) {
-        this.navn = navn;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public ArrayList<String> getProducts() {
